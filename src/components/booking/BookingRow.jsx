@@ -47,7 +47,7 @@ export function BookingRow({ booking, propName }) {
       {/* Content */}
       <div className="flex-1 py-3 px-3 min-w-0">
         <div className="flex items-start justify-between gap-2 mb-1">
-          <div className="font-semibold text-[15px] text-warm-800 leading-tight truncate">
+          <div className="font-semibold text-[15px] text-warm-800 leading-tight">
             {month} {day} &middot; {propName || 'Turnover'}
           </div>
           <Pill label={sc.label} bg={sc.bg} text={sc.text} size="sm" />

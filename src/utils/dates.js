@@ -49,6 +49,6 @@ export function isUrgent(booking) {
     const [y, m, d] = clean.split('-').map(Number);
     const checkout = new Date(y, m - 1, d);
     const diff = (checkout - new Date()) / (1000 * 60 * 60 * 24);
-    return diff <= 3 && diff >= 0;
+    return diff <= 5 && diff >= 0;
   } catch { return false; }
 }

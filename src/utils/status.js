@@ -8,6 +8,15 @@ export const STATUS_CONFIG = {
   cancel_acknowledged: { label: 'Cancelled', bg: 'bg-warm-100', text: 'text-warm-400', border: 'border-l-warm-200' },
 };
 
+export function isUrgent(booking) {
+  if (!booking.checkout_date) return false;
+  const clean = booking.checkout_date.toString().slice(0, 10);
+  const [year, month, day] = clean.split('-').map(Number);
+  const checkout = new Date(year, month - 1, day);
+  const diff = (checkout - new Date()) / (1000 * 60 * 60 * 24);
+  return diff <= 5 && diff >= 0;
+}
+
 export function getStatusConfig(status, urgent) {
   if (urgent && status === 'pending') {
     return { label: 'Immediate attention', bg: 'bg-danger-50', text: 'text-danger-600', border: 'border-l-danger-400' };
