@@ -1,7 +1,11 @@
 import axios from 'axios';
 
+// In development, Vite proxies /api to localhost:3000
+// In production on Railway, we need the full backend URL
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || '';
+
 const client = axios.create({
-  baseURL: '/api',
+  baseURL: import.meta.env.DEV ? '/api' : `${BACKEND_URL}/api`,
   withCredentials: true,
   headers: { 'Content-Type': 'application/json' },
 });
