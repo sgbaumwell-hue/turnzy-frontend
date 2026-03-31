@@ -37,15 +37,15 @@ export function Dashboard() {
             <h1 className="font-bold text-lg text-warm-800">Home &middot; {filtered.length}</h1>
             <button onClick={() => pollNow()} disabled={isPolling} aria-label="Refresh calendar" className="p-1.5 rounded-lg text-warm-400 hover:bg-warm-100 hover:text-warm-600 transition-colors"><RefreshCw size={15} className={isPolling ? 'animate-spin' : ''} /></button>
           </div>
-          <div className="flex items-center gap-2 bg-warm-100 rounded-lg px-3 py-2">
-            <Search size={14} className="text-warm-400 flex-shrink-0" />
+          <div className="flex items-center gap-2 bg-warm-100 rounded-xl px-3 py-2">
+            <Search size={14} className="text-warm-300 flex-shrink-0" />
             <input type="text" placeholder="Search turnovers..." value={search} onChange={(e) => setSearch(e.target.value)} className="flex-1 bg-transparent text-sm text-warm-700 placeholder:text-warm-400 focus:outline-none" />
           </div>
         </div>
         <BookingList bookings={filtered} properties={properties} isLoading={isLoading} />
       </div>
       {isDesktop && (
-        <div className="flex-1 bg-warm-50 overflow-y-auto">
+        <div className="flex-1 bg-warm-50 overflow-y-auto border-l border-warm-200">
           {selectedBookingId ? <BookingDetail bookingId={selectedBookingId} onClose={() => setSelectedBooking(null)} /> : <div className="flex items-center justify-center h-full text-warm-400 text-sm">Select a booking to view details</div>}
         </div>
       )}

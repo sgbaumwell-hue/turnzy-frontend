@@ -41,14 +41,3 @@ export function getMonthDay(dateStr) {
     };
   } catch { return { month: '', day: '' }; }
 }
-
-export function isUrgent(booking) {
-  if (!booking.checkout_date) return false;
-  try {
-    const clean = booking.checkout_date.toString().slice(0, 10);
-    const [y, m, d] = clean.split('-').map(Number);
-    const checkout = new Date(y, m - 1, d);
-    const diff = (checkout - new Date()) / (1000 * 60 * 60 * 24);
-    return diff <= 5 && diff >= 0;
-  } catch { return false; }
-}

@@ -1,14 +1,30 @@
 import { useMemo } from 'react';
 import { BookingRow } from './BookingRow';
 import { BookingRowSkeleton } from '../ui/Skeleton';
-import { isUrgent } from '../../utils/dates';
+import { isUrgent } from '../../utils/status';
 
 function SectionHeader({ label, count, color = 'warm' }) {
-  const colors = { danger: 'text-danger-600', amber: 'text-amber-600', warm: 'text-warm-400', sage: 'text-sage-600' };
-  const badgeColors = { danger: 'bg-danger-400 text-white', amber: 'bg-amber-400 text-white', warm: 'bg-warm-200 text-warm-600', sage: 'bg-sage-400 text-white' };
+  const colors = {
+    danger: 'text-red-600',
+    amber: 'text-amber-700',
+    warm: 'text-warm-400',
+    sage: 'text-sage-600',
+  };
+  const badgeColors = {
+    danger: 'bg-red-500 text-white',
+    amber: 'bg-amber-400 text-white',
+    warm: 'bg-warm-200 text-warm-600',
+    sage: 'bg-sage-400 text-white',
+  };
+  const headerBg = {
+    danger: 'bg-red-50/50',
+    amber: 'bg-warm-50/90',
+    warm: 'bg-warm-50/90',
+    sage: 'bg-warm-50/90',
+  };
   return (
-    <div className="flex items-center gap-2 px-4 py-2 sticky top-0 bg-warm-50/90 backdrop-blur-sm z-10 border-b border-warm-100">
-      <span className={`text-[11px] font-bold uppercase tracking-widest ${colors[color]}`}>{label}</span>
+    <div className={`flex items-center gap-2 px-4 py-2.5 sticky top-0 backdrop-blur-sm z-10 border-b border-warm-100 ${headerBg[color] || headerBg.warm}`}>
+      <span className={`text-[11px] font-extrabold uppercase tracking-widest ${colors[color]}`}>{label}</span>
       {count > 0 && <span className={`text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center ${badgeColors[color]}`}>{count}</span>}
     </div>
   );
@@ -47,7 +63,7 @@ export function BookingList({ bookings, properties, isLoading }) {
 
   return (
     <div className="flex-1 overflow-y-auto scrollbar-hide">
-      {renderSection('urgent', 'URGENT (< 5 DAYS)', 'danger')}
+      {renderSection('urgent', 'URGENT', 'danger')}
       {renderSection('needsAction', 'NEEDS ACTION', 'amber')}
       {renderSection('queued', 'QUEUED', 'warm')}
       {renderSection('upcoming', 'UPCOMING (CONFIRMED)', 'sage')}

@@ -18,8 +18,14 @@ export function isUrgent(booking) {
 }
 
 export function getStatusConfig(status, urgent) {
-  if (urgent && status === 'pending') {
-    return { label: 'Immediate attention', bg: 'bg-danger-50', text: 'text-danger-600', border: 'border-l-danger-400' };
+  if (urgent && (status === 'pending' || status === 'declined')) {
+    return {
+      label: 'IMMEDIATE ATTENTION',
+      bg: 'bg-red-100',
+      text: 'text-red-700',
+      border: 'border-l-red-500',
+      rowBg: 'bg-red-50',
+    };
   }
   return STATUS_CONFIG[status] || {
     label: (status || 'Unknown').replace(/_/g, ' '),
