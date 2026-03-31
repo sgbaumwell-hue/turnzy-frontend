@@ -1,0 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer base {
+  * { box-sizing: border-box; }
+  body { font-family: 'DM Sans', system-ui, sans-serif; font-size: 15px; background-color: #F9F8F6; color: #1a1a1a; -webkit-font-smoothing: antialiased; }
+  input, textarea, select, button { font-family: 'DM Sans', system-ui, sans-serif; font-size: 15px; }
+}
+@layer utilities {
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
