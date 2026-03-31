@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { X, Mail, Check } from 'lucide-react';
+import { X, Mail, MapPin, UserPlus } from 'lucide-react';
 import { bookingsApi } from '../../api/bookings';
 import { fmtDateLong, fmtTime, getMonthDay } from '../../utils/dates';
 import { getStatusConfig, isUrgent } from '../../utils/status';
@@ -29,7 +29,7 @@ function ActionButtons({ booking, bookingId }) {
       await apiFn();
       await queryClient.invalidateQueries({ queryKey: ['bookings'] });
       await queryClient.invalidateQueries({ queryKey: ['booking', bookingId] });
-      const labels = { resend: 'Notification resent', confirm: 'Marked as confirmed', dismiss: 'Booking dismissed' };
+      const labels = { resend: 'Notification resent', dismiss: 'Booking dismissed', backup: 'Backup cleaner notified' };
       setActionMsg({ type: 'success', text: labels[key] || 'Done' });
     } catch (e) {
       setActionMsg({ type: 'error', text: e.response?.data?.error || 'Something went wrong' });
@@ -50,22 +50,21 @@ function ActionButtons({ booking, bookingId }) {
             className="w-full h-[52px] px-4 rounded-xl font-semibold text-[15px] bg-coral-400 text-white hover:bg-coral-500 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
           >
             <Mail size={16} />
-            {loading === 'resend' ? 'Sending...' : 'Resend notification'}
+            {loading === 'resend' ? 'Sending...' : 'Resend Notification'}
           </button>
           <button
-            disabled={loading === 'confirm'}
-            onClick={() => doAction('confirm', () => bookingsApi.confirm(bookingId))}
-            className="w-full h-[52px] px-4 rounded-xl font-semibold text-[15px] bg-white border-2 border-sage-400 text-sage-600 hover:bg-sage-50 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+            onClick={() => console.log('Ask backup cleaner — coming soon')}
+            className="w-full h-[52px] px-4 rounded-xl font-semibold text-[15px] bg-white border border-warm-200 text-warm-600 hover:bg-warm-50 transition-colors flex items-center justify-center gap-2"
           >
-            <Check size={16} />
-            {loading === 'confirm' ? 'Confirming...' : 'Mark confirmed'}
+            <UserPlus size={16} />
+            Ask Backup Cleaner
           </button>
           <button
             disabled={loading === 'dismiss'}
             onClick={() => doAction('dismiss', () => bookingsApi.dismiss(bookingId))}
-            className="w-full h-[52px] px-4 rounded-xl font-semibold text-[15px] bg-warm-100 text-warm-600 hover:bg-warm-200 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full h-[44px] px-4 rounded-xl font-medium text-[14px] text-warm-400 hover:text-warm-600 hover:bg-warm-100 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
           >
-            <X size={16} />
+            <X size={14} />
             {loading === 'dismiss' ? 'Dismissing...' : "Dismiss \u2014 I'll handle it"}
           </button>
         </>
@@ -74,19 +73,28 @@ function ActionButtons({ booking, bookingId }) {
       {status === 'declined' && (
         <>
           <button
-            disabled={loading === 'dismiss'}
-            onClick={() => doAction('dismiss', () => bookingsApi.dismiss(bookingId))}
+            disabled={loading === 'resend'}
+            onClick={() => doAction('resend', () => bookingsApi.resend(bookingId))}
             className="w-full h-[52px] px-4 rounded-xl font-semibold text-[15px] bg-coral-400 text-white hover:bg-coral-500 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
           >
-            <X size={16} />
+            <Mail size={16} />
+            {loading === 'resend' ? 'Sending...' : 'Resend Notification'}
+          </button>
+          <button
+            onClick={() => console.log('Ask backup cleaner — coming soon')}
+            className="w-full h-[52px] px-4 rounded-xl font-semibold text-[15px] bg-white border border-warm-200 text-warm-600 hover:bg-warm-50 transition-colors flex items-center justify-center gap-2"
+          >
+            <UserPlus size={16} />
+            Ask Backup Cleaner
+          </button>
+          <button
+            disabled={loading === 'dismiss'}
+            onClick={() => doAction('dismiss', () => bookingsApi.dismiss(bookingId))}
+            className="w-full h-[44px] px-4 rounded-xl font-medium text-[14px] text-warm-400 hover:text-warm-600 hover:bg-warm-100 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+          >
+            <X size={14} />
             {loading === 'dismiss' ? 'Dismissing...' : "Dismiss \u2014 I'll handle it"}
           </button>
-          <a
-            href="/settings/cleaners"
-            className="flex items-center justify-center gap-2 w-full h-[52px] px-4 rounded-xl font-semibold text-[15px] text-center border border-warm-200 text-warm-500 hover:bg-warm-50 transition-colors"
-          >
-            Add backup cleaner &rarr;
-          </a>
         </>
       )}
 
@@ -147,7 +155,10 @@ export function BookingDetail({ bookingId, onClose }) {
           </span>
         )}
         <h2 className="text-[32px] font-extrabold text-warm-900 leading-tight">{title}</h2>
-        <p className="text-[14px] font-medium text-warm-400 mt-1">{b.property_name || 'Property'}</p>
+        <div className="flex items-center gap-1.5 mt-1">
+          <MapPin size={13} className="text-warm-300 flex-shrink-0" />
+          <p className="text-[14px] font-medium text-warm-400">{b.property_name || 'Property address'}</p>
+        </div>
       </div>
 
       {/* Status */}
@@ -169,8 +180,8 @@ export function BookingDetail({ bookingId, onClose }) {
         </div>
       </div>
 
-      {/* Info grid */}
-      <div className="bg-white border border-warm-200 rounded-xl p-4 mb-4">
+      {/* Info grid — single consolidated card */}
+      <div className="bg-white border border-warm-200 rounded-xl p-4 mb-5">
         <div className="space-y-3">
           <div>
             <div className="text-[10px] font-black uppercase tracking-widest text-warm-400 mb-1">Assigned to</div>
@@ -181,12 +192,10 @@ export function BookingDetail({ bookingId, onClose }) {
             <div className="text-[10px] font-black uppercase tracking-widest text-warm-400 mb-1">Response</div>
             <div className="text-[16px] font-semibold text-warm-900">{responseLabel}</div>
           </div>
-          {b.guest_name && (
-            <div className="border-t border-warm-100 pt-3">
-              <div className="text-[10px] font-black uppercase tracking-widest text-warm-400 mb-1">Guest</div>
-              <div className="text-[16px] font-semibold text-warm-900">{b.guest_name}</div>
-            </div>
-          )}
+          <div className="border-t border-warm-100 pt-3">
+            <div className="text-[10px] font-black uppercase tracking-widest text-warm-400 mb-1">Guest</div>
+            <div className="text-[16px] font-semibold text-warm-900">{b.guest_name || '\u2014'}</div>
+          </div>
           {b.backup_cleaner_name && (
             <div className="border-t border-warm-100 pt-3">
               <div className="text-[10px] font-black uppercase tracking-widest text-warm-400 mb-1">Backup cleaner</div>

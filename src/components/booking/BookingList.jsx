@@ -63,9 +63,9 @@ export function BookingList({ bookings, properties, isLoading }) {
 
   return (
     <div className="flex-1 overflow-y-auto scrollbar-hide">
-      {renderSection('urgent', 'URGENT', 'danger')}
-      {renderSection('needsAction', 'NEEDS ACTION', 'amber')}
-      {renderSection('queued', 'QUEUED', 'warm')}
+      {renderSection('urgent', 'URGENT (UPCOMING < 3 DAYS)', 'danger')}
+      {renderSection('needsAction', 'NEEDS ACTION (UNCONFIRMED)', 'amber')}
+      {renderSection('queued', 'QUEUED (TOO EARLY)', 'warm')}
       {renderSection('upcoming', 'UPCOMING (CONFIRMED)', 'sage')}
       {renderSection('hostHandling', 'HOST HANDLING', 'warm')}
       {renderSection('cancelled', 'CANCELLED', 'warm')}

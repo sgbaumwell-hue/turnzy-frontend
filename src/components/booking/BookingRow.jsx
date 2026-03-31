@@ -32,12 +32,13 @@ export function BookingRow({ booking, propName }) {
       onClick={handleClick}
       onKeyDown={(e) => e.key === 'Enter' && handleClick()}
       className={clsx(
-        'flex gap-0 cursor-pointer border-b border-warm-100 border-l-[3px]',
+        'flex gap-0 cursor-pointer border-b border-warm-100',
         'transition-colors duration-100 min-h-[72px]',
         'hover:bg-warm-100 focus-visible:outline-2 focus-visible:outline-coral-400',
-        isSelected && 'bg-coral-50 border-l-coral-400',
+        isSelected && 'bg-coral-50 border-l-[3px] border-l-coral-400',
+        !isSelected && !urgent && 'border-l-[3px]',
         !isSelected && !urgent && sc.border,
-        urgent && !isSelected && 'bg-red-50 border-l-red-500',
+        urgent && !isSelected && 'bg-red-50 border-l-4 border-l-red-500',
       )}>
       {/* Date stamp */}
       <div className="flex flex-col items-center justify-center w-[48px] min-w-[48px] flex-shrink-0 border-r border-warm-100 py-4 px-1 gap-0.5 bg-white">

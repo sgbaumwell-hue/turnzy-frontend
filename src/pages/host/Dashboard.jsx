@@ -32,10 +32,13 @@ export function Dashboard() {
   return (
     <div className="flex flex-1 overflow-hidden">
       <div className={clsx('flex flex-col border-r border-warm-200 bg-white', isDesktop ? 'w-[320px] flex-shrink-0' : 'flex-1')}>
-        <div className="px-4 pt-3 pb-2 border-b border-warm-100">
-          <div className="flex items-center justify-between mb-2">
-            <h1 className="font-bold text-lg text-warm-800">Home &middot; {filtered.length}</h1>
-            <button onClick={() => pollNow()} disabled={isPolling} aria-label="Refresh calendar" className="p-1.5 rounded-lg text-warm-400 hover:bg-warm-100 hover:text-warm-600 transition-colors"><RefreshCw size={15} className={isPolling ? 'animate-spin' : ''} /></button>
+        <div className="px-4 pt-4 pb-3 border-b border-warm-100">
+          <div className="flex items-start justify-between mb-3">
+            <div>
+              <h1 className="font-bold text-[20px] text-warm-900 leading-tight">Operations Overview</h1>
+              <p className="text-[13px] text-warm-400 mt-0.5">Manage upcoming property transitions</p>
+            </div>
+            <button onClick={() => pollNow()} disabled={isPolling} aria-label="Refresh calendar" className="p-1.5 rounded-lg text-warm-400 hover:bg-warm-100 hover:text-warm-600 transition-colors mt-0.5"><RefreshCw size={15} className={isPolling ? 'animate-spin' : ''} /></button>
           </div>
           <div className="flex items-center gap-2 bg-warm-100 rounded-xl px-3 py-2">
             <Search size={14} className="text-warm-300 flex-shrink-0" />
