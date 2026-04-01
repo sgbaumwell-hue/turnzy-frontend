@@ -8,8 +8,7 @@ import { Properties } from './pages/settings/sections/Properties';
 import { Cleaners } from './pages/settings/sections/Cleaners';
 import { Notifications } from './pages/settings/sections/Notifications';
 import { Billing } from './pages/settings/sections/Billing';
-import { Profile } from './pages/settings/sections/Profile';
-import { Security } from './pages/settings/sections/Security';
+import { Account } from './pages/settings/sections/Account';
 import { DeleteConfirm } from './pages/account/DeleteConfirm';
 import { Login } from './pages/auth/Login';
 import { useAuthStore } from './store/authStore';
@@ -76,8 +75,7 @@ function AppWithAuth() {
         <Route path="cleaners" element={<Cleaners />} />
         <Route path="notifications" element={<Notifications />} />
         <Route path="billing" element={<Billing />} />
-        <Route path="profile" element={<Profile />} />
-        <Route path="security" element={<Security />} />
+        <Route path="account" element={<Account />} />
       </Route>
       <Route path="*" element={
         <div className="flex items-center justify-center h-screen text-warm-400">Page not found</div>
