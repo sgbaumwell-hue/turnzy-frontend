@@ -30,7 +30,7 @@ export function Dashboard() {
   const filtered = search ? bookings.filter(b => b.checkout_date?.includes(search) || properties.find(p => p.id === b.property_id)?.name?.toLowerCase().includes(search.toLowerCase())) : bookings;
 
   return (
-    <div className="flex flex-1 overflow-hidden">
+    <div className="flex w-full h-screen overflow-hidden">
       <div className={clsx('flex flex-col border-r border-warm-200 bg-white', isDesktop ? 'w-[320px] flex-shrink-0' : 'flex-1')}>
         <div className="px-4 pt-4 pb-3 border-b border-warm-100">
           <div className="flex items-start justify-between mb-3">
@@ -48,7 +48,7 @@ export function Dashboard() {
         <BookingList bookings={filtered} properties={properties} isLoading={isLoading} />
       </div>
       {isDesktop && (
-        <div className="flex-1 bg-warm-50 overflow-y-auto border-l border-warm-200">
+        <div className="flex-1 min-w-0 bg-warm-50 overflow-y-auto">
           {selectedBookingId ? <BookingDetail bookingId={selectedBookingId} onClose={() => setSelectedBooking(null)} /> : <div className="flex items-center justify-center h-full text-warm-400 text-sm">Select a booking to view details</div>}
         </div>
       )}

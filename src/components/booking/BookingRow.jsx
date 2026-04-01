@@ -32,10 +32,10 @@ export function BookingRow({ booking, propName }) {
       onClick={handleClick}
       onKeyDown={(e) => e.key === 'Enter' && handleClick()}
       className={clsx(
-        'flex gap-0 cursor-pointer border-b border-warm-100',
-        'transition-colors duration-100 min-h-[72px]',
-        'hover:bg-warm-100 focus-visible:outline-2 focus-visible:outline-coral-400',
-        isSelected && 'bg-coral-50 border-l-[3px] border-l-coral-400',
+        'flex gap-0 cursor-pointer bg-white rounded-lg shadow-sm',
+        'transition-colors duration-100 min-h-[72px] mx-2 mb-2',
+        'hover:bg-warm-50 focus-visible:outline-2 focus-visible:outline-coral-400',
+        isSelected && 'ring-2 ring-coral-400 bg-coral-50',
         !isSelected && !urgent && 'border-l-[3px]',
         !isSelected && !urgent && sc.border,
         urgent && !isSelected && 'bg-red-50 border-l-4 border-l-red-500',
@@ -58,7 +58,7 @@ export function BookingRow({ booking, propName }) {
         {isSameDay && (
           <div className="flex items-center gap-1.5 bg-sky-600 text-white text-xs font-bold px-2 py-1 rounded-md mb-1.5 w-fit">
             <span>⚡</span>
-            <span>Same-day &middot; {coTime} &ndash; {ciTime}</span>
+            <span>Same-day</span>
           </div>
         )}
         <div className="text-[12px] text-warm-400 flex flex-wrap gap-x-3">

@@ -62,7 +62,7 @@ function ActionButtons({ booking, bookingId }) {
           <button
             disabled={loading === 'dismiss'}
             onClick={() => doAction('dismiss', () => bookingsApi.dismiss(bookingId))}
-            className="w-full h-[44px] px-4 rounded-xl font-medium text-[14px] text-warm-400 hover:text-warm-600 hover:bg-warm-100 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full h-[44px] px-4 rounded-lg font-medium text-[14px] border border-gray-300 text-warm-500 hover:text-warm-700 hover:bg-warm-50 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
           >
             <X size={14} />
             {loading === 'dismiss' ? 'Dismissing...' : "Dismiss \u2014 I'll handle it"}
@@ -90,7 +90,7 @@ function ActionButtons({ booking, bookingId }) {
           <button
             disabled={loading === 'dismiss'}
             onClick={() => doAction('dismiss', () => bookingsApi.dismiss(bookingId))}
-            className="w-full h-[44px] px-4 rounded-xl font-medium text-[14px] text-warm-400 hover:text-warm-600 hover:bg-warm-100 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full h-[44px] px-4 rounded-lg font-medium text-[14px] border border-gray-300 text-warm-500 hover:text-warm-700 hover:bg-warm-50 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
           >
             <X size={14} />
             {loading === 'dismiss' ? 'Dismissing...' : "Dismiss \u2014 I'll handle it"}
@@ -143,7 +143,7 @@ export function BookingDetail({ bookingId, onClose }) {
   const checkinDate = b.next_checkin_date || b.checkin_date;
 
   return (
-    <div className="p-6 max-w-xl relative">
+    <div className="p-6 relative">
       {/* Close button */}
       <button onClick={onClose} className="absolute top-4 right-4 p-1.5 rounded-lg text-warm-400 hover:bg-warm-100" aria-label="Close"><X size={18} /></button>
 
@@ -166,24 +166,22 @@ export function BookingDetail({ bookingId, onClose }) {
         <Pill label={sc.label} bg={sc.bg} text={sc.text} size="lg" />
       </div>
 
-      {/* Time cards */}
-      <div className="grid grid-cols-2 gap-3 mb-5">
-        <div className="bg-warm-100 rounded-xl p-4 border-l-2 border-l-coral-400">
-          <div className="text-[10px] font-black uppercase tracking-widest text-warm-400 mb-1">Checkout</div>
-          <div className="text-[28px] font-black text-warm-900 leading-none mb-1">{coTime}</div>
-          <div className="text-[13px] text-warm-500">{fmtDateLong(b.checkout_date)}</div>
-        </div>
-        <div className="bg-warm-100 rounded-xl p-4 border-l-2 border-l-sage-400">
-          <div className="text-[10px] font-black uppercase tracking-widest text-warm-400 mb-1">Check-in</div>
-          <div className="text-[28px] font-black text-warm-900 leading-none mb-1">{ciTime}</div>
-          <div className="text-[13px] text-warm-500">{fmtDateLong(checkinDate)}</div>
-        </div>
-      </div>
-
       {/* Info grid — single consolidated card */}
       <div className="bg-white border border-warm-200 rounded-xl p-4 mb-5">
         <div className="space-y-3">
-          <div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <div className="text-[10px] font-black uppercase tracking-widest text-warm-400 mb-1">Checkout</div>
+              <div className="text-[15px] font-semibold text-warm-900">{coTime}</div>
+              <div className="text-[12px] text-warm-400">{fmtDateLong(b.checkout_date)}</div>
+            </div>
+            <div>
+              <div className="text-[10px] font-black uppercase tracking-widest text-warm-400 mb-1">Next Check-in</div>
+              <div className="text-[15px] font-semibold text-warm-900">{ciTime}</div>
+              <div className="text-[12px] text-warm-400">{fmtDateLong(checkinDate)}</div>
+            </div>
+          </div>
+          <div className="border-t border-warm-100 pt-3">
             <div className="text-[10px] font-black uppercase tracking-widest text-warm-400 mb-1">Assigned to</div>
             <div className="text-[16px] font-semibold text-warm-900">{b.cleaner_name || 'Not assigned'}</div>
             {b.cleaner_email && <div className="text-[12px] text-warm-400 mt-0.5">{b.cleaner_email}</div>}
@@ -191,10 +189,6 @@ export function BookingDetail({ bookingId, onClose }) {
           <div className="border-t border-warm-100 pt-3">
             <div className="text-[10px] font-black uppercase tracking-widest text-warm-400 mb-1">Response</div>
             <div className="text-[16px] font-semibold text-warm-900">{responseLabel}</div>
-          </div>
-          <div className="border-t border-warm-100 pt-3">
-            <div className="text-[10px] font-black uppercase tracking-widest text-warm-400 mb-1">Guest</div>
-            <div className="text-[16px] font-semibold text-warm-900">{b.guest_name || '\u2014'}</div>
           </div>
           {b.backup_cleaner_name && (
             <div className="border-t border-warm-100 pt-3">

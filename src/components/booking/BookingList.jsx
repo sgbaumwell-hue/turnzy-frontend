@@ -57,7 +57,9 @@ export function BookingList({ bookings, properties, isLoading }) {
     if (!items?.length) return null;
     return (<div key={key}>
       <SectionHeader label={label} count={items.length} color={color} />
-      {key === 'cancelled' ? <div className="opacity-50">{items.map(b => <BookingRow key={b.id} booking={b} propName={propMap[b.property_id]?.name} />)}</div> : items.map(b => <BookingRow key={b.id} booking={b} propName={propMap[b.property_id]?.name} />)}
+      <div className="pt-2">
+        {key === 'cancelled' ? <div className="opacity-50">{items.map(b => <BookingRow key={b.id} booking={b} propName={propMap[b.property_id]?.name} />)}</div> : items.map(b => <BookingRow key={b.id} booking={b} propName={propMap[b.property_id]?.name} />)}
+      </div>
     </div>);
   };
 

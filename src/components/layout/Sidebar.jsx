@@ -1,19 +1,22 @@
+import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, Building2, RefreshCw, CalendarDays, MessageSquare, Settings, LogOut, Plus } from 'lucide-react';
+import { Home, Activity, Settings, ChevronDown, Building2, Users, CreditCard, Bell, User, ExternalLink, LogOut, Plus } from 'lucide-react';
 import clsx from 'clsx';
 import { useAuthStore } from '../../store/authStore';
 
-const NAV_ITEMS = [
-  { to: '/', icon: Home, label: 'Dashboard', end: true },
-  { to: '/properties', icon: Building2, label: 'Properties' },
-  { to: '/turnovers', icon: RefreshCw, label: 'Turnovers' },
-  { to: '/calendar', icon: CalendarDays, label: 'Calendar' },
-  { to: '/messages', icon: MessageSquare, label: 'Messages' },
-  { to: '/settings', icon: Settings, label: 'Settings' },
+const SETTINGS_SUB_ITEMS = [
+  { to: '/settings/properties', icon: Building2, label: 'Properties' },
+  { to: '/settings/cleaners', icon: Users, label: 'Cleaners' },
+  { to: '/settings/billing', icon: CreditCard, label: 'Billing' },
+  { to: '/settings/notifications', icon: Bell, label: 'Notifications' },
+  { to: '/settings/profile', icon: User, label: 'Profile' },
 ];
 
 export function Sidebar({ properties, activeProperty, onPropertyChange }) {
   const { user, clearUser } = useAuthStore();
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const isAdmin = user?.role === 'admin';
+
   return (
     <aside className="w-[220px] flex-shrink-0 bg-white border-r border-warm-200 flex flex-col h-full">
       {/* Logo */}
@@ -44,14 +47,60 @@ export function Sidebar({ properties, activeProperty, onPropertyChange }) {
       {/* Navigation */}
       <nav className="flex-1 px-2 py-2 overflow-y-auto">
         <div className="text-[10px] font-black text-warm-300 uppercase tracking-widest px-3 pt-4 pb-1">Views</div>
-        {NAV_ITEMS.map(({ to, icon: Icon, label, end }) => (
-          <NavLink key={to} to={to} end={end} className={({ isActive }) => clsx(
-            'flex items-center gap-3 px-3 rounded-lg text-[14px] font-medium transition-colors duration-100 min-h-[40px]',
-            isActive ? 'bg-coral-50 text-coral-400 border-l-2 border-l-coral-400' : 'text-warm-500 hover:bg-warm-100 hover:text-warm-700'
-          )}>
-            {({ isActive }) => (<><Icon size={16} className={isActive ? 'text-coral-400' : 'text-warm-400'} />{label}</>)}
-          </NavLink>
-        ))}
+
+        {/* Dashboard */}
+        <NavLink to="/" end className={({ isActive }) => clsx(
+          'flex items-center gap-3 px-3 rounded-lg text-[14px] font-medium transition-colors duration-100 min-h-[40px]',
+          isActive ? 'bg-coral-50 text-coral-400 border-l-2 border-l-coral-400' : 'text-warm-500 hover:bg-warm-100 hover:text-warm-700'
+        )}>
+          {({ isActive }) => (<><Home size={16} className={isActive ? 'text-coral-400' : 'text-warm-400'} />Dashboard</>)}
+        </NavLink>
+
+        {/* Activity */}
+        <NavLink to="/activity" className={({ isActive }) => clsx(
+          'flex items-center gap-3 px-3 rounded-lg text-[14px] font-medium transition-colors duration-100 min-h-[40px]',
+          isActive ? 'bg-coral-50 text-coral-400 border-l-2 border-l-coral-400' : 'text-warm-500 hover:bg-warm-100 hover:text-warm-700'
+        )}>
+          {({ isActive }) => (<><Activity size={16} className={isActive ? 'text-coral-400' : 'text-warm-400'} />Activity</>)}
+        </NavLink>
+
+        {/* Settings (collapsible) */}
+        <button
+          onClick={() => setSettingsOpen(!settingsOpen)}
+          className={clsx(
+            'flex items-center gap-3 px-3 rounded-lg text-[14px] font-medium transition-colors duration-100 min-h-[40px] w-full text-left',
+            'text-warm-500 hover:bg-warm-100 hover:text-warm-700'
+          )}
+        >
+          <Settings size={16} className="text-warm-400" />
+          <span className="flex-1">Settings</span>
+          <ChevronDown size={14} className={clsx('text-warm-400 transition-transform duration-200', settingsOpen && 'rotate-180')} />
+        </button>
+        {settingsOpen && (
+          <div className="ml-5 pl-3 border-l border-warm-100">
+            {SETTINGS_SUB_ITEMS.map(({ to, icon: Icon, label }) => (
+              <NavLink key={to} to={to} className={({ isActive }) => clsx(
+                'flex items-center gap-2.5 px-2 rounded-lg text-[13px] font-medium transition-colors duration-100 min-h-[34px]',
+                isActive ? 'text-coral-400' : 'text-warm-400 hover:text-warm-600 hover:bg-warm-50'
+              )}>
+                {({ isActive }) => (<><Icon size={14} className={isActive ? 'text-coral-400' : 'text-warm-300'} />{label}</>)}
+              </NavLink>
+            ))}
+          </div>
+        )}
+
+        {/* Admin (only for admin users) */}
+        {isAdmin && (
+          <a
+            href="/admin"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-3 px-3 rounded-lg text-[14px] font-medium transition-colors duration-100 min-h-[40px] text-warm-500 hover:bg-warm-100 hover:text-warm-700"
+          >
+            <ExternalLink size={16} className="text-warm-400" />
+            Admin
+          </a>
+        )}
       </nav>
 
       {/* New Turnover button */}
