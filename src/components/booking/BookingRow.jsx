@@ -32,16 +32,21 @@ export function BookingRow({ booking, propName }) {
       onClick={handleClick}
       onKeyDown={(e) => e.key === 'Enter' && handleClick()}
       className={clsx(
-        'flex gap-0 cursor-pointer bg-white rounded-lg shadow-sm',
-        'transition-colors duration-100 min-h-[72px] mx-2 mb-2',
+        'flex gap-0 cursor-pointer mx-2 mb-2',
+        'transition-colors duration-100 min-h-[72px]',
         'hover:bg-warm-50 focus-visible:outline-2 focus-visible:outline-coral-400',
+        urgent && !isSelected && 'bg-red-50 border-l-4 border-l-red-500 rounded-r-lg shadow-sm',
+        !urgent && 'bg-white rounded-lg shadow-sm',
         isSelected && 'ring-2 ring-coral-400 bg-coral-50',
-        !isSelected && !urgent && 'border-l-[3px]',
-        !isSelected && !urgent && sc.border,
-        urgent && !isSelected && 'bg-red-50 border-l-4 border-l-red-500',
-      )}>
+      )}
+      style={urgent && !isSelected ? { borderRadius: '0 8px 8px 0' } : undefined}
+    >
       {/* Date stamp */}
-      <div className="flex flex-col items-center justify-center w-[48px] min-w-[48px] flex-shrink-0 border-r border-warm-100 py-4 px-1 gap-0.5 bg-white">
+      <div className={clsx(
+        'flex flex-col items-center justify-center w-[48px] min-w-[48px] flex-shrink-0 border-r border-warm-100 py-4 px-1 gap-0.5',
+        urgent && !isSelected ? 'bg-red-50' : 'bg-white',
+        !urgent && 'rounded-l-lg',
+      )}>
         <span className="text-[9px] font-black text-coral-400 tracking-widest uppercase leading-none">{month}</span>
         <span className="text-[24px] font-black text-warm-900 leading-none">{day}</span>
       </div>
@@ -56,7 +61,7 @@ export function BookingRow({ booking, propName }) {
           </div>
         </div>
         {isSameDay && (
-          <div className="flex items-center gap-1.5 bg-sky-600 text-white text-xs font-bold px-2 py-1 rounded-md mb-1.5 w-fit">
+          <div className="inline-flex items-center gap-1.5 bg-amber-100 text-amber-800 border border-amber-300 text-xs font-semibold px-2 py-0.5 rounded-md mb-1.5">
             <span>⚡</span>
             <span>Same-day</span>
           </div>

@@ -1,6 +1,5 @@
-import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, Activity, Settings, ChevronDown, Building2, Users, CreditCard, Bell, User, ExternalLink, LogOut, Plus } from 'lucide-react';
+import { Home, Activity, ExternalLink, Building2, Users, CreditCard, Bell, User, LogOut } from 'lucide-react';
 import clsx from 'clsx';
 import { useAuthStore } from '../../store/authStore';
 
@@ -14,7 +13,6 @@ const SETTINGS_SUB_ITEMS = [
 
 export function Sidebar({ properties, activeProperty, onPropertyChange }) {
   const { user, clearUser } = useAuthStore();
-  const [settingsOpen, setSettingsOpen] = useState(false);
   const isAdmin = user?.role === 'admin';
 
   return (
@@ -64,31 +62,6 @@ export function Sidebar({ properties, activeProperty, onPropertyChange }) {
           {({ isActive }) => (<><Activity size={16} className={isActive ? 'text-coral-400' : 'text-warm-400'} />Activity</>)}
         </NavLink>
 
-        {/* Settings (collapsible) */}
-        <button
-          onClick={() => setSettingsOpen(!settingsOpen)}
-          className={clsx(
-            'flex items-center gap-3 px-3 rounded-lg text-[14px] font-medium transition-colors duration-100 min-h-[40px] w-full text-left',
-            'text-warm-500 hover:bg-warm-100 hover:text-warm-700'
-          )}
-        >
-          <Settings size={16} className="text-warm-400" />
-          <span className="flex-1">Settings</span>
-          <ChevronDown size={14} className={clsx('text-warm-400 transition-transform duration-200', settingsOpen && 'rotate-180')} />
-        </button>
-        {settingsOpen && (
-          <div className="ml-5 pl-3 border-l border-warm-100">
-            {SETTINGS_SUB_ITEMS.map(({ to, icon: Icon, label }) => (
-              <NavLink key={to} to={to} className={({ isActive }) => clsx(
-                'flex items-center gap-2.5 px-2 rounded-lg text-[13px] font-medium transition-colors duration-100 min-h-[34px]',
-                isActive ? 'text-coral-400' : 'text-warm-400 hover:text-warm-600 hover:bg-warm-50'
-              )}>
-                {({ isActive }) => (<><Icon size={14} className={isActive ? 'text-coral-400' : 'text-warm-300'} />{label}</>)}
-              </NavLink>
-            ))}
-          </div>
-        )}
-
         {/* Admin (only for admin users) */}
         {isAdmin && (
           <a
@@ -101,15 +74,22 @@ export function Sidebar({ properties, activeProperty, onPropertyChange }) {
             Admin
           </a>
         )}
-      </nav>
 
-      {/* New Turnover button */}
-      <div className="px-3 pb-3">
-        <button className="w-full flex items-center justify-center gap-2 bg-coral-400 hover:bg-coral-500 text-white font-semibold text-[14px] py-2.5 rounded-full transition-colors">
-          <Plus size={16} />
-          New Turnover
-        </button>
-      </div>
+        {/* Settings section label */}
+        <div className="text-[10px] font-black text-warm-300 uppercase tracking-widest px-3 pt-5 pb-1">Settings</div>
+
+        {/* Settings sub-items — always visible */}
+        <div className="ml-2">
+          {SETTINGS_SUB_ITEMS.map(({ to, icon: Icon, label }) => (
+            <NavLink key={to} to={to} className={({ isActive }) => clsx(
+              'flex items-center gap-2.5 px-3 rounded-lg text-[13px] font-medium transition-colors duration-100 min-h-[34px]',
+              isActive ? 'text-coral-400 bg-coral-50' : 'text-warm-400 hover:text-warm-600 hover:bg-warm-50'
+            )}>
+              {({ isActive }) => (<><Icon size={14} className={isActive ? 'text-coral-400' : 'text-warm-300'} />{label}</>)}
+            </NavLink>
+          ))}
+        </div>
+      </nav>
 
       {/* Profile */}
       <div className="border-t border-warm-100 p-3">

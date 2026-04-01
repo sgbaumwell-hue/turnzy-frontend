@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { X, Mail, MapPin, UserPlus } from 'lucide-react';
+import { X, Mail, MapPin, UserPlus, Pencil } from 'lucide-react';
 import { bookingsApi } from '../../api/bookings';
 import { fmtDateLong, fmtTime, getMonthDay } from '../../utils/dates';
 import { getStatusConfig, isUrgent } from '../../utils/status';
@@ -16,6 +16,71 @@ const STATUS_LABELS = {
   cancel_pending: 'Cancellation unconfirmed',
   cancel_acknowledged: 'Cancellation acknowledged',
 };
+
+function TimeEditForm({ type, currentTime, bookingId, onCancel, onSent }) {
+  const [requestedTime, setRequestedTime] = useState(currentTime || '');
+  const [note, setNote] = useState('');
+  const [sending, setSending] = useState(false);
+
+  const label = type === 'late_checkout' ? 'Late Checkout Request' : 'Early Check-in Request';
+
+  async function handleSend() {
+    setSending(true);
+    try {
+      if (bookingsApi.timeChangeRequest) {
+        await bookingsApi.timeChangeRequest(bookingId, { type, requestedTime, note });
+      } else {
+        console.log(`POST /api/bookings/${bookingId}/time-change-request`, { type, requestedTime, note });
+      }
+      onSent();
+    } catch (e) {
+      console.error('Time change request failed', e);
+      onSent();
+    } finally {
+      setSending(false);
+    }
+  }
+
+  return (
+    <div className="mt-2 p-3 bg-warm-50 rounded-lg border border-warm-200 space-y-2">
+      <div className="text-[11px] font-bold text-warm-600 uppercase tracking-wide">{label}</div>
+      <div>
+        <label className="text-[11px] text-warm-500 block mb-0.5">New time</label>
+        <input
+          type="time"
+          value={requestedTime}
+          onChange={(e) => setRequestedTime(e.target.value)}
+          className="w-full text-[14px] font-medium bg-white border border-warm-200 rounded-lg px-3 py-1.5 text-warm-900 focus:outline-none focus:ring-2 focus:ring-coral-400"
+        />
+      </div>
+      <div>
+        <label className="text-[11px] text-warm-500 block mb-0.5">Note to cleaner (optional)</label>
+        <textarea
+          rows={2}
+          value={note}
+          onChange={(e) => setNote(e.target.value)}
+          placeholder="e.g. Guest requested late checkout..."
+          className="w-full text-[13px] bg-white border border-warm-200 rounded-lg px-3 py-1.5 text-warm-900 placeholder:text-warm-300 focus:outline-none focus:ring-2 focus:ring-coral-400 resize-none"
+        />
+      </div>
+      <div className="flex gap-2">
+        <button
+          disabled={sending || !requestedTime}
+          onClick={handleSend}
+          className="flex-1 h-[36px] rounded-lg font-semibold text-[13px] bg-coral-400 text-white hover:bg-coral-500 transition-colors disabled:opacity-50"
+        >
+          {sending ? 'Sending...' : 'Send Request'}
+        </button>
+        <button
+          onClick={onCancel}
+          className="h-[36px] px-4 rounded-lg font-medium text-[13px] border border-gray-300 text-warm-500 hover:text-warm-700 hover:bg-warm-50 transition-colors"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  );
+}
 
 function ActionButtons({ booking, bookingId }) {
   const queryClient = useQueryClient();
@@ -120,6 +185,11 @@ export function BookingDetail({ bookingId, onClose }) {
     enabled: !!bookingId,
   });
 
+  const [editingCheckout, setEditingCheckout] = useState(false);
+  const [editingCheckin, setEditingCheckin] = useState(false);
+  const [checkoutRequestSent, setCheckoutRequestSent] = useState(false);
+  const [checkinRequestSent, setCheckinRequestSent] = useState(false);
+
   if (isLoading) return (
     <div className="p-6 space-y-4">
       <Skeleton className="h-8 w-48" />
@@ -136,6 +206,8 @@ export function BookingDetail({ bookingId, onClose }) {
   const sc = getStatusConfig(b.cleaner_status, urgent);
   const coTime = fmtTime(b.checkout_time || b.default_checkout_time || '11:00');
   const ciTime = fmtTime(b.checkin_time || b.default_checkin_time || '15:00');
+  const coTimeRaw = b.checkout_time || b.default_checkout_time || '11:00';
+  const ciTimeRaw = b.checkin_time || b.default_checkin_time || '15:00';
   const responseLabel = STATUS_LABELS[b.cleaner_status] || b.cleaner_status || '\u2014';
 
   const { month, day } = getMonthDay(b.checkout_date);
@@ -170,15 +242,61 @@ export function BookingDetail({ bookingId, onClose }) {
       <div className="bg-white border border-warm-200 rounded-xl p-4 mb-5">
         <div className="space-y-3">
           <div className="grid grid-cols-2 gap-3">
+            {/* Checkout */}
             <div>
-              <div className="text-[10px] font-black uppercase tracking-widest text-warm-400 mb-1">Checkout</div>
-              <div className="text-[15px] font-semibold text-warm-900">{coTime}</div>
-              <div className="text-[12px] text-warm-400">{fmtDateLong(b.checkout_date)}</div>
+              <div className="flex items-center gap-1.5 mb-1">
+                <div className="text-[10px] font-black uppercase tracking-widest text-warm-400">Checkout</div>
+                {!editingCheckout && !checkoutRequestSent && (
+                  <button onClick={() => setEditingCheckout(true)} className="p-0.5 rounded text-gray-400 hover:text-gray-600 transition-colors" aria-label="Edit checkout time">
+                    <Pencil size={12} />
+                  </button>
+                )}
+              </div>
+              {editingCheckout ? (
+                <TimeEditForm
+                  type="late_checkout"
+                  currentTime={coTimeRaw}
+                  bookingId={bookingId}
+                  onCancel={() => setEditingCheckout(false)}
+                  onSent={() => { setEditingCheckout(false); setCheckoutRequestSent(true); }}
+                />
+              ) : (
+                <>
+                  <div className="text-[15px] font-semibold text-warm-900">{coTime}</div>
+                  <div className="text-[12px] text-warm-400">{fmtDateLong(b.checkout_date)}</div>
+                  {checkoutRequestSent && (
+                    <div className="text-[11px] text-amber-600 font-medium mt-1">Request sent — awaiting cleaner approval</div>
+                  )}
+                </>
+              )}
             </div>
+            {/* Next Check-in */}
             <div>
-              <div className="text-[10px] font-black uppercase tracking-widest text-warm-400 mb-1">Next Check-in</div>
-              <div className="text-[15px] font-semibold text-warm-900">{ciTime}</div>
-              <div className="text-[12px] text-warm-400">{fmtDateLong(checkinDate)}</div>
+              <div className="flex items-center gap-1.5 mb-1">
+                <div className="text-[10px] font-black uppercase tracking-widest text-warm-400">Next Check-in</div>
+                {!editingCheckin && !checkinRequestSent && (
+                  <button onClick={() => setEditingCheckin(true)} className="p-0.5 rounded text-gray-400 hover:text-gray-600 transition-colors" aria-label="Edit check-in time">
+                    <Pencil size={12} />
+                  </button>
+                )}
+              </div>
+              {editingCheckin ? (
+                <TimeEditForm
+                  type="early_checkin"
+                  currentTime={ciTimeRaw}
+                  bookingId={bookingId}
+                  onCancel={() => setEditingCheckin(false)}
+                  onSent={() => { setEditingCheckin(false); setCheckinRequestSent(true); }}
+                />
+              ) : (
+                <>
+                  <div className="text-[15px] font-semibold text-warm-900">{ciTime}</div>
+                  <div className="text-[12px] text-warm-400">{fmtDateLong(checkinDate)}</div>
+                  {checkinRequestSent && (
+                    <div className="text-[11px] text-amber-600 font-medium mt-1">Request sent — awaiting cleaner approval</div>
+                  )}
+                </>
+              )}
             </div>
           </div>
           <div className="border-t border-warm-100 pt-3">

@@ -1,9 +1,11 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import { ChevronDown } from 'lucide-react';
 import { BookingRow } from './BookingRow';
 import { BookingRowSkeleton } from '../ui/Skeleton';
 import { isUrgent } from '../../utils/status';
+import clsx from 'clsx';
 
-function SectionHeader({ label, count, color = 'warm' }) {
+function SectionHeader({ label, count, color = 'warm', open, onToggle }) {
   const colors = {
     danger: 'text-red-600',
     amber: 'text-amber-700',
@@ -23,10 +25,15 @@ function SectionHeader({ label, count, color = 'warm' }) {
     sage: 'bg-warm-50/90',
   };
   return (
-    <div className={`flex items-center gap-2 px-4 py-2.5 sticky top-0 backdrop-blur-sm z-10 border-b border-warm-100 ${headerBg[color] || headerBg.warm}`}>
+    <button
+      type="button"
+      onClick={onToggle}
+      className={`flex items-center gap-2 px-4 py-2.5 sticky top-0 backdrop-blur-sm z-10 border-b border-warm-100 w-full text-left cursor-pointer ${headerBg[color] || headerBg.warm}`}
+    >
       <span className={`text-[11px] font-extrabold uppercase tracking-widest ${colors[color]}`}>{label}</span>
       {count > 0 && <span className={`text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center ${badgeColors[color]}`}>{count}</span>}
-    </div>
+      <ChevronDown size={14} className={clsx('ml-auto text-warm-400 transition-transform duration-200', open && 'rotate-180')} />
+    </button>
   );
 }
 
@@ -50,25 +57,49 @@ export function BookingList({ bookings, properties, isLoading }) {
     };
   }, [bookings, today]);
 
+  const [openSections, setOpenSections] = useState({
+    urgent: true,
+    needsAction: true,
+    upcoming: false,
+    queued: false,
+    hostHandling: false,
+    cancelled: false,
+  });
+
+  function toggleSection(key) {
+    setOpenSections(prev => ({ ...prev, [key]: !prev[key] }));
+  }
+
   if (isLoading) return <div>{[...Array(5)].map((_, i) => <BookingRowSkeleton key={i} />)}</div>;
 
   const renderSection = (key, label, color) => {
     const items = sections[key];
     if (!items?.length) return null;
-    return (<div key={key}>
-      <SectionHeader label={label} count={items.length} color={color} />
-      <div className="pt-2">
-        {key === 'cancelled' ? <div className="opacity-50">{items.map(b => <BookingRow key={b.id} booking={b} propName={propMap[b.property_id]?.name} />)}</div> : items.map(b => <BookingRow key={b.id} booking={b} propName={propMap[b.property_id]?.name} />)}
+    const isOpen = openSections[key] !== false;
+    return (
+      <div key={key}>
+        <SectionHeader label={label} count={items.length} color={color} open={isOpen} onToggle={() => toggleSection(key)} />
+        <div
+          className="overflow-hidden transition-[max-height] duration-300 ease-in-out"
+          style={{ maxHeight: isOpen ? `${items.length * 120}px` : '0px' }}
+        >
+          <div className="pt-2">
+            {key === 'cancelled'
+              ? <div className="opacity-50">{items.map(b => <BookingRow key={b.id} booking={b} propName={propMap[b.property_id]?.name} />)}</div>
+              : items.map(b => <BookingRow key={b.id} booking={b} propName={propMap[b.property_id]?.name} />)
+            }
+          </div>
+        </div>
       </div>
-    </div>);
+    );
   };
 
   return (
     <div className="flex-1 overflow-y-auto scrollbar-hide">
-      {renderSection('urgent', 'URGENT (UPCOMING < 3 DAYS)', 'danger')}
-      {renderSection('needsAction', 'NEEDS ACTION (UNCONFIRMED)', 'amber')}
-      {renderSection('queued', 'QUEUED (TOO EARLY)', 'warm')}
-      {renderSection('upcoming', 'UPCOMING (CONFIRMED)', 'sage')}
+      {renderSection('urgent', 'URGENT (< 3 DAYS)', 'danger')}
+      {renderSection('needsAction', 'NEEDS ACTION', 'amber')}
+      {renderSection('upcoming', 'CONFIRMED', 'sage')}
+      {renderSection('queued', 'QUEUED', 'warm')}
       {renderSection('hostHandling', 'HOST HANDLING', 'warm')}
       {renderSection('cancelled', 'CANCELLED', 'warm')}
       {!bookings?.length && <div className="flex flex-col items-center justify-center h-64 text-warm-400 text-sm gap-2"><span className="text-3xl">📋</span><span>No bookings yet</span></div>}
