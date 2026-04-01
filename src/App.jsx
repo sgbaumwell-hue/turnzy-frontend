@@ -3,6 +3,14 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AppShell } from './components/layout/AppShell';
 import { Dashboard } from './pages/host/Dashboard';
+import { SettingsLayout } from './pages/settings/SettingsLayout';
+import { Properties } from './pages/settings/sections/Properties';
+import { Cleaners } from './pages/settings/sections/Cleaners';
+import { Notifications } from './pages/settings/sections/Notifications';
+import { Billing } from './pages/settings/sections/Billing';
+import { Profile } from './pages/settings/sections/Profile';
+import { Security } from './pages/settings/sections/Security';
+import { DeleteConfirm } from './pages/account/DeleteConfirm';
 import { Login } from './pages/auth/Login';
 import { useAuthStore } from './store/authStore';
 
@@ -54,9 +62,23 @@ function AppWithAuth() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/account/delete-confirm" element={
+        <RequireAuth><DeleteConfirm /></RequireAuth>
+      } />
       <Route path="/" element={
         <RequireAuth><AppShell><Dashboard /></AppShell></RequireAuth>
       } />
+      <Route path="/settings" element={
+        <RequireAuth><AppShell><SettingsLayout /></AppShell></RequireAuth>
+      }>
+        <Route index element={<Navigate to="/settings/properties" replace />} />
+        <Route path="properties" element={<Properties />} />
+        <Route path="cleaners" element={<Cleaners />} />
+        <Route path="notifications" element={<Notifications />} />
+        <Route path="billing" element={<Billing />} />
+        <Route path="profile" element={<Profile />} />
+        <Route path="security" element={<Security />} />
+      </Route>
       <Route path="*" element={
         <div className="flex items-center justify-center h-screen text-warm-400">Page not found</div>
       } />

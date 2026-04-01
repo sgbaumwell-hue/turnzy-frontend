@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { Home, Activity, ExternalLink, Building2, Users, CreditCard, Bell, User, LogOut } from 'lucide-react';
+import { Home, Activity, ExternalLink, Building2, Users, CreditCard, Bell, User, Lock, LogOut } from 'lucide-react';
 import clsx from 'clsx';
 import { useAuthStore } from '../../store/authStore';
 
@@ -9,6 +9,7 @@ const SETTINGS_SUB_ITEMS = [
   { to: '/settings/billing', icon: CreditCard, label: 'Billing' },
   { to: '/settings/notifications', icon: Bell, label: 'Notifications' },
   { to: '/settings/profile', icon: User, label: 'Profile' },
+  { to: '/settings/security', icon: Lock, label: 'Security' },
 ];
 
 export function Sidebar({ properties, activeProperty, onPropertyChange }) {
