@@ -35,10 +35,16 @@ export function BookingList({ bookings, properties, isLoading }) {
 
   const sections = useMemo(() => {
     if (!bookings) return {};
+    const schedAfterToday = (b) => {
+      if (!b.notification_scheduled_for) return false;
+      const sched = String(b.notification_scheduled_for).slice(0, 10);
+      return sched > today;
+    };
+    const schedNotAfterToday = (b) => !b.notification_scheduled_for || String(b.notification_scheduled_for).slice(0, 10) <= today;
     return {
       urgent: bookings.filter(b => isUrgent(b) && ['pending', 'declined'].includes(b.cleaner_status)),
-      needsAction: bookings.filter(b => ['pending', 'declined', 'cancel_pending'].includes(b.cleaner_status) && !isUrgent(b) && !['cancellation', 'blocked'].includes((b.booking_type || '').toLowerCase()) && (!b.notification_scheduled_for || b.notification_scheduled_for <= today)),
-      queued: bookings.filter(b => b.cleaner_status === 'pending' && b.notification_scheduled_for && b.notification_scheduled_for > today),
+      needsAction: bookings.filter(b => ['pending', 'declined', 'cancel_pending'].includes(b.cleaner_status) && !isUrgent(b) && !['cancellation', 'blocked'].includes((b.booking_type || '').toLowerCase()) && schedNotAfterToday(b)),
+      queued: bookings.filter(b => b.cleaner_status === 'pending' && schedAfterToday(b)),
       upcoming: bookings.filter(b => b.cleaner_status === 'accepted'),
       hostHandling: bookings.filter(b => b.cleaner_status === 'dismissed'),
       cancelled: bookings.filter(b => (b.booking_type || '').toLowerCase() === 'cancellation' || b.cleaner_status === 'cancel_acknowledged'),
