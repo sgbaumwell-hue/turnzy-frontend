@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AppShell } from './components/layout/AppShell';
 import { Dashboard } from './pages/host/Dashboard';
+import { CleanerDashboard } from './pages/cleaner/CleanerDashboard';
 import { SettingsLayout } from './pages/settings/SettingsLayout';
 import { Properties } from './pages/settings/sections/Properties';
 import { Cleaners } from './pages/settings/sections/Cleaners';
@@ -17,13 +18,24 @@ const queryClient = new QueryClient({
   defaultOptions: { queries: { staleTime: 30 * 1000, retry: 1 } },
 });
 
-function RequireAuth({ children }) {
-  const isAuthenticated = useAuthStore(s => s.isAuthenticated);
+function RequireAuth({ children, allowedRoles }) {
+  const { isAuthenticated, user } = useAuthStore();
   const location = useLocation();
   if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
+  if (allowedRoles && !allowedRoles.includes(user?.role)) {
+    // Role mismatch — redirect to appropriate home
+    if (user?.role === 'cleaner') return <Navigate to="/cleaner" replace />;
+    return <Navigate to="/" replace />;
+  }
   return children;
+}
+
+function RoleRedirect() {
+  const { user } = useAuthStore();
+  if (user?.role === 'cleaner') return <Navigate to="/cleaner" replace />;
+  return <Navigate to="/" replace />;
 }
 
 function AppWithAuth() {
@@ -64,11 +76,20 @@ function AppWithAuth() {
       <Route path="/account/delete-confirm" element={
         <RequireAuth><DeleteConfirm /></RequireAuth>
       } />
+
+      {/* Host dashboard */}
       <Route path="/" element={
-        <RequireAuth><AppShell><Dashboard /></AppShell></RequireAuth>
+        <RequireAuth allowedRoles={['host', 'admin']}><AppShell><Dashboard /></AppShell></RequireAuth>
       } />
+
+      {/* Cleaner dashboard */}
+      <Route path="/cleaner" element={
+        <RequireAuth allowedRoles={['cleaner']}><AppShell><CleanerDashboard /></AppShell></RequireAuth>
+      } />
+
+      {/* Host settings */}
       <Route path="/settings" element={
-        <RequireAuth><AppShell><SettingsLayout /></AppShell></RequireAuth>
+        <RequireAuth allowedRoles={['host', 'admin']}><AppShell><SettingsLayout /></AppShell></RequireAuth>
       }>
         <Route index element={<Navigate to="/settings/properties" replace />} />
         <Route path="properties" element={<Properties />} />
@@ -77,6 +98,10 @@ function AppWithAuth() {
         <Route path="billing" element={<Billing />} />
         <Route path="account" element={<Account />} />
       </Route>
+
+      {/* Auto-redirect based on role */}
+      <Route path="/home" element={<RequireAuth><RoleRedirect /></RequireAuth>} />
+
       <Route path="*" element={
         <div className="flex items-center justify-center h-screen text-warm-400">Page not found</div>
       } />
