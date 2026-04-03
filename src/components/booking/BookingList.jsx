@@ -18,7 +18,7 @@ function SectionHeader({ label, count, color = 'warm', open, onToggle }) {
       onClick={onToggle}
       className="flex items-center gap-2 px-4 py-2.5 sticky top-0 backdrop-blur-sm z-10 border-b border-gray-100 w-full text-left cursor-pointer bg-gray-50/90"
     >
-      <span className="text-sm font-semibold text-gray-600">{label}</span>
+      <span className="text-sm font-semibold text-gray-600 uppercase tracking-wide">{label}</span>
       {count > 0 && <span className={`text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center ${badgeColors[color]}`}>{count}</span>}
       <ChevronDown size={14} className={clsx('ml-auto text-gray-400 transition-transform duration-200', open && 'rotate-180')} />
     </button>

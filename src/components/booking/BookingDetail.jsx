@@ -249,7 +249,7 @@ export function BookingDetail({ bookingId, onClose }) {
             ) : (
               <div className="flex items-start justify-between">
                 <div>
-                  <div className="text-2xl font-semibold text-gray-900 whitespace-nowrap">{coTime}</div>
+                  <div className="text-xl font-semibold text-gray-900 whitespace-nowrap">{coTime}</div>
                   <div className="text-sm text-gray-500 mt-0.5">{fmtDateLong(b.checkout_date)}</div>
                   {checkoutRequestSent && (
                     <div className="text-[11px] text-amber-600 font-medium mt-1">Request sent — awaiting cleaner approval</div>
@@ -258,7 +258,7 @@ export function BookingDetail({ bookingId, onClose }) {
                 {!checkoutRequestSent && (
                   <button
                     onClick={() => setEditingCheckout(true)}
-                    className="text-xs font-medium text-gray-500 border border-gray-200 rounded-lg px-2 py-1 hover:bg-gray-50 cursor-pointer flex-shrink-0 ml-2"
+                    className="text-xs font-medium text-gray-500 border border-gray-200 rounded px-2 py-1 hover:bg-gray-50 cursor-pointer whitespace-nowrap flex-shrink-0 ml-2"
                   >
                     Request Update
                   </button>
@@ -280,7 +280,7 @@ export function BookingDetail({ bookingId, onClose }) {
             ) : (
               <div className="flex items-start justify-between">
                 <div>
-                  <div className="text-2xl font-semibold text-gray-900 whitespace-nowrap">{ciTime}</div>
+                  <div className="text-xl font-semibold text-gray-900 whitespace-nowrap">{ciTime}</div>
                   <div className="text-sm text-gray-500 mt-0.5">{fmtDateLong(checkinDate)}</div>
                   {checkinRequestSent && (
                     <div className="text-[11px] text-amber-600 font-medium mt-1">Request sent — awaiting cleaner approval</div>
@@ -289,7 +289,7 @@ export function BookingDetail({ bookingId, onClose }) {
                 {!checkinRequestSent && (
                   <button
                     onClick={() => setEditingCheckin(true)}
-                    className="text-xs font-medium text-gray-500 border border-gray-200 rounded-lg px-2 py-1 hover:bg-gray-50 cursor-pointer flex-shrink-0 ml-2"
+                    className="text-xs font-medium text-gray-500 border border-gray-200 rounded px-2 py-1 hover:bg-gray-50 cursor-pointer whitespace-nowrap flex-shrink-0 ml-2"
                   >
                     Request Update
                   </button>
