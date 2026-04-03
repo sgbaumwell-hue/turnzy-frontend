@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AppShell } from './components/layout/AppShell';
 import { Dashboard } from './pages/host/Dashboard';
+import { BookingDetailPage } from './pages/host/BookingDetailPage';
 import { CleanerDashboard } from './pages/cleaner/CleanerDashboard';
 import { CleanerCalendar } from './pages/cleaner/CleanerCalendar';
 import { CleanerCalendarJobDetail } from './pages/cleaner/CleanerCalendarJobDetail';
@@ -88,6 +89,9 @@ function AppWithAuth() {
       {/* Host dashboard */}
       <Route path="/" element={
         <RequireAuth allowedRoles={['host', 'admin']}><AppShell><Dashboard /></AppShell></RequireAuth>
+      } />
+      <Route path="/bookings/:id" element={
+        <RequireAuth allowedRoles={['host', 'admin']}><BookingDetailPage /></RequireAuth>
       } />
 
       {/* Cleaner pages */}
