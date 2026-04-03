@@ -5,6 +5,7 @@ import { AppShell } from './components/layout/AppShell';
 import { Dashboard } from './pages/host/Dashboard';
 import { CleanerDashboard } from './pages/cleaner/CleanerDashboard';
 import { CleanerCalendar } from './pages/cleaner/CleanerCalendar';
+import { CleanerCalendarJobDetail } from './pages/cleaner/CleanerCalendarJobDetail';
 import { CleanerActivity } from './pages/cleaner/CleanerActivity';
 import { CleanerSettingsLayout } from './pages/cleaner/settings/CleanerSettingsLayout';
 import { CleanerSettingsTeam } from './pages/cleaner/settings/CleanerSettingsTeam';
@@ -96,6 +97,9 @@ function AppWithAuth() {
       <Route path="/cleaner/calendar" element={
         <RequireAuth allowedRoles={['cleaner']}><AppShell><CleanerCalendar /></AppShell></RequireAuth>
       } />
+      <Route path="/cleaner/calendar/job/:id" element={
+        <RequireAuth allowedRoles={['cleaner']}><CleanerCalendarJobDetail /></RequireAuth>
+      } />
       <Route path="/cleaner/activity" element={
         <RequireAuth allowedRoles={['cleaner']}><AppShell><CleanerActivity /></AppShell></RequireAuth>
       } />
@@ -104,7 +108,8 @@ function AppWithAuth() {
       <Route path="/cleaner/settings" element={
         <RequireAuth allowedRoles={['cleaner']}><AppShell><CleanerSettingsLayout /></AppShell></RequireAuth>
       }>
-        <Route index element={<Navigate to="/cleaner/settings/notifications" replace />} />
+        {/* No index redirect — CleanerSettingsLayout handles root state:
+            desktop redirects via sidebar nav, mobile shows menu */}
         <Route path="team" element={<CleanerSettingsTeam />} />
         <Route path="notifications" element={<CleanerSettingsNotifications />} />
         <Route path="account" element={<CleanerSettingsAccount />} />

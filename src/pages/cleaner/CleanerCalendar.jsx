@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
 import { enUS } from 'date-fns/locale';
@@ -24,10 +25,50 @@ function getEventColor(status) {
   }[status] ?? '#f97316';
 }
 
+function CustomToolbar({ label, onNavigate, onView, view }) {
+  const isDesktop = useMediaQuery('(min-width: 768px)');
+  const btnClass = 'px-3 py-1.5 text-sm border border-gray-200 rounded-lg bg-white text-gray-700 hover:bg-gray-50';
+
+  if (!isDesktop) {
+    return (
+      <div className="flex flex-col items-center gap-2 mb-4">
+        <span className="text-base font-semibold text-gray-900">{label}</span>
+        <div className="flex gap-2">
+          <button onClick={() => onNavigate('PREV')} className={btnClass}>← Back</button>
+          <button onClick={() => onNavigate('TODAY')} className={btnClass}>Today</button>
+          <button onClick={() => onNavigate('NEXT')} className={btnClass}>Next →</button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex items-center justify-between mb-4">
+      <div className="flex gap-2">
+        <button onClick={() => onNavigate('PREV')} className={btnClass}>← Back</button>
+        <button onClick={() => onNavigate('TODAY')} className={btnClass}>Today</button>
+        <button onClick={() => onNavigate('NEXT')} className={btnClass}>Next →</button>
+      </div>
+      <span className="text-base font-semibold text-gray-900">{label}</span>
+      <div className="flex gap-1">
+        <button onClick={() => onView('month')}
+          className={`px-3 py-1.5 text-sm rounded-lg ${view === 'month' ? 'bg-orange-500 text-white' : 'border border-gray-200 bg-white text-gray-700'}`}>
+          Month
+        </button>
+        <button onClick={() => onView('week')}
+          className={`px-3 py-1.5 text-sm rounded-lg ${view === 'week' ? 'bg-orange-500 text-white' : 'border border-gray-200 bg-white text-gray-700'}`}>
+          Week
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export function CleanerCalendar() {
   const { user } = useAuthStore();
   const hasTeam = user?.has_team || false;
   const isDesktop = useMediaQuery('(min-width: 768px)');
+  const navigate = useNavigate();
   const [selectedJobId, setSelectedJobId] = useState(null);
   const [showTeam, setShowTeam] = useState(false);
 
@@ -63,16 +104,24 @@ export function CleanerCalendar() {
     });
   }, [jobs, showTeam, hasTeam]);
 
+  function handleSelectEvent(event) {
+    if (!isDesktop) {
+      navigate(`/cleaner/calendar/job/${event.resource.id}`);
+    } else {
+      setSelectedJobId(event.resource.id);
+    }
+  }
+
   return (
     <div className="flex w-full h-screen overflow-hidden">
       <div className={selectedJobId && isDesktop ? 'flex-1 min-w-0' : 'flex-1'}>
-        <div className="p-6 h-full flex flex-col">
-          <div className="flex items-center justify-between mb-4">
+        <div className="p-4 md:p-6 h-full flex flex-col">
+          <div className="flex items-center justify-between mb-3">
             <div>
               <h1 className="font-semibold text-[18px] text-gray-900">Calendar</h1>
               <p className="text-[13px] text-gray-400">Your upcoming turnovers</p>
             </div>
-            {hasTeam && (
+            {hasTeam && isDesktop && (
               <label className="flex items-center gap-2 cursor-pointer">
                 <span className="text-[12px] text-gray-500">Show team</span>
                 <div className={`relative w-8 h-5 rounded-full transition-colors ${showTeam ? 'bg-coral-400' : 'bg-gray-200'}`} onClick={() => setShowTeam(!showTeam)}>
@@ -81,12 +130,12 @@ export function CleanerCalendar() {
               </label>
             )}
           </div>
-          <div className="flex-1 min-h-0">
+          <div className="flex-1 min-h-0 h-[calc(100vh-220px)] md:h-auto">
             <Calendar
               localizer={localizer}
               events={events}
-              defaultView={isDesktop ? 'month' : 'week'}
-              views={['month', 'week']}
+              defaultView="month"
+              views={isDesktop ? ['month', 'week'] : ['month']}
               style={{ height: '100%' }}
               eventPropGetter={(event) => ({
                 style: {
@@ -97,7 +146,8 @@ export function CleanerCalendar() {
                   fontFamily: 'Manrope, sans-serif',
                 },
               })}
-              onSelectEvent={(event) => setSelectedJobId(event.resource.id)}
+              onSelectEvent={handleSelectEvent}
+              components={{ toolbar: CustomToolbar }}
             />
           </div>
         </div>
