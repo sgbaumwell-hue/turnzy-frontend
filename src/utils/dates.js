@@ -29,6 +29,16 @@ export function fmtTime(timeStr) {
   } catch { return timeStr; }
 }
 
+export function fmtDateShort(dateStr) {
+  if (!dateStr) return '';
+  try {
+    const clean = dateStr.toString().slice(0, 10);
+    const [year, month, day] = clean.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  } catch { return dateStr; }
+}
+
 export function getMonthDay(dateStr) {
   if (!dateStr) return { month: '', day: '' };
   try {

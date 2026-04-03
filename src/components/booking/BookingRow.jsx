@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { useNavigate } from 'react-router-dom';
-import { getMonthDay, fmtTime } from '../../utils/dates';
+import { getMonthDay, fmtTime, fmtDateShort } from '../../utils/dates';
 import { getStatusConfig, isUrgent as checkUrgent } from '../../utils/status';
 import { Pill } from '../ui/Pill';
 import { useUiStore } from '../../store/uiStore';
@@ -17,6 +17,8 @@ export function BookingRow({ booking, propName }) {
   const isSameDay = booking.booking_type === 'SAME_DAY' || booking.is_same_day;
   const coTime = fmtTime(booking.checkout_time || booking.default_checkout_time || '11:00');
   const ciTime = fmtTime(booking.checkin_time || booking.default_checkin_time || '15:00');
+  const checkinDate = booking.next_checkin_date || booking.checkin_date || booking.checkout_date;
+  const ciDateLabel = fmtDateShort(checkinDate);
 
   function handleClick() {
     if (isDesktop) {
@@ -56,18 +58,23 @@ export function BookingRow({ booking, propName }) {
         <div className="text-[13px] text-gray-500 mt-0.5">{propName}</div>
       )}
 
-      {/* Same-day badge */}
+      {/* Same-day label */}
       {isSameDay && (
-        <div className="inline-flex items-center gap-1.5 bg-amber-100 text-amber-800 border border-amber-300 text-xs font-semibold px-2 py-0.5 rounded-md mt-2">
-          <span>⚡</span>
-          <span>Same-day</span>
+        <div className="text-xs font-bold text-amber-600 uppercase tracking-wide mt-1.5">
+          SAME-DAY
         </div>
       )}
 
-      {/* Times */}
-      <div className="text-[12px] text-gray-400 flex flex-wrap gap-x-3 mt-1.5">
-        <span>Checkout {coTime}</span>
-        <span>Check-in {ciTime}</span>
+      {/* Structured time rows */}
+      <div className="mt-3 space-y-1.5">
+        <div className="flex items-center justify-between">
+          <span className="text-xs text-gray-400 uppercase tracking-widest">Checkout</span>
+          <span className="text-sm font-medium text-gray-700">{coTime}</span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-xs text-gray-400 uppercase tracking-widest">Next Check-in</span>
+          <span className="text-sm font-medium text-gray-700">{ciDateLabel}, {ciTime}</span>
+        </div>
       </div>
     </div>
   );
