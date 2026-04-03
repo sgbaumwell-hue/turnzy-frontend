@@ -2,11 +2,8 @@ import client from './client';
 
 export const settingsApi = {
   // Create property
-  createProperty: (data) => {
-    // TODO: endpoint missing — stub
-    console.warn('Endpoint missing: POST /api/properties/create', data);
-    return Promise.resolve({ data: { ok: true, id: 'temp-' + Date.now(), property_id: 'temp-' + Date.now() } });
-  },
+  createProperty: (data) =>
+    client.post('/properties/create', data),
 
   // Properties
   updatePropertyTimes: (property_id, default_checkout_time, default_checkin_time) =>
