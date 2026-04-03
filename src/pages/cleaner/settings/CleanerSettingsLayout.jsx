@@ -28,8 +28,7 @@ export function CleanerSettingsLayout() {
   const labelMap = {
     '/cleaner/settings/team': 'My Team',
     '/cleaner/settings/notifications': 'Notifications',
-    '/cleaner/settings/profile': 'Profile',
-    '/cleaner/settings/security': 'Security',
+    '/cleaner/settings/account': 'Account',
   };
 
   return (

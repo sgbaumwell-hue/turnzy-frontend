@@ -9,8 +9,7 @@ import { CleanerActivity } from './pages/cleaner/CleanerActivity';
 import { CleanerSettingsLayout } from './pages/cleaner/settings/CleanerSettingsLayout';
 import { CleanerSettingsTeam } from './pages/cleaner/settings/CleanerSettingsTeam';
 import { CleanerSettingsNotifications } from './pages/cleaner/settings/CleanerSettingsNotifications';
-import { CleanerSettingsProfile } from './pages/cleaner/settings/CleanerSettingsProfile';
-import { CleanerSettingsSecurity } from './pages/cleaner/settings/CleanerSettingsSecurity';
+import { CleanerSettingsAccount } from './pages/cleaner/settings/CleanerSettingsAccount';
 import { TeamDashboard } from './pages/team/TeamDashboard';
 import { AcceptInvite } from './pages/team/AcceptInvite';
 import { SettingsLayout } from './pages/settings/SettingsLayout';
@@ -108,8 +107,7 @@ function AppWithAuth() {
         <Route index element={<Navigate to="/cleaner/settings/notifications" replace />} />
         <Route path="team" element={<CleanerSettingsTeam />} />
         <Route path="notifications" element={<CleanerSettingsNotifications />} />
-        <Route path="profile" element={<CleanerSettingsProfile />} />
-        <Route path="security" element={<CleanerSettingsSecurity />} />
+        <Route path="account" element={<CleanerSettingsAccount />} />
       </Route>
 
       {/* Team member dashboard */}

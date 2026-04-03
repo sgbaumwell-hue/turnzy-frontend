@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { Home, Activity, ExternalLink, Building2, Users, CreditCard, Bell, User, Settings, CalendarDays, Lock, LogOut } from 'lucide-react';
+import { Home, Activity, ExternalLink, Building2, Users, CreditCard, Bell, User, Settings, CalendarDays, LogOut } from 'lucide-react';
 import clsx from 'clsx';
 import { useAuthStore } from '../../store/authStore';
 
@@ -57,8 +57,7 @@ function HostNav({ isAdmin }) {
 const CLEANER_SETTINGS_ITEMS = [
   { to: '/cleaner/settings/team', icon: Users, label: 'My Team' },
   { to: '/cleaner/settings/notifications', icon: Bell, label: 'Notifications' },
-  { to: '/cleaner/settings/profile', icon: User, label: 'Profile' },
-  { to: '/cleaner/settings/security', icon: Lock, label: 'Security' },
+  { to: '/cleaner/settings/account', icon: User, label: 'Account' },
 ];
 
 function CleanerNav() {
