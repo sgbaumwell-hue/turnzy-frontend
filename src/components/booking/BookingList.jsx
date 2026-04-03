@@ -51,6 +51,28 @@ export function BookingList({ bookings, properties, isLoading }) {
     };
   }, [bookings, today]);
 
+  // [QUEUE-DIAG] Log section counts
+  if (bookings?.length) {
+    const statuses = {};
+    bookings.forEach(b => { statuses[b.cleaner_status] = (statuses[b.cleaner_status] || 0) + 1; });
+    const withNsf = bookings.filter(b => b.notification_scheduled_for);
+    console.log('[QUEUE-DIAG] BookingList received:', {
+      total: bookings.length,
+      byCleanerStatus: statuses,
+      withNotifScheduledFor: withNsf.length,
+      nsfSample: withNsf.slice(0, 3).map(b => ({ id: b.id, nsf: String(b.notification_scheduled_for).slice(0, 10), status: b.cleaner_status })),
+      today,
+      sectionCounts: {
+        urgent: sections.urgent?.length,
+        needsAction: sections.needsAction?.length,
+        queued: sections.queued?.length,
+        upcoming: sections.upcoming?.length,
+        hostHandling: sections.hostHandling?.length,
+        cancelled: sections.cancelled?.length,
+      }
+    });
+  }
+
   const [openSections, setOpenSections] = useState({
     urgent: true,
     needsAction: true,
