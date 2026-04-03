@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { X, Mail, MapPin, UserPlus } from 'lucide-react';
+import { X, Mail, MapPin, UserPlus, Clock } from 'lucide-react';
 import { bookingsApi } from '../../api/bookings';
 import { fmtDateLong, fmtTime, getMonthDay } from '../../utils/dates';
 import { getStatusConfig, isUrgent } from '../../utils/status';
@@ -98,6 +98,24 @@ function ActionButtons({ booking, bookingId }) {
   }
 
   const status = booking.cleaner_status;
+
+  // Queued bookings: only show dismiss
+  if (booking.is_queued) {
+    return (
+      <div className="mb-5 space-y-2">
+        <button disabled={loading === 'dismiss'} onClick={() => doAction('dismiss', () => bookingsApi.dismiss(bookingId))}
+          className="w-full py-3 px-4 rounded-lg font-medium text-[14px] border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
+          <X size={14} />
+          {loading === 'dismiss' ? 'Dismissing...' : "Dismiss \u2014 I'll handle it"}
+        </button>
+        {actionMsg && (
+          <div className={`text-sm font-medium px-3 py-2 rounded-lg ${actionMsg.type === 'success' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
+            {actionMsg.text}
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="mb-5 space-y-2">
@@ -214,7 +232,11 @@ export function BookingDetail({ bookingId, onClose }) {
 
       {/* Status badge */}
       <div>
-        {isDeclined ? (
+        {b.is_queued ? (
+          <span className="inline-block bg-gray-100 text-gray-500 font-semibold text-xs px-3 py-1 rounded-full">
+            QUEUED
+          </span>
+        ) : isDeclined ? (
           <span className="inline-block bg-red-100 text-red-700 font-semibold text-xs px-3 py-1 rounded-full">
             DECLINED BY CLEANER
           </span>
@@ -228,6 +250,27 @@ export function BookingDetail({ bookingId, onClose }) {
           </span>
         )}
       </div>
+
+      {/* Queued notification date */}
+      {b.is_queued && (() => {
+        const windowDays = b.notification_window_days ?? 60;
+        const coDate = b.checkout_date ? new Date(String(b.checkout_date).slice(0, 10) + 'T12:00:00') : null;
+        if (!coDate) return null;
+        const notifyDate = new Date(coDate);
+        notifyDate.setDate(notifyDate.getDate() - windowDays);
+        return (
+          <div className="flex items-center gap-2 px-4 py-2 bg-gray-50 rounded-lg border border-gray-100 text-sm text-gray-500">
+            <Clock size={14} className="text-gray-400 shrink-0" />
+            <span>
+              Cleaner will be notified on{' '}
+              <span className="font-medium text-gray-700">
+                {notifyDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+              </span>
+              {' '}when this enters their notification window.
+            </span>
+          </div>
+        );
+      })()}
 
       {/* Time display — single card, 2-col grid */}
       <div className="grid grid-cols-2 gap-6 p-4 bg-gray-50 rounded-lg">
