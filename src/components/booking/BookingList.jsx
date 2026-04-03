@@ -31,47 +31,26 @@ export function BookingList({ bookings, properties, isLoading }) {
     return Object.fromEntries(properties.map(p => [p.id, p]));
   }, [properties]);
 
-  const today = new Date().toISOString().slice(0, 10);
-
   const sections = useMemo(() => {
     if (!bookings) return {};
-    const schedAfterToday = (b) => {
-      if (!b.notification_scheduled_for) return false;
-      const sched = String(b.notification_scheduled_for).slice(0, 10);
-      return sched > today;
-    };
-    const schedNotAfterToday = (b) => !b.notification_scheduled_for || String(b.notification_scheduled_for).slice(0, 10) <= today;
+
+    // Use server-computed is_queued flag (falls back to false if not present)
+    const isCancellation = (b) => ['cancellation', 'blocked'].includes((b.booking_type || '').toLowerCase());
+
     return {
-      urgent: bookings.filter(b => isUrgent(b) && ['pending', 'declined'].includes(b.cleaner_status)),
-      needsAction: bookings.filter(b => ['pending', 'declined', 'cancel_pending'].includes(b.cleaner_status) && !isUrgent(b) && !['cancellation', 'blocked'].includes((b.booking_type || '').toLowerCase()) && schedNotAfterToday(b)),
-      queued: bookings.filter(b => b.cleaner_status === 'pending' && schedAfterToday(b)),
+      urgent: bookings.filter(b =>
+        isUrgent(b) && ['pending', 'declined'].includes(b.cleaner_status) && !b.is_queued
+      ),
+      needsAction: bookings.filter(b =>
+        ['pending', 'declined', 'cancel_pending'].includes(b.cleaner_status) &&
+        !isUrgent(b) && !b.is_queued && !isCancellation(b)
+      ),
+      queued: bookings.filter(b => b.is_queued === true),
       upcoming: bookings.filter(b => b.cleaner_status === 'accepted'),
       hostHandling: bookings.filter(b => b.cleaner_status === 'dismissed'),
-      cancelled: bookings.filter(b => (b.booking_type || '').toLowerCase() === 'cancellation' || b.cleaner_status === 'cancel_acknowledged'),
+      cancelled: bookings.filter(b => isCancellation(b) || b.cleaner_status === 'cancel_acknowledged'),
     };
-  }, [bookings, today]);
-
-  // [QUEUE-DIAG] Log section counts
-  if (bookings?.length) {
-    const statuses = {};
-    bookings.forEach(b => { statuses[b.cleaner_status] = (statuses[b.cleaner_status] || 0) + 1; });
-    const withNsf = bookings.filter(b => b.notification_scheduled_for);
-    console.log('[QUEUE-DIAG] BookingList received:', {
-      total: bookings.length,
-      byCleanerStatus: statuses,
-      withNotifScheduledFor: withNsf.length,
-      nsfSample: withNsf.slice(0, 3).map(b => ({ id: b.id, nsf: String(b.notification_scheduled_for).slice(0, 10), status: b.cleaner_status })),
-      today,
-      sectionCounts: {
-        urgent: sections.urgent?.length,
-        needsAction: sections.needsAction?.length,
-        queued: sections.queued?.length,
-        upcoming: sections.upcoming?.length,
-        hostHandling: sections.hostHandling?.length,
-        cancelled: sections.cancelled?.length,
-      }
-    });
-  }
+  }, [bookings]);
 
   const [openSections, setOpenSections] = useState({
     urgent: true,

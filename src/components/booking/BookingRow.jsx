@@ -12,7 +12,9 @@ export function BookingRow({ booking, propName }) {
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const navigate = useNavigate();
   const urgent = checkUrgent(booking);
-  const sc = getStatusConfig(booking.cleaner_status, urgent);
+  const sc = booking.is_queued
+    ? { label: 'QUEUED', bg: 'bg-gray-100', text: 'text-gray-500', border: 'border-l-gray-300' }
+    : getStatusConfig(booking.cleaner_status, urgent);
   const { month, day } = getMonthDay(booking.checkout_date);
   const isSameDay = booking.booking_type === 'SAME_DAY' || booking.is_same_day;
   const coTime = fmtTime(booking.checkout_time || booking.default_checkout_time || '11:00');
