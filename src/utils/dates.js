@@ -36,7 +36,7 @@ export function getMonthDay(dateStr) {
     const [year, month, day] = clean.split('-').map(Number);
     const date = new Date(year, month - 1, day);
     return {
-      month: date.toLocaleDateString('en-US', { month: 'short' }).toUpperCase(),
+      month: date.toLocaleDateString('en-US', { month: 'short' }),
       day: String(day),
     };
   } catch { return { month: '', day: '' }; }

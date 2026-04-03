@@ -18,7 +18,7 @@ export function Sidebar({ properties, activeProperty, onPropertyChange }) {
   return (
     <aside className="w-[220px] flex-shrink-0 bg-white border-r border-warm-200 flex flex-col h-full">
       {/* Logo */}
-      <div className="px-4 pt-4 pb-3 border-b border-warm-100">
+      <div className="px-4 pt-6 pb-3 border-b border-warm-100">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 bg-coral-400 rounded-lg flex items-center justify-center flex-shrink-0"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1L13 4.5V9.5L7 13L1 9.5V4.5L7 1Z" fill="white"/></svg></div>
           <div>
@@ -43,12 +43,12 @@ export function Sidebar({ properties, activeProperty, onPropertyChange }) {
       )}
 
       {/* Navigation */}
-      <nav className="flex-1 px-2 py-2 overflow-y-auto">
+      <nav className="flex-1 px-4 py-6 overflow-y-auto">
         <div className="text-[10px] font-black text-warm-300 uppercase tracking-widest px-3 pt-4 pb-1">Views</div>
 
         {/* Dashboard */}
         <NavLink to="/" end className={({ isActive }) => clsx(
-          'flex items-center gap-3 px-3 rounded-lg text-[14px] font-medium transition-colors duration-100 min-h-[40px]',
+          'flex items-center gap-3 px-3 py-2 rounded-lg text-[14px] font-medium transition-colors duration-100',
           isActive ? 'bg-coral-50 text-coral-400 border-l-2 border-l-coral-400' : 'text-warm-500 hover:bg-warm-100 hover:text-warm-700'
         )}>
           {({ isActive }) => (<><Home size={16} className={isActive ? 'text-coral-400' : 'text-warm-400'} />Dashboard</>)}
@@ -56,7 +56,7 @@ export function Sidebar({ properties, activeProperty, onPropertyChange }) {
 
         {/* Activity */}
         <NavLink to="/activity" className={({ isActive }) => clsx(
-          'flex items-center gap-3 px-3 rounded-lg text-[14px] font-medium transition-colors duration-100 min-h-[40px]',
+          'flex items-center gap-3 px-3 py-2 rounded-lg text-[14px] font-medium transition-colors duration-100',
           isActive ? 'bg-coral-50 text-coral-400 border-l-2 border-l-coral-400' : 'text-warm-500 hover:bg-warm-100 hover:text-warm-700'
         )}>
           {({ isActive }) => (<><Activity size={16} className={isActive ? 'text-coral-400' : 'text-warm-400'} />Activity</>)}
@@ -68,7 +68,7 @@ export function Sidebar({ properties, activeProperty, onPropertyChange }) {
             href="/admin"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-3 px-3 rounded-lg text-[14px] font-medium transition-colors duration-100 min-h-[40px] text-warm-500 hover:bg-warm-100 hover:text-warm-700"
+            className="flex items-center gap-3 px-3 py-2 rounded-lg text-[14px] font-medium transition-colors duration-100 text-warm-500 hover:bg-warm-100 hover:text-warm-700"
           >
             <ExternalLink size={16} className="text-warm-400" />
             Admin
@@ -82,7 +82,7 @@ export function Sidebar({ properties, activeProperty, onPropertyChange }) {
         <div className="ml-2">
           {SETTINGS_SUB_ITEMS.map(({ to, icon: Icon, label }) => (
             <NavLink key={to} to={to} className={({ isActive }) => clsx(
-              'flex items-center gap-2.5 px-3 rounded-lg text-[13px] font-medium transition-colors duration-100 min-h-[34px]',
+              'flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors duration-100',
               isActive ? 'text-coral-400 bg-coral-50' : 'text-warm-400 hover:text-warm-600 hover:bg-warm-50'
             )}>
               {({ isActive }) => (<><Icon size={14} className={isActive ? 'text-coral-400' : 'text-warm-300'} />{label}</>)}

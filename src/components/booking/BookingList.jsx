@@ -6,33 +6,21 @@ import { isUrgent } from '../../utils/status';
 import clsx from 'clsx';
 
 function SectionHeader({ label, count, color = 'warm', open, onToggle }) {
-  const colors = {
-    danger: 'text-red-600',
-    amber: 'text-amber-700',
-    warm: 'text-warm-400',
-    sage: 'text-sage-600',
-  };
   const badgeColors = {
     danger: 'bg-red-500 text-white',
     amber: 'bg-amber-400 text-white',
-    warm: 'bg-warm-200 text-warm-600',
-    sage: 'bg-sage-400 text-white',
-  };
-  const headerBg = {
-    danger: 'bg-red-50/50',
-    amber: 'bg-warm-50/90',
-    warm: 'bg-warm-50/90',
-    sage: 'bg-warm-50/90',
+    warm: 'bg-gray-200 text-gray-600',
+    sage: 'bg-green-500 text-white',
   };
   return (
     <button
       type="button"
       onClick={onToggle}
-      className={`flex items-center gap-2 px-4 py-2.5 sticky top-0 backdrop-blur-sm z-10 border-b border-warm-100 w-full text-left cursor-pointer ${headerBg[color] || headerBg.warm}`}
+      className="flex items-center gap-2 px-4 py-2.5 sticky top-0 backdrop-blur-sm z-10 border-b border-gray-100 w-full text-left cursor-pointer bg-gray-50/90"
     >
-      <span className={`text-[11px] font-extrabold uppercase tracking-widest ${colors[color]}`}>{label}</span>
+      <span className="text-sm font-semibold text-gray-600">{label}</span>
       {count > 0 && <span className={`text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center ${badgeColors[color]}`}>{count}</span>}
-      <ChevronDown size={14} className={clsx('ml-auto text-warm-400 transition-transform duration-200', open && 'rotate-180')} />
+      <ChevronDown size={14} className={clsx('ml-auto text-gray-400 transition-transform duration-200', open && 'rotate-180')} />
     </button>
   );
 }
@@ -81,7 +69,7 @@ export function BookingList({ bookings, properties, isLoading }) {
         <SectionHeader label={label} count={items.length} color={color} open={isOpen} onToggle={() => toggleSection(key)} />
         <div
           className="overflow-hidden transition-[max-height] duration-300 ease-in-out"
-          style={{ maxHeight: isOpen ? `${items.length * 120}px` : '0px' }}
+          style={{ maxHeight: isOpen ? `${items.length * 160}px` : '0px' }}
         >
           <div className="pt-2">
             {key === 'cancelled'
@@ -95,14 +83,14 @@ export function BookingList({ bookings, properties, isLoading }) {
   };
 
   return (
-    <div className="flex-1 overflow-y-auto scrollbar-hide">
-      {renderSection('urgent', 'URGENT (< 3 DAYS)', 'danger')}
-      {renderSection('needsAction', 'NEEDS ACTION', 'amber')}
-      {renderSection('upcoming', 'CONFIRMED', 'sage')}
-      {renderSection('queued', 'QUEUED', 'warm')}
-      {renderSection('hostHandling', 'HOST HANDLING', 'warm')}
-      {renderSection('cancelled', 'CANCELLED', 'warm')}
-      {!bookings?.length && <div className="flex flex-col items-center justify-center h-64 text-warm-400 text-sm gap-2"><span className="text-3xl">📋</span><span>No bookings yet</span></div>}
+    <div className="flex-1 overflow-y-auto scrollbar-hide bg-gray-50">
+      {renderSection('urgent', 'Urgent (< 3 days)', 'danger')}
+      {renderSection('needsAction', 'Needs Action', 'amber')}
+      {renderSection('upcoming', 'Confirmed', 'sage')}
+      {renderSection('queued', 'Queued', 'warm')}
+      {renderSection('hostHandling', 'Host Handling', 'warm')}
+      {renderSection('cancelled', 'Cancelled', 'warm')}
+      {!bookings?.length && <div className="flex flex-col items-center justify-center h-64 text-gray-400 text-sm gap-2"><span className="text-3xl">📋</span><span>No bookings yet</span></div>}
     </div>
   );
 }

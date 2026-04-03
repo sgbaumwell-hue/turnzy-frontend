@@ -11,7 +11,7 @@ export default {
         danger: { 50: '#FCEBEB', 200: '#F7C1C1', 400: '#E24B4A', 600: '#A32D2D', 800: '#791F1F' },
         warm: { 50: '#F9F8F6', 100: '#F1EFE8', 200: '#D3D1C7', 400: '#888780', 600: '#5F5E5A', 800: '#2C2C2A' },
       },
-      fontFamily: { sans: ['DM Sans', 'system-ui', 'sans-serif'] },
+      fontFamily: { sans: ['Inter', 'sans-serif'] },
       borderRadius: { pill: '20px' },
       minHeight: { touch: '44px' },
     },

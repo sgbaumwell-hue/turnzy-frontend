@@ -28,21 +28,21 @@ export function Dashboard() {
 
   return (
     <div className="flex w-full h-screen overflow-hidden">
-      <div className={clsx('flex flex-col border-r border-warm-200 bg-white', isDesktop ? 'w-[320px] flex-shrink-0' : 'flex-1')}>
-        <div className="px-4 pt-4 pb-3 border-b border-warm-100">
+      <div className={clsx('flex flex-col border-r border-gray-200 bg-white', isDesktop ? 'w-[340px] flex-shrink-0' : 'flex-1')}>
+        <div className="px-4 pt-5 pb-3 border-b border-gray-100">
           <div className="flex items-start justify-between">
             <div>
-              <h1 className="font-bold text-[20px] text-warm-900 leading-tight">Operations Overview</h1>
-              <p className="text-[13px] text-warm-400 mt-0.5">Manage upcoming property transitions</p>
+              <h1 className="font-semibold text-[18px] text-gray-900 leading-tight">Operations</h1>
+              <p className="text-[13px] text-gray-400 mt-0.5">Upcoming turnovers</p>
             </div>
-            <button onClick={() => pollNow()} disabled={isPolling} aria-label="Refresh calendar" className="p-1.5 rounded-lg text-warm-400 hover:bg-warm-100 hover:text-warm-600 transition-colors mt-0.5"><RefreshCw size={15} className={isPolling ? 'animate-spin' : ''} /></button>
+            <button onClick={() => pollNow()} disabled={isPolling} aria-label="Refresh calendar" className="p-1.5 rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors mt-0.5"><RefreshCw size={15} className={isPolling ? 'animate-spin' : ''} /></button>
           </div>
         </div>
         <BookingList bookings={bookings} properties={properties} isLoading={isLoading} />
       </div>
       {isDesktop && (
-        <div className="flex-1 min-w-0 bg-warm-50 overflow-y-auto">
-          {selectedBookingId ? <BookingDetail bookingId={selectedBookingId} onClose={() => setSelectedBooking(null)} /> : <div className="flex items-center justify-center h-full text-warm-400 text-sm">Select a booking to view details</div>}
+        <div className="flex-1 min-w-0 bg-stone-50 overflow-y-auto">
+          {selectedBookingId ? <BookingDetail bookingId={selectedBookingId} onClose={() => setSelectedBooking(null)} /> : <div className="flex items-center justify-center h-full text-gray-400 text-sm">Select a booking to view details</div>}
         </div>
       )}
     </div>
