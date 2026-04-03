@@ -11,4 +11,5 @@ export const bookingsApi = {
   notifyNow: (id) => client.post(`/bookings/${id}/notify-now`),
   requestTimeChange: (id, data) => client.post(`/bookings/${id}/request-time-change`, data),
   pollNow: () => client.post('/poll-icals'),
+  getActivity: () => client.get('/activity'),
 };

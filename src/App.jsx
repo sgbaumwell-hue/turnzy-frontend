@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AppShell } from './components/layout/AppShell';
 import { Dashboard } from './pages/host/Dashboard';
 import { BookingDetailPage } from './pages/host/BookingDetailPage';
+import { HostActivity } from './pages/host/HostActivity';
 import { CleanerDashboard } from './pages/cleaner/CleanerDashboard';
 import { CleanerCalendar } from './pages/cleaner/CleanerCalendar';
 import { CleanerCalendarJobDetail } from './pages/cleaner/CleanerCalendarJobDetail';
@@ -92,6 +93,9 @@ function AppWithAuth() {
       } />
       <Route path="/bookings/:id" element={
         <RequireAuth allowedRoles={['host', 'admin']}><BookingDetailPage /></RequireAuth>
+      } />
+      <Route path="/activity" element={
+        <RequireAuth allowedRoles={['host', 'admin']}><AppShell><HostActivity /></AppShell></RequireAuth>
       } />
 
       {/* Cleaner pages */}
