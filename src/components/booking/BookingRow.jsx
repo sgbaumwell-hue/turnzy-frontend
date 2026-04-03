@@ -66,14 +66,14 @@ export function BookingRow({ booking, propName }) {
       )}
 
       {/* Structured time rows */}
-      <div className="mt-2.5 space-y-1">
+      <div className="mt-2.5 space-y-0.5">
         <div className="flex items-center justify-between">
-          <span className="text-xs text-gray-500 uppercase tracking-wide">Checkout</span>
-          <span className="text-sm font-semibold text-gray-800">{coTime}</span>
+          <span className="text-[10px] uppercase tracking-wide text-gray-500 font-medium">Checkout</span>
+          <span className="text-xs font-medium text-gray-800">{coTime}</span>
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-xs text-gray-500 uppercase tracking-wide">Next Check-in</span>
-          <span className="text-xs text-gray-500">{ciDateLabel}, {ciTime}</span>
+          <span className="text-[10px] uppercase tracking-wide text-gray-500 font-medium">Next Check-in</span>
+          <span className="text-xs font-medium text-gray-800">{ciDateLabel}, {ciTime}</span>
         </div>
       </div>
     </div>
