@@ -34,12 +34,7 @@ function TimeEditForm({ type, currentTime, bookingId, onCancel, onSent }) {
   async function handleSend() {
     setSending(true);
     try {
-      if (bookingsApi.timeChangeRequest) {
-        await bookingsApi.timeChangeRequest(bookingId, { type, requestedTime, note });
-      } else {
-        // TODO: implement time change request API — currently stubbed
-        console.warn(`Stub: POST /api/bookings/${bookingId}/time-change-request`, { type, requestedTime, note });
-      }
+      await bookingsApi.requestTimeChange(bookingId, { type, requested_time: requestedTime, reason: note });
       onSent();
     } catch (e) {
       console.error('Time change request failed', e);
