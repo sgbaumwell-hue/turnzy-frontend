@@ -37,7 +37,8 @@ function TimeEditForm({ type, currentTime, bookingId, onCancel, onSent }) {
       if (bookingsApi.timeChangeRequest) {
         await bookingsApi.timeChangeRequest(bookingId, { type, requestedTime, note });
       } else {
-        console.log(`POST /api/bookings/${bookingId}/time-change-request`, { type, requestedTime, note });
+        // TODO: implement time change request API — currently stubbed
+        console.warn(`Stub: POST /api/bookings/${bookingId}/time-change-request`, { type, requestedTime, note });
       }
       onSent();
     } catch (e) {
@@ -107,7 +108,7 @@ function ActionButtons({ booking, bookingId }) {
             <Mail size={16} />
             {loading === 'resend' ? 'Sending...' : 'Resend Notification'}
           </button>
-          <button onClick={() => console.log('Ask backup cleaner — coming soon')}
+          <button onClick={() => { /* TODO: implement backup cleaner assignment */ }}
             className="w-full py-3 px-4 rounded-lg font-medium text-[15px] bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
             <UserPlus size={16} />
             Ask Backup Cleaner
@@ -122,7 +123,7 @@ function ActionButtons({ booking, bookingId }) {
 
       {status === 'declined' && (
         <>
-          <button onClick={() => console.log('Ask backup cleaner — coming soon')}
+          <button onClick={() => { /* TODO: implement backup cleaner assignment */ }}
             className="w-full py-3 px-4 rounded-lg font-medium text-[15px] bg-orange-500 text-white hover:bg-orange-600 transition-colors flex items-center justify-center gap-2">
             <UserPlus size={16} />
             Ask Backup Cleaner

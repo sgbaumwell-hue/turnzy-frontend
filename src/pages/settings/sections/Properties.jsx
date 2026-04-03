@@ -172,11 +172,7 @@ export function Properties() {
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['properties'],
-    queryFn: async () => {
-      const res = await propertiesApi.getAll();
-      console.log('GET /api/properties response:', res.data);
-      return res;
-    },
+    queryFn: () => propertiesApi.getAll(),
   });
 
   // Log if the properties endpoint fails

@@ -31,36 +31,27 @@ export const settingsApi = {
   promoteBackup: (property_id) =>
     client.post('/settings/cleaner/promote-backup', { property_id }),
 
-  // Notifications
+  // TODO: implement GET /api/notification-prefs — host notification preferences
   getNotificationPrefs: () => {
-    // TODO: endpoint missing — stub
-    console.warn('Endpoint missing: GET /api/notification-prefs');
     return Promise.resolve({ data: null });
   },
+  // TODO: implement POST /api/settings/notifications — host notification save
   saveNotificationPrefs: (prefs) => {
-    // TODO: endpoint missing — stub
-    console.warn('Endpoint missing: POST /api/settings/notifications', prefs);
     return Promise.resolve({ data: { ok: true } });
   },
 
-  // Language
+  // TODO: implement POST /api/account/update-language — language preference
   updateLanguage: (language) => {
-    // TODO: endpoint missing — stub
-    console.warn('Endpoint missing: POST /api/account/update-language', { language });
     return Promise.resolve({ data: { ok: true } });
   },
 
-  // Property name update
+  // TODO: implement POST /api/settings/property/name — property rename
   updatePropertyName: (property_id, name) => {
-    // TODO: endpoint missing — stub
-    console.warn('Endpoint missing: POST /api/settings/property/name', { property_id, name });
     return Promise.resolve({ data: { ok: true } });
   },
 
-  // Property platform update
+  // TODO: implement POST /api/settings/property/platform — platform change
   updatePropertyPlatform: (property_id, platform) => {
-    // TODO: endpoint missing — stub
-    console.warn('Endpoint missing: POST /api/settings/property/platform', { property_id, platform });
     return Promise.resolve({ data: { ok: true } });
   },
 };

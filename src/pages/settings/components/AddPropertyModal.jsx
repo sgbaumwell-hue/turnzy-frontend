@@ -123,7 +123,6 @@ export function AddPropertyModal({ open, onClose, onCreated }) {
     setSaving(true);
     try {
       const res = await settingsApi.createProperty({ name, platform, timezone, default_checkout_time: coTime, default_checkin_time: ciTime });
-      console.log('POST /api/properties/create response:', res.data);
       const newId = res.data?.property_id || res.data?.id || 'temp-123';
       setPropertyId(newId);
 

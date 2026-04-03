@@ -82,12 +82,7 @@ export function CleanerSettingsNotifications() {
   async function save() {
     setSaving(true);
     try {
-      if (cleanerApi.saveNotificationPrefs) {
-        await cleanerApi.saveNotificationPrefs(prefs);
-      } else {
-        // TODO: endpoint missing
-        console.warn('Endpoint missing: POST /api/cleaner/settings/notifications', prefs);
-      }
+      await cleanerApi.saveNotificationPrefs(prefs);
       setSaved(true);
     } catch { alert('Failed to save'); }
     setSaving(false);
