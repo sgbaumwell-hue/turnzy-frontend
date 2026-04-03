@@ -46,13 +46,21 @@ export function CleanerSettingsTeam() {
     setToggling(false);
   }
 
+  const [toast, setToast] = useState(null);
+  function showToast(msg, type = 'success') { setToast({ msg, type }); setTimeout(() => setToast(null), 5000); }
+
   async function handleAdd() {
     if (!email.trim()) return;
     setSaving(true); setAddError(null);
     try {
-      await cleanerApi.addTeamMember({ name, email });
+      const res = await cleanerApi.addTeamMember({ name, email });
       setName(''); setEmail(''); setAdding(false);
       queryClient.invalidateQueries({ queryKey: ['cleaner-team'] });
+      if (res.data?.email_sent === false) {
+        showToast('Team member added but invite email failed to send. Check their email address and try resending.', 'warning');
+      } else {
+        showToast(`Invite sent to ${email}`);
+      }
     } catch (e) {
       setAddError(e.response?.data?.error || 'Failed to add');
     }
@@ -143,5 +151,11 @@ export function CleanerSettingsTeam() {
         )}
       </div>
     </div>
+    {toast && (
+      <div className={`fixed bottom-4 right-4 text-[13px] px-4 py-2 rounded-lg shadow-lg ${toast.type === 'warning' ? 'bg-amber-500 text-white' : 'bg-gray-900 text-white'}`}>
+        {toast.msg}
+      </div>
+    )}
+  </div>
   );
 }

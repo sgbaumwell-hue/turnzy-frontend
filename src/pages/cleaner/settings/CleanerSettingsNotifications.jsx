@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { cleanerApi } from '../../../api/cleaner';
 import { useAuthStore } from '../../../store/authStore';
 
@@ -52,6 +52,30 @@ export function CleanerSettingsNotifications() {
   const [prefs, setPrefs] = useState(DEFAULT_PREFS);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+
+  // Load saved prefs on mount
+  useEffect(() => {
+    cleanerApi.getNotificationPrefs().then(res => {
+      const saved = res?.data?.prefs;
+      if (saved) {
+        setPrefs({
+          notification_method: saved.notification_method || 'email',
+          new_job: saved.new_job_alerts !== false,
+          modified_job: saved.modified_job_alerts !== false,
+          cancellation: saved.cancellation_alerts !== false,
+          advance_notice_days: saved.notification_window_days || 60,
+          day_before_reminder: saved.day_before_reminder !== false,
+          day_before_time: saved.day_before_time || '19:00',
+          morning_of_reminder: saved.morning_reminder === true,
+          morning_of_time: saved.morning_time || '07:00',
+          team_confirmed: saved.team_confirmed_alerts !== false,
+          team_declined: saved.team_declined_alerts !== false,
+          team_completed: saved.team_completed_alerts !== false,
+          team_issue: saved.team_issue_alerts !== false,
+        });
+      }
+    }).catch(() => {});
+  }, []);
 
   function set(key, val) { setPrefs(p => ({ ...p, [key]: val })); setSaved(false); }
 

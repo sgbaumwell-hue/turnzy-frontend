@@ -79,14 +79,11 @@ export function CleanerJobList({ jobs, isLoading }) {
     return (
       <div key={key}>
         <SectionHeader label={label} count={items.length} color={color} open={isOpen} onToggle={() => toggleSection(key)} />
-        <div
-          className="overflow-hidden transition-[max-height] duration-300 ease-in-out"
-          style={{ maxHeight: isOpen ? `${items.length * 180}px` : '0px' }}
-        >
+        {isOpen && (
           <div className="pt-2">
             {items.map(j => <CleanerJobRow key={j.id} job={j} isToday={key === 'today'} />)}
           </div>
-        </div>
+        )}
       </div>
     );
   };

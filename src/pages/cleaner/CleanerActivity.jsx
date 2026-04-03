@@ -21,24 +21,23 @@ function getDotColor(eventType) {
   if (t.includes('accept') || t.includes('confirm') || t.includes('complete')) return 'bg-green-500';
   if (t.includes('decline') || t.includes('cancel')) return 'bg-red-500';
   if (t.includes('modified') || t.includes('issue')) return 'bg-amber-500';
-  if (t.includes('assign') || t.includes('new') || t.includes('notif')) return 'bg-orange-500';
+  if (t.includes('assign') || t.includes('new') || t.includes('notif') || t.includes('detect')) return 'bg-orange-500';
   return 'bg-gray-300';
 }
 
 export function CleanerActivity() {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error } = useQuery({
     queryKey: ['cleaner-activity'],
-    queryFn: async () => {
-      try {
-        if (cleanerApi.getActivity) return await cleanerApi.getActivity();
-        // Stub: generate activity from jobs
-        console.warn('Endpoint missing: GET /api/cleaner/activity');
-        return { data: { activities: [] } };
-      } catch { return { data: { activities: [] } }; }
-    },
+    queryFn: () => cleanerApi.getActivity(),
+    retry: 1,
   });
 
-  const activities = data?.data?.activities || [];
+  if (isError) {
+    console.error('CleanerActivity fetch error:', error);
+  }
+
+  // Bulletproof: never let undefined reach .map()
+  const activities = Array.isArray(data?.data?.activities) ? data.data.activities : [];
 
   return (
     <div className="flex w-full h-screen overflow-hidden">
@@ -48,12 +47,19 @@ export function CleanerActivity() {
           <p className="text-[13px] text-gray-400 mb-6">A log of everything across your jobs</p>
 
           {isLoading && (
-            <div className="space-y-3">
-              {[...Array(5)].map((_, i) => <div key={i} className="h-16 bg-gray-100 rounded-lg animate-pulse" />)}
+            <div className="flex items-center justify-center py-16">
+              <div className="w-6 h-6 border-2 border-coral-400 border-t-transparent rounded-full animate-spin" />
             </div>
           )}
 
-          {!isLoading && activities.length === 0 && (
+          {isError && !isLoading && (
+            <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-8 text-center">
+              <div className="text-[15px] font-medium text-gray-700 mb-1">Activity couldn't load</div>
+              <div className="text-[13px] text-gray-400">Please refresh the page to try again.</div>
+            </div>
+          )}
+
+          {!isLoading && !isError && activities.length === 0 && (
             <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-8 text-center">
               <div className="text-3xl mb-3">📋</div>
               <div className="text-[15px] font-medium text-gray-700 mb-1">No activity yet</div>
@@ -61,11 +67,11 @@ export function CleanerActivity() {
             </div>
           )}
 
-          {!isLoading && activities.map((a, i) => (
+          {!isLoading && !isError && activities.map((a, i) => (
             <div key={a.id || i} className="flex gap-3 py-3 border-b border-gray-100">
               <div className={`w-3 h-3 rounded-full flex-shrink-0 mt-1 ${getDotColor(a.event_type)}`} />
               <div className="flex-1 min-w-0">
-                <div className="text-[14px] text-gray-700">{a.description}</div>
+                <div className="text-[14px] text-gray-700">{a.description || 'Activity event'}</div>
                 <div className="flex items-center gap-2 mt-1">
                   {a.property_name && (
                     <span className="text-[11px] font-medium text-orange-600 bg-orange-50 px-2 py-0.5 rounded">{a.property_name}</span>
