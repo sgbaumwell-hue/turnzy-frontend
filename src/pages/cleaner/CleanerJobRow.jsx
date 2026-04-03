@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { getMonthDay, fmtTime, fmtDateShort } from '../../utils/dates';
 import { useCleanerUiStore } from '../../store/cleanerUiStore';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
+import { useAuthStore } from '../../store/authStore';
 
 const CLEANER_STATUS_CONFIG = {
   pending: { label: 'Awaiting Response', bg: 'bg-amber-50', text: 'text-amber-800' },
@@ -20,6 +21,8 @@ export function CleanerJobRow({ job, isToday }) {
   const isSelected = selectedJobId === job.id;
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const navigate = useNavigate();
+  const { user } = useAuthStore();
+  const hasTeam = user?.has_team || false;
   const { month, day } = getMonthDay(job.checkout_date);
   const isSameDay = job.booking_type === 'SAME_DAY' || job.is_same_day;
   const coTime = fmtTime(job.checkout_time || job.default_checkout_time || '11:00');
@@ -67,6 +70,12 @@ export function CleanerJobRow({ job, isToday }) {
       {/* Property */}
       {job.property_name && (
         <div className="text-[13px] text-gray-500 mt-0.5">{job.property_name}</div>
+      )}
+      {/* Team assignment status */}
+      {hasTeam && (
+        <div className="text-[12px] text-gray-300 mt-0.5">
+          {job.team_assignment_name ? `Assigned to ${job.team_assignment_name}` : 'No team member assigned'}
+        </div>
       )}
 
       {/* Same-day label */}

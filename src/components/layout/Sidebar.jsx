@@ -74,11 +74,28 @@ function CleanerNav() {
   );
 }
 
+function TeamMemberNav() {
+  return (
+    <>
+      <div className="text-[10px] font-black text-warm-300 uppercase tracking-widest px-3 pt-4 pb-1">Views</div>
+
+      <NavLink to="/team" end className={navLinkClass}>
+        {({ isActive }) => (<><Home size={16} className={isActive ? 'text-coral-400' : 'text-warm-400'} />My Jobs</>)}
+      </NavLink>
+
+      <NavLink to="/team/settings" className={navLinkClass}>
+        {({ isActive }) => (<><Settings size={16} className={isActive ? 'text-coral-400' : 'text-warm-400'} />Settings</>)}
+      </NavLink>
+    </>
+  );
+}
+
 export function Sidebar({ properties, activeProperty, onPropertyChange }) {
   const { user, clearUser } = useAuthStore();
   const isAdmin = user?.role === 'admin' || user?.is_admin;
   const isCleaner = user?.role === 'cleaner';
-  const roleLabel = isCleaner ? 'Cleaner' : 'Pro Host';
+  const isTeamMember = user?.role === 'team_member';
+  const roleLabel = isTeamMember ? 'Team Member' : isCleaner ? 'Cleaner' : 'Pro Host';
 
   return (
     <aside className="w-[220px] flex-shrink-0 bg-white border-r border-warm-200 flex flex-col h-full">
@@ -96,7 +113,7 @@ export function Sidebar({ properties, activeProperty, onPropertyChange }) {
       </div>
 
       {/* Property filter — host only */}
-      {!isCleaner && properties?.length > 0 && (
+      {!isCleaner && !isTeamMember && properties?.length > 0 && (
         <div className="px-3 pt-3 pb-2">
           <select
             value={activeProperty || ''}
@@ -111,7 +128,7 @@ export function Sidebar({ properties, activeProperty, onPropertyChange }) {
 
       {/* Navigation */}
       <nav className="flex-1 px-4 py-6 overflow-y-auto">
-        {isCleaner ? <CleanerNav /> : <HostNav isAdmin={isAdmin} />}
+        {isTeamMember ? <TeamMemberNav /> : isCleaner ? <CleanerNav /> : <HostNav isAdmin={isAdmin} />}
       </nav>
 
       {/* Profile */}

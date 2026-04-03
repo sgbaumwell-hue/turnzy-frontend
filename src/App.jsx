@@ -4,6 +4,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AppShell } from './components/layout/AppShell';
 import { Dashboard } from './pages/host/Dashboard';
 import { CleanerDashboard } from './pages/cleaner/CleanerDashboard';
+import { CleanerSettings } from './pages/cleaner/CleanerSettings';
+import { TeamDashboard } from './pages/team/TeamDashboard';
+import { AcceptInvite } from './pages/team/AcceptInvite';
 import { SettingsLayout } from './pages/settings/SettingsLayout';
 import { Properties } from './pages/settings/sections/Properties';
 import { Cleaners } from './pages/settings/sections/Cleaners';
@@ -25,8 +28,8 @@ function RequireAuth({ children, allowedRoles }) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
   if (allowedRoles && !allowedRoles.includes(user?.role)) {
-    // Role mismatch — redirect to appropriate home
     if (user?.role === 'cleaner') return <Navigate to="/cleaner" replace />;
+    if (user?.role === 'team_member') return <Navigate to="/team" replace />;
     return <Navigate to="/" replace />;
   }
   return children;
@@ -35,6 +38,7 @@ function RequireAuth({ children, allowedRoles }) {
 function RoleRedirect() {
   const { user } = useAuthStore();
   if (user?.role === 'cleaner') return <Navigate to="/cleaner" replace />;
+  if (user?.role === 'team_member') return <Navigate to="/team" replace />;
   return <Navigate to="/" replace />;
 }
 
@@ -43,7 +47,6 @@ function AppWithAuth() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    // Check for OAuth redirect with _u param
     const params = new URLSearchParams(window.location.search);
     const userParam = params.get('_u');
     if (userParam) {
@@ -73,9 +76,8 @@ function AppWithAuth() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
-      <Route path="/account/delete-confirm" element={
-        <RequireAuth><DeleteConfirm /></RequireAuth>
-      } />
+      <Route path="/team/accept" element={<AcceptInvite />} />
+      <Route path="/account/delete-confirm" element={<RequireAuth><DeleteConfirm /></RequireAuth>} />
 
       {/* Host dashboard */}
       <Route path="/" element={
@@ -85,6 +87,14 @@ function AppWithAuth() {
       {/* Cleaner dashboard */}
       <Route path="/cleaner" element={
         <RequireAuth allowedRoles={['cleaner']}><AppShell><CleanerDashboard /></AppShell></RequireAuth>
+      } />
+      <Route path="/cleaner/settings" element={
+        <RequireAuth allowedRoles={['cleaner']}><AppShell><CleanerSettings /></AppShell></RequireAuth>
+      } />
+
+      {/* Team member dashboard */}
+      <Route path="/team" element={
+        <RequireAuth allowedRoles={['team_member']}><AppShell><TeamDashboard /></AppShell></RequireAuth>
       } />
 
       {/* Host settings */}
