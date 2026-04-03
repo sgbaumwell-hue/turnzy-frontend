@@ -83,6 +83,7 @@ export function CleanerSettingsTeam() {
   }
 
   return (
+    <>
     <div>
       <h2 className="text-[20px] font-bold text-gray-900 mb-1">My Team</h2>
       <p className="text-[13px] text-gray-400 mb-5">Invite helpers and assign them to jobs.</p>
@@ -156,6 +157,6 @@ export function CleanerSettingsTeam() {
         {toast.msg}
       </div>
     )}
-  </div>
+  </>
   );
 }
