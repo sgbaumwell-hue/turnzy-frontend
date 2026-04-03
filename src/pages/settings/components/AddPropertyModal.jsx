@@ -1,8 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { X, CheckCircle, Loader2 } from 'lucide-react';
 import { settingsApi } from '../../../api/settings';
 import { useToast } from './Toast';
+
+const STORAGE_KEY = 'addPropertyWizard';
 
 const US_TIMEZONES = [
   'America/New_York', 'America/Chicago', 'America/Denver',
@@ -17,6 +20,21 @@ function detectTimezone() {
   return 'America/New_York';
 }
 
+function saveWizardState(state) {
+  try { sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch {}
+}
+
+function loadWizardState() {
+  try {
+    const raw = sessionStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch { return null; }
+}
+
+function clearWizardState() {
+  try { sessionStorage.removeItem(STORAGE_KEY); } catch {}
+}
+
 function StepDots({ current }) {
   return (
     <div className="flex items-center justify-center gap-2 mb-6">
@@ -27,9 +45,12 @@ function StepDots({ current }) {
   );
 }
 
+export { STORAGE_KEY };
+
 export function AddPropertyModal({ open, onClose, onCreated }) {
   const navigate = useNavigate();
   const toast = useToast();
+  const queryClient = useQueryClient();
   const [step, setStep] = useState(1);
   const [saving, setSaving] = useState(false);
 
@@ -43,17 +64,55 @@ export function AddPropertyModal({ open, onClose, onCreated }) {
 
   // Step 2
   const [icalUrl, setIcalUrl] = useState('');
-  const [icalStatus, setIcalStatus] = useState(null); // null | 'loading' | 'success' | 'error'
+  const [icalStatus, setIcalStatus] = useState(null);
   const [icalError, setIcalError] = useState('');
   const [calConnected, setCalConnected] = useState(false);
 
+  // Restore wizard state from sessionStorage on mount
   useEffect(() => {
-    function handleEsc(e) { if (e.key === 'Escape') onClose(); }
+    if (!open) return;
+    const saved = loadWizardState();
+    if (saved) {
+      setStep(saved.step || 1);
+      setName(saved.name || '');
+      setPlatform(saved.platform || 'Airbnb');
+      setTimezone(saved.timezone || detectTimezone());
+      setCoTime(saved.coTime || '11:00');
+      setCiTime(saved.ciTime || '15:00');
+      setPropertyId(saved.propertyId || null);
+      setIcalUrl(saved.icalUrl || '');
+      setCalConnected(saved.calConnected || false);
+    }
+  }, [open]);
+
+  // Persist wizard state on every meaningful change
+  useEffect(() => {
+    if (!open) return;
+    saveWizardState({ step, name, platform, timezone, coTime, ciTime, propertyId, icalUrl, calConnected });
+  }, [open, step, name, platform, timezone, coTime, ciTime, propertyId, icalUrl, calConnected]);
+
+  useEffect(() => {
+    function handleEsc(e) { if (e.key === 'Escape') handleClose(); }
     if (open) document.addEventListener('keydown', handleEsc);
     return () => document.removeEventListener('keydown', handleEsc);
-  }, [open, onClose]);
+  }, [open]);
+
+  const handleClose = useCallback(() => {
+    // Only clear storage if we're on step 3 (completed) or step 1 with no data
+    if (step === 3 || (step === 1 && !name.trim())) {
+      clearWizardState();
+    }
+    onClose();
+  }, [step, name, onClose]);
+
+  function handleCompleted() {
+    clearWizardState();
+    queryClient.invalidateQueries({ queryKey: ['properties'] });
+    onCreated();
+  }
 
   function reset() {
+    clearWizardState();
     setStep(1); setName(''); setPlatform('Airbnb'); setTimezone(detectTimezone());
     setCoTime('11:00'); setCiTime('15:00'); setPropertyId(null);
     setIcalUrl(''); setIcalStatus(null); setIcalError(''); setCalConnected(false);
@@ -63,16 +122,17 @@ export function AddPropertyModal({ open, onClose, onCreated }) {
     if (!name.trim()) return;
     setSaving(true);
     try {
-      if (settingsApi.createProperty) {
-        const res = await settingsApi.createProperty({ name, platform, timezone, default_checkout_time: coTime, default_checkin_time: ciTime });
-        setPropertyId(res.data?.property_id || res.data?.id || 'temp-123');
-      } else {
-        // TODO: endpoint missing — stub
-        console.warn('Endpoint missing: POST /api/properties/create');
-        setPropertyId('temp-123');
-      }
+      const res = await settingsApi.createProperty({ name, platform, timezone, default_checkout_time: coTime, default_checkin_time: ciTime });
+      console.log('POST /api/properties/create response:', res.data);
+      const newId = res.data?.property_id || res.data?.id || 'temp-123';
+      setPropertyId(newId);
+
+      // Optimistic: invalidate properties cache so list picks up new property on next render
+      queryClient.invalidateQueries({ queryKey: ['properties'] });
+
       setStep(2);
     } catch (e) {
+      console.error('Failed to create property:', e);
       toast(e.response?.data?.error || 'Failed to create property', 'error');
     }
     setSaving(false);
@@ -87,27 +147,23 @@ export function AddPropertyModal({ open, onClose, onCreated }) {
     const looksValid = url.endsWith('.ics') || url.includes('calendar');
 
     if (looksValid) {
-      // URL looks like a calendar link — accept it immediately, then try backend in background
       setIcalStatus('success');
       setCalConnected(true);
       try {
         await settingsApi.updateIcal(propertyId, icalUrl);
       } catch {
-        // Backend save failed but we still proceed — it will sync later
         console.warn('Backend iCal save failed, but URL accepted locally');
       }
       setTimeout(() => setStep(3), 800);
       return;
     }
 
-    // URL doesn't match quick patterns — try real backend validation
     try {
       await settingsApi.updateIcal(propertyId, icalUrl);
       setIcalStatus('success');
       setCalConnected(true);
       setTimeout(() => setStep(3), 800);
     } catch (e) {
-      // Allow proceeding with a warning instead of hard failure
       setIcalStatus('warning');
       setIcalError("Couldn't verify URL, but you can continue — bookings will appear once the calendar syncs.");
       setCalConnected(false);
@@ -117,13 +173,13 @@ export function AddPropertyModal({ open, onClose, onCreated }) {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={handleClose}>
       <div className="bg-white rounded-xl shadow-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between px-6 pt-5 pb-0">
           <h2 className="text-[18px] font-bold text-warm-900">
             {step === 1 ? 'Add Property' : step === 2 ? 'Connect Calendar' : 'All Set!'}
           </h2>
-          <button onClick={onClose} className="p-1 text-warm-400 hover:text-warm-600"><X size={18} /></button>
+          <button onClick={handleClose} className="p-1 text-warm-400 hover:text-warm-600"><X size={18} /></button>
         </div>
 
         <div className="px-6 py-5">
@@ -222,7 +278,7 @@ export function AddPropertyModal({ open, onClose, onCreated }) {
               </div>
               <div className="flex flex-col gap-2 pt-2">
                 <button
-                  onClick={() => { onClose(); onCreated(); navigate('/settings/properties'); }}
+                  onClick={() => { handleCompleted(); handleClose(); navigate('/settings/properties'); }}
                   className="w-full py-2.5 bg-coral-400 text-white text-[14px] font-semibold rounded-lg hover:bg-coral-500"
                 >
                   Go to property settings

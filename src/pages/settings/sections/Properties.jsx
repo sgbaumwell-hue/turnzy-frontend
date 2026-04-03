@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Pencil, Check, X, Link, Unlink, Plus, Settings } from 'lucide-react';
 import { propertiesApi } from '../../../api/properties';
 import { settingsApi } from '../../../api/settings';
 import { useToast } from '../components/Toast';
-import { AddPropertyModal } from '../components/AddPropertyModal';
+import { AddPropertyModal, STORAGE_KEY } from '../components/AddPropertyModal';
 
 const US_TIMEZONES = [
   'America/New_York', 'America/Chicago', 'America/Denver',
@@ -169,7 +169,32 @@ function PropertyCard({ property, onRefresh }) {
 export function Properties() {
   const queryClient = useQueryClient();
   const [showModal, setShowModal] = useState(false);
-  const { data, isLoading } = useQuery({ queryKey: ['properties'], queryFn: () => propertiesApi.getAll() });
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['properties'],
+    queryFn: async () => {
+      const res = await propertiesApi.getAll();
+      console.log('GET /api/properties response:', res.data);
+      return res;
+    },
+  });
+
+  // Log if the properties endpoint fails
+  useEffect(() => {
+    if (error) {
+      console.warn('GET /api/properties failed:', error.message || error);
+    }
+  }, [error]);
+
+  // Auto-open modal if wizard state exists in sessionStorage (survives reload)
+  useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        setShowModal(true);
+      }
+    } catch {}
+  }, []);
 
   function refresh() { queryClient.invalidateQueries({ queryKey: ['properties'] }); }
   const properties = data?.data?.properties || data?.data || [];
