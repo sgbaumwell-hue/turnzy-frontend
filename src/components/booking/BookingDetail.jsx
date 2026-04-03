@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { X, Mail, MapPin, UserPlus, Clock } from 'lucide-react';
+import { X, Mail, MapPin, UserPlus, Clock, AlertTriangle, CheckCircle } from 'lucide-react';
 import { bookingsApi } from '../../api/bookings';
 import { fmtDateLong, fmtTime, getMonthDay } from '../../utils/dates';
 import { getStatusConfig, isUrgent } from '../../utils/status';
@@ -10,6 +10,8 @@ const STATUS_LABELS = {
   pending: 'Awaiting response',
   accepted: 'Confirmed',
   declined: 'Declined',
+  self_managed: 'Self-managed',
+  completed: 'Completed',
   forwarded_to_team: 'Forwarded to team',
   dismissed: 'Host handling',
   cancel_pending: 'Cancellation unconfirmed',
@@ -112,8 +114,30 @@ function ActionButtons({ booking, bookingId }) {
     );
   }
 
+  const hasBackup = booking.has_backup_cleaner;
+  const backupBtnOutlined = (
+    <button onClick={() => { /* TODO: implement backup cleaner assignment */ }}
+      className="w-full py-3 px-4 rounded-lg font-medium text-[15px] bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
+      <UserPlus size={16} /> Ask Backup Cleaner
+    </button>
+  );
+  const backupBtnPrimary = (
+    <button onClick={() => { /* TODO: implement backup cleaner assignment */ }}
+      className="w-full py-3 px-4 rounded-lg font-medium text-[15px] bg-orange-500 text-white hover:bg-orange-600 transition-colors flex items-center justify-center gap-2">
+      <UserPlus size={16} /> Ask Backup Cleaner
+    </button>
+  );
+  const dismissBtn = (
+    <button disabled={loading === 'dismiss'} onClick={() => doAction('dismiss', () => bookingsApi.dismiss(bookingId))}
+      className="w-full py-3 px-4 rounded-lg font-medium text-[14px] border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
+      <X size={14} />
+      {loading === 'dismiss' ? 'Dismissing...' : "Dismiss \u2014 I'll handle it"}
+    </button>
+  );
+
   return (
     <div className="mb-5 space-y-2">
+      {/* PENDING / URGENT */}
       {status === 'pending' && (
         <>
           <button disabled={loading === 'resend'} onClick={() => doAction('resend', () => bookingsApi.resend(bookingId))}
@@ -121,39 +145,35 @@ function ActionButtons({ booking, bookingId }) {
             <Mail size={16} />
             {loading === 'resend' ? 'Sending...' : 'Resend Notification'}
           </button>
-          <button onClick={() => { /* TODO: implement backup cleaner assignment */ }}
-            className="w-full py-3 px-4 rounded-lg font-medium text-[15px] bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
-            <UserPlus size={16} />
-            Ask Backup Cleaner
-          </button>
-          <button disabled={loading === 'dismiss'} onClick={() => doAction('dismiss', () => bookingsApi.dismiss(bookingId))}
-            className="w-full py-3 px-4 rounded-lg font-medium text-[14px] border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
-            <X size={14} />
-            {loading === 'dismiss' ? 'Dismissing...' : "Dismiss \u2014 I'll handle it"}
-          </button>
+          {hasBackup && backupBtnOutlined}
+          {dismissBtn}
         </>
       )}
 
+      {/* DECLINED */}
       {status === 'declined' && (
         <>
-          <button onClick={() => { /* TODO: implement backup cleaner assignment */ }}
-            className="w-full py-3 px-4 rounded-lg font-medium text-[15px] bg-orange-500 text-white hover:bg-orange-600 transition-colors flex items-center justify-center gap-2">
-            <UserPlus size={16} />
-            Ask Backup Cleaner
-          </button>
-          <button disabled={loading === 'dismiss'} onClick={() => doAction('dismiss', () => bookingsApi.dismiss(bookingId))}
-            className="w-full py-3 px-4 rounded-lg font-medium text-[14px] bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
-            <X size={14} />
-            {loading === 'dismiss' ? 'Dismissing...' : "Dismiss \u2014 I'll handle it"}
-          </button>
+          {hasBackup && backupBtnPrimary}
+          {dismissBtn}
         </>
       )}
 
+      {/* ACCEPTED / CONFIRMED */}
       {status === 'accepted' && (
-        <button className="py-2 px-3 rounded-lg text-xs font-medium text-gray-400 hover:bg-gray-100 transition-colors">
-          Turn off alerts
-        </button>
+        <>
+          {hasBackup && backupBtnOutlined}
+          {dismissBtn}
+        </>
       )}
+
+      {/* SELF-MANAGED / DISMISSED */}
+      {(status === 'self_managed' || status === 'dismissed') && (
+        <>
+          {hasBackup && backupBtnOutlined}
+        </>
+      )}
+
+      {/* COMPLETED — read-only, no buttons */}
 
       {actionMsg && (
         <div className={`text-sm font-medium px-3 py-2 rounded-lg ${actionMsg.type === 'success' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
@@ -245,6 +265,28 @@ export function BookingDetail({ bookingId, onClose }) {
           </span>
         )}
       </div>
+
+      {/* Times modified indicator */}
+      {b.is_times_modified && !b.is_queued && (
+        <div className="text-xs text-amber-600 font-medium flex items-center gap-1.5">
+          <AlertTriangle size={13} />
+          Times were updated by your Airbnb calendar
+        </div>
+      )}
+
+      {/* Pre-approve indicators */}
+      {b.late_checkout_preapproved && (
+        <div className="text-xs text-amber-600 font-medium flex items-center gap-1.5">
+          <CheckCircle size={13} />
+          Late Checkout Pre-Approved by cleaner
+        </div>
+      )}
+      {b.early_checkin_preapproved && (
+        <div className="text-xs text-amber-600 font-medium flex items-center gap-1.5">
+          <CheckCircle size={13} />
+          Early Check-in Pre-Approved by cleaner
+        </div>
+      )}
 
       {/* Queued notification date */}
       {b.is_queued && (() => {

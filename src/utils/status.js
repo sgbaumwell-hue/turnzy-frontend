@@ -1,8 +1,10 @@
 export const STATUS_CONFIG = {
   pending: { label: 'Awaiting response', bg: 'bg-amber-50', text: 'text-amber-800', border: 'border-l-amber-400' },
-  accepted: { label: 'Confirmed', bg: 'bg-sage-50', text: 'text-sage-600', border: 'border-l-sage-400' },
+  accepted: { label: 'Confirmed', bg: 'bg-green-100', text: 'text-green-700 font-semibold', border: 'border-l-green-500' },
   declined: { label: 'Declined', bg: 'bg-red-100', text: 'text-red-700 font-semibold', border: 'border-l-red-500' },
-  dismissed: { label: 'Host handling', bg: 'bg-warm-100', text: 'text-warm-600', border: 'border-l-warm-400' },
+  self_managed: { label: 'Self-managed', bg: 'bg-gray-100', text: 'text-gray-600', border: 'border-l-gray-300' },
+  completed: { label: 'Completed', bg: 'bg-gray-100', text: 'text-gray-500', border: 'border-l-gray-300' },
+  dismissed: { label: 'Host handling', bg: 'bg-gray-100', text: 'text-gray-600', border: 'border-l-gray-300' },
   forwarded_to_team: { label: 'Forwarded to team', bg: 'bg-sky-50', text: 'text-sky-600', border: 'border-l-sky-400' },
   cancel_pending: { label: 'Cancellation', bg: 'bg-warm-100', text: 'text-warm-600', border: 'border-l-warm-400' },
   cancel_acknowledged: { label: 'Cancelled', bg: 'bg-warm-100', text: 'text-warm-400', border: 'border-l-warm-200' },
@@ -17,7 +19,23 @@ export function isUrgent(booking) {
   return diff <= 5 && diff >= 0;
 }
 
-export function getStatusConfig(status, urgent) {
+export function getStatusConfig(statusOrBooking, urgentOverride) {
+  // Support both old signature (status, urgent) and new (booking)
+  let status, urgent, isQueued;
+  if (typeof statusOrBooking === 'object' && statusOrBooking !== null) {
+    status = statusOrBooking.cleaner_status;
+    urgent = urgentOverride ?? isUrgent(statusOrBooking);
+    isQueued = statusOrBooking.is_queued;
+  } else {
+    status = statusOrBooking;
+    urgent = urgentOverride;
+    isQueued = false;
+  }
+
+  if (isQueued) {
+    return { label: 'QUEUED', bg: 'bg-gray-100', text: 'text-gray-500', border: 'border-l-gray-300' };
+  }
+
   if (urgent && (status === 'pending' || status === 'declined')) {
     return {
       label: 'IMMEDIATE ATTENTION',
@@ -27,6 +45,7 @@ export function getStatusConfig(status, urgent) {
       rowBg: 'bg-red-50',
     };
   }
+
   return STATUS_CONFIG[status] || {
     label: (status || 'Unknown').replace(/_/g, ' '),
     bg: 'bg-warm-100', text: 'text-warm-600', border: 'border-l-warm-400',
