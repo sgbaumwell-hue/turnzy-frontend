@@ -4,7 +4,13 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AppShell } from './components/layout/AppShell';
 import { Dashboard } from './pages/host/Dashboard';
 import { CleanerDashboard } from './pages/cleaner/CleanerDashboard';
-import { CleanerSettings } from './pages/cleaner/CleanerSettings';
+import { CleanerCalendar } from './pages/cleaner/CleanerCalendar';
+import { CleanerActivity } from './pages/cleaner/CleanerActivity';
+import { CleanerSettingsLayout } from './pages/cleaner/settings/CleanerSettingsLayout';
+import { CleanerSettingsTeam } from './pages/cleaner/settings/CleanerSettingsTeam';
+import { CleanerSettingsNotifications } from './pages/cleaner/settings/CleanerSettingsNotifications';
+import { CleanerSettingsProfile } from './pages/cleaner/settings/CleanerSettingsProfile';
+import { CleanerSettingsSecurity } from './pages/cleaner/settings/CleanerSettingsSecurity';
 import { TeamDashboard } from './pages/team/TeamDashboard';
 import { AcceptInvite } from './pages/team/AcceptInvite';
 import { SettingsLayout } from './pages/settings/SettingsLayout';
@@ -84,13 +90,27 @@ function AppWithAuth() {
         <RequireAuth allowedRoles={['host', 'admin']}><AppShell><Dashboard /></AppShell></RequireAuth>
       } />
 
-      {/* Cleaner dashboard */}
+      {/* Cleaner pages */}
       <Route path="/cleaner" element={
         <RequireAuth allowedRoles={['cleaner']}><AppShell><CleanerDashboard /></AppShell></RequireAuth>
       } />
-      <Route path="/cleaner/settings" element={
-        <RequireAuth allowedRoles={['cleaner']}><AppShell><CleanerSettings /></AppShell></RequireAuth>
+      <Route path="/cleaner/calendar" element={
+        <RequireAuth allowedRoles={['cleaner']}><AppShell><CleanerCalendar /></AppShell></RequireAuth>
       } />
+      <Route path="/cleaner/activity" element={
+        <RequireAuth allowedRoles={['cleaner']}><AppShell><CleanerActivity /></AppShell></RequireAuth>
+      } />
+
+      {/* Cleaner settings */}
+      <Route path="/cleaner/settings" element={
+        <RequireAuth allowedRoles={['cleaner']}><AppShell><CleanerSettingsLayout /></AppShell></RequireAuth>
+      }>
+        <Route index element={<Navigate to="/cleaner/settings/notifications" replace />} />
+        <Route path="team" element={<CleanerSettingsTeam />} />
+        <Route path="notifications" element={<CleanerSettingsNotifications />} />
+        <Route path="profile" element={<CleanerSettingsProfile />} />
+        <Route path="security" element={<CleanerSettingsSecurity />} />
+      </Route>
 
       {/* Team member dashboard */}
       <Route path="/team" element={
@@ -109,7 +129,6 @@ function AppWithAuth() {
         <Route path="account" element={<Account />} />
       </Route>
 
-      {/* Auto-redirect based on role */}
       <Route path="/home" element={<RequireAuth><RoleRedirect /></RequireAuth>} />
 
       <Route path="*" element={

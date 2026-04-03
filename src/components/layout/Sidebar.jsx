@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { Home, Activity, ExternalLink, Building2, Users, CreditCard, Bell, User, Settings, LogOut } from 'lucide-react';
+import { Home, Activity, ExternalLink, Building2, Users, CreditCard, Bell, User, Settings, CalendarDays, Lock, LogOut } from 'lucide-react';
 import clsx from 'clsx';
 import { useAuthStore } from '../../store/authStore';
 
@@ -54,22 +54,38 @@ function HostNav({ isAdmin }) {
   );
 }
 
+const CLEANER_SETTINGS_ITEMS = [
+  { to: '/cleaner/settings/team', icon: Users, label: 'My Team' },
+  { to: '/cleaner/settings/notifications', icon: Bell, label: 'Notifications' },
+  { to: '/cleaner/settings/profile', icon: User, label: 'Profile' },
+  { to: '/cleaner/settings/security', icon: Lock, label: 'Security' },
+];
+
 function CleanerNav() {
   return (
     <>
       <div className="text-[10px] font-black text-warm-300 uppercase tracking-widest px-3 pt-4 pb-1">Views</div>
 
       <NavLink to="/cleaner" end className={navLinkClass}>
-        {({ isActive }) => (<><Home size={16} className={isActive ? 'text-coral-400' : 'text-warm-400'} />My Jobs</>)}
+        {({ isActive }) => (<><Home size={16} className={isActive ? 'text-coral-400' : 'text-warm-400'} />Dashboard</>)}
+      </NavLink>
+
+      <NavLink to="/cleaner/calendar" className={navLinkClass}>
+        {({ isActive }) => (<><CalendarDays size={16} className={isActive ? 'text-coral-400' : 'text-warm-400'} />Calendar</>)}
       </NavLink>
 
       <NavLink to="/cleaner/activity" className={navLinkClass}>
         {({ isActive }) => (<><Activity size={16} className={isActive ? 'text-coral-400' : 'text-warm-400'} />Activity</>)}
       </NavLink>
 
-      <NavLink to="/cleaner/settings" className={navLinkClass}>
-        {({ isActive }) => (<><Settings size={16} className={isActive ? 'text-coral-400' : 'text-warm-400'} />Settings</>)}
-      </NavLink>
+      <div className="text-[10px] font-black text-warm-300 uppercase tracking-widest px-3 pt-5 pb-1">Settings</div>
+      <div className="ml-2">
+        {CLEANER_SETTINGS_ITEMS.map(({ to, icon: Icon, label }) => (
+          <NavLink key={to} to={to} className={subNavClass}>
+            {({ isActive }) => (<><Icon size={14} className={isActive ? 'text-coral-400' : 'text-warm-300'} />{label}</>)}
+          </NavLink>
+        ))}
+      </div>
     </>
   );
 }

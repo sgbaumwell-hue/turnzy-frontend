@@ -16,6 +16,13 @@ export const cleanerApi = {
   toggleTeam: (has_team) => client.post('/cleaner/team/toggle', { has_team }),
   assignJob: (bookingId, team_member_id, note) => client.post(`/cleaner/jobs/${bookingId}/assign`, { team_member_id, note }),
   getAssignment: (bookingId) => client.get(`/cleaner/jobs/${bookingId}/assignment`),
+
+  // Activity
+  getActivity: () => client.get('/cleaner/activity'),
+
+  // Notification prefs
+  getNotificationPrefs: () => client.get('/cleaner/settings/notifications'),
+  saveNotificationPrefs: (prefs) => client.post('/cleaner/settings/notifications', prefs),
 };
 
 export const teamApi = {

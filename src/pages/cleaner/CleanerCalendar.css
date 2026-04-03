@@ -1,0 +1,69 @@
+/* react-big-calendar overrides to match Turnzy design system */
+.rbc-calendar {
+  font-family: 'Manrope', sans-serif;
+}
+.rbc-header {
+  font-family: 'Manrope', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #9ca3af;
+  padding: 8px 4px;
+  border-bottom: 1px solid #f3f4f6;
+}
+.rbc-today {
+  background-color: #fff7ed;
+}
+.rbc-off-range-bg {
+  background-color: #fafafa;
+}
+.rbc-event {
+  border: none !important;
+  font-size: 12px;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 500;
+  padding: 2px 6px;
+}
+.rbc-event.rbc-selected {
+  outline: 2px solid #f97316;
+  outline-offset: 1px;
+}
+.rbc-toolbar {
+  margin-bottom: 12px;
+  padding: 0;
+}
+.rbc-toolbar button {
+  font-family: 'Manrope', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  padding: 6px 14px;
+  color: #374151;
+  background: white;
+}
+.rbc-toolbar button:hover {
+  background: #f9fafb;
+}
+.rbc-toolbar button.rbc-active {
+  background: #f97316;
+  color: white;
+  border-color: #f97316;
+}
+.rbc-toolbar .rbc-toolbar-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+.rbc-month-view, .rbc-time-view {
+  border: 1px solid #f3f4f6;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.rbc-day-bg + .rbc-day-bg {
+  border-left: 1px solid #f3f4f6;
+}
+.rbc-month-row + .rbc-month-row {
+  border-top: 1px solid #f3f4f6;
+}
