@@ -86,14 +86,14 @@ export function CleanerJobRow({ job, isToday }) {
       )}
 
       {/* Structured time rows */}
-      <div className="mt-3 space-y-1.5">
+      <div className="mt-2.5 space-y-1">
         <div className="flex items-center justify-between">
-          <span className="text-xs text-gray-400 uppercase tracking-widest">Checkout</span>
-          <span className="text-sm font-medium text-gray-700">{coTime}</span>
+          <span className="text-xs text-gray-500 uppercase tracking-wide">Checkout</span>
+          <span className="text-sm font-semibold text-gray-800">{coTime}</span>
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-xs text-gray-400 uppercase tracking-widest">Next Check-in</span>
-          <span className="text-sm font-medium text-gray-700">{ciDateLabel}, {ciTime}</span>
+          <span className="text-xs text-gray-500 uppercase tracking-wide">Next Check-in</span>
+          <span className="text-xs text-gray-500">{ciDateLabel}, {ciTime}</span>
         </div>
       </div>
     </div>
