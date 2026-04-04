@@ -3,3 +3,8 @@ dist
 .env.local
 .env.*.local
 *.log
+
+# UX audit outputs
+ux-audit-screenshots/
+ux-audit-report.md
+test-results/
