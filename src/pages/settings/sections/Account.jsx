@@ -119,29 +119,35 @@ export function Account() {
         <div className="px-6 py-3 border-b border-warm-100">
           <span className="text-[11px] font-bold text-warm-400 uppercase tracking-wider">Security</span>
         </div>
-        <div className="flex items-center justify-between py-3 px-4">
-          <div>
-            <div className="text-[12px] text-warm-400">Password</div>
-            <div className="text-[14px] font-medium text-warm-900 mt-0.5">••••••••</div>
-          </div>
-          <button onClick={() => setShowPwForm(!showPwForm)} className="text-[12px] text-coral-400 font-medium hover:text-coral-500">
-            {hasPassword ? 'Change' : 'Set password'}
-          </button>
-        </div>
-        {showPwForm && (
-          <div className="px-4 pb-4 space-y-2">
-            {hasPassword && (
-              <input type="password" value={currentPw} onChange={(e) => setCurrentPw(e.target.value)} placeholder="Current password" className="w-full max-w-sm px-3 py-2 border border-warm-200 rounded-lg text-[14px] focus:outline-none focus:ring-2 focus:ring-coral-400" />
-            )}
-            <input type="password" value={newPw} onChange={(e) => setNewPw(e.target.value)} placeholder="New password (8+ characters)" className="w-full max-w-sm px-3 py-2 border border-warm-200 rounded-lg text-[14px] focus:outline-none focus:ring-2 focus:ring-coral-400" />
-            <input type="password" value={confirmPw} onChange={(e) => setConfirmPw(e.target.value)} placeholder="Confirm new password" className="w-full max-w-sm px-3 py-2 border border-warm-200 rounded-lg text-[14px] focus:outline-none focus:ring-2 focus:ring-coral-400" />
-            {newPw && confirmPw && newPw !== confirmPw && <div className="text-[12px] text-red-600">Passwords do not match</div>}
-            {newPw && newPw.length > 0 && newPw.length < 8 && <div className="text-[12px] text-red-600">Must be at least 8 characters</div>}
-            {pwError && <div className="text-[12px] text-red-600">{pwError}</div>}
-            <div className="flex gap-2">
-              <button onClick={handleSavePassword} disabled={saving} className="px-4 py-1.5 bg-coral-400 text-white text-[13px] font-medium rounded-lg hover:bg-coral-500 disabled:opacity-50">{saving ? 'Saving...' : 'Save'}</button>
-              <button onClick={() => setShowPwForm(false)} className="px-4 py-1.5 border border-warm-200 text-[13px] font-medium rounded-lg text-warm-600 hover:bg-warm-50">Cancel</button>
+        {hasPassword ? (
+          <>
+            <div className="flex items-center justify-between py-3 px-4">
+              <div>
+                <div className="text-[12px] text-warm-400">Password</div>
+                <div className="text-[14px] font-medium text-warm-900 mt-0.5">••••••••</div>
+              </div>
+              <button onClick={() => setShowPwForm(!showPwForm)} className="text-[12px] text-coral-400 font-medium hover:text-coral-500">
+                Change
+              </button>
             </div>
+            {showPwForm && (
+              <div className="px-4 pb-4 space-y-2">
+                <input type="password" value={currentPw} onChange={(e) => setCurrentPw(e.target.value)} placeholder="Current password" className="w-full max-w-sm px-3 py-2 border border-warm-200 rounded-lg text-[14px] focus:outline-none focus:ring-2 focus:ring-coral-400" />
+                <input type="password" value={newPw} onChange={(e) => setNewPw(e.target.value)} placeholder="New password (8+ characters)" className="w-full max-w-sm px-3 py-2 border border-warm-200 rounded-lg text-[14px] focus:outline-none focus:ring-2 focus:ring-coral-400" />
+                <input type="password" value={confirmPw} onChange={(e) => setConfirmPw(e.target.value)} placeholder="Confirm new password" className="w-full max-w-sm px-3 py-2 border border-warm-200 rounded-lg text-[14px] focus:outline-none focus:ring-2 focus:ring-coral-400" />
+                {newPw && confirmPw && newPw !== confirmPw && <div className="text-[12px] text-red-600">Passwords do not match</div>}
+                {newPw && newPw.length > 0 && newPw.length < 8 && <div className="text-[12px] text-red-600">Must be at least 8 characters</div>}
+                {pwError && <div className="text-[12px] text-red-600">{pwError}</div>}
+                <div className="flex gap-2">
+                  <button onClick={handleSavePassword} disabled={saving} className="px-4 py-1.5 bg-coral-400 text-white text-[13px] font-medium rounded-lg hover:bg-coral-500 disabled:opacity-50">{saving ? 'Saving...' : 'Save'}</button>
+                  <button onClick={() => setShowPwForm(false)} className="px-4 py-1.5 border border-warm-200 text-[13px] font-medium rounded-lg text-warm-600 hover:bg-warm-50">Cancel</button>
+                </div>
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="py-3 px-4 text-[13px] text-warm-500">
+            You signed in with Google. Password login is not available for this account.
           </div>
         )}
       </div>
