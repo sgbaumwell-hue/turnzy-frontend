@@ -83,6 +83,36 @@ export function BookingRow({ booking, propName }) {
           <span className="text-xs font-medium text-gray-800">{ciDateLabel}, {ciTime}</span>
         </div>
       </div>
+
+      {/* Payment status (completed bookings only) */}
+      {booking.cleaner_status === 'completed' && booking.payment_status && (
+        <div className="mt-2 pt-2 border-t border-gray-100">
+          {booking.payment_status === 'unpaid' && (
+            <div className="flex items-center gap-1.5 text-xs text-amber-600">
+              <span className="w-2 h-2 rounded-full bg-amber-400 inline-block" />
+              Payment pending
+            </div>
+          )}
+          {booking.payment_status === 'payment_marked' && (
+            <div className="flex items-center gap-1.5 text-xs text-amber-600">
+              <span className="w-2 h-2 rounded-full bg-amber-400 inline-block" />
+              Awaiting cleaner confirmation
+            </div>
+          )}
+          {booking.payment_status === 'payment_confirmed' && (
+            <div className="flex items-center gap-1.5 text-xs text-green-600">
+              <span className="w-2 h-2 rounded-full bg-green-400 inline-block" />
+              Payment confirmed
+            </div>
+          )}
+          {booking.payment_status === 'payment_not_received' && (
+            <div className="flex items-center gap-1.5 text-xs text-red-600">
+              <span className="w-2 h-2 rounded-full bg-red-400 inline-block" />
+              Cleaner hasn't received payment
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

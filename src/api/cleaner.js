@@ -17,6 +17,11 @@ export const cleanerApi = {
   assignJob: (bookingId, team_member_id, note) => client.post(`/cleaner/jobs/${bookingId}/assign`, { team_member_id, note }),
   getAssignment: (bookingId) => client.get(`/cleaner/jobs/${bookingId}/assignment`),
 
+  // Payment
+  confirmPayment: (id) => client.post(`/cleaner/jobs/${id}/confirm-payment`),
+  paymentNotReceived: (id) => client.post(`/cleaner/jobs/${id}/payment-not-received`),
+  nudgePayment: (id) => client.post(`/cleaner/jobs/${id}/nudge-payment`),
+
   // Activity
   getActivity: () => client.get('/cleaner/activity'),
 

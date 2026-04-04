@@ -100,7 +100,12 @@ export function BookingList({ bookings, properties, isLoading }) {
       {renderSection('confirmed', 'Confirmed', 'sage')}
       {renderSection('queued', 'Queued', 'warm', "Beyond your cleaner's notification window")}
       {renderSection('selfManaged', 'Self-Managed', 'warm', "You're handling these turnovers yourself")}
-      {renderSection('completed', 'Past', 'warm')}
+      {(() => {
+        const unpaid = sections.completed?.filter(b => b.payment_status === 'unpaid' || b.payment_status === 'payment_not_received') || [];
+        const label = unpaid.length > 0 ? `Past (${unpaid.length} unpaid)` : 'Past';
+        const color = unpaid.length > 0 ? 'amber' : 'warm';
+        return renderSection('completed', label, color);
+      })()}
       {renderSection('cancelled', 'Cancelled', 'warm')}
       {!bookings?.length && <div className="flex flex-col items-center justify-center h-64 text-gray-400 text-sm gap-2"><span className="text-3xl">📋</span><span>No bookings yet</span></div>}
     </div>
