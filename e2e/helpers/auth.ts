@@ -26,8 +26,10 @@ export const freshEmail = (role: string) =>
 
 export async function loginAs(page: any, account: any) {
   await page.goto('/login');
-  await page.fill('[name="email"]', account.email);
-  await page.fill('[name="password"]', account.password);
+  // Login form uses id= attributes, not name=
+  await page.fill('#email', account.email);
+  await page.fill('#password', account.password);
   await page.click('[type="submit"]');
-  await page.waitForURL(/\/(dashboard|cleaner|team)/, { timeout: 15000 });
+  // Host goes to /, cleaner to /cleaner, team to /team
+  await page.waitForURL(/^\/$|\/cleaner|\/team|\/dashboard|\/settings/, { timeout: 15000 });
 }
