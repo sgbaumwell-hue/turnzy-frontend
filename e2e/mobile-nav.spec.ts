@@ -25,7 +25,7 @@ test.describe('Mobile Navigation', () => {
     const backBtn = page.locator('[data-testid="back-button"]');
     if ((await backBtn.count()) > 0) {
       await backBtn.click();
-      await expect(page).toHaveURL(/\/dashboard/);
+      await expect(page).toHaveURL(/^\/$|\/dashboard/);
     }
   });
 

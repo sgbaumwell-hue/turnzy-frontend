@@ -31,5 +31,12 @@ export async function loginAs(page: any, account: any) {
   await page.fill('#password', account.password);
   await page.click('[type="submit"]');
   // Host goes to /, cleaner to /cleaner, team to /team
-  await page.waitForURL(/^\/$|\/cleaner|\/team|\/dashboard|\/settings/, { timeout: 15000 });
+  // waitForURL tests against the full URL string, so use a function to check pathname
+  await page.waitForURL(
+    (url) => {
+      const p = new URL(url).pathname;
+      return p === '/' || p.startsWith('/cleaner') || p.startsWith('/team') || p.startsWith('/dashboard') || p.startsWith('/settings');
+    },
+    { timeout: 15000 }
+  );
 }
