@@ -30,6 +30,7 @@ export function BookingRow({ booking, propName }) {
 
   return (
     <div role="button" tabIndex={0}
+      data-testid="booking-row"
       aria-label={`${month} ${day} Turnover - ${sc.label}`}
       onClick={handleClick}
       onKeyDown={(e) => e.key === 'Enter' && handleClick()}

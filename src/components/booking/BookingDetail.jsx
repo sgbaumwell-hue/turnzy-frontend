@@ -232,7 +232,7 @@ export function BookingDetail({ bookingId, onClose }) {
   }
 
   return (
-    <div className="p-6 relative space-y-5">
+    <div className="p-6 relative space-y-5" data-testid="booking-detail">
       {/* Close button */}
       <button onClick={onClose} className="absolute top-4 right-4 p-1.5 rounded-lg text-gray-400 hover:bg-gray-100" aria-label="Close"><X size={18} /></button>
 
