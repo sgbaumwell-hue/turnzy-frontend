@@ -6,6 +6,7 @@ import { Button } from '@/components/shadcn/button';
 import { Input } from '@/components/shadcn/input';
 import { Label } from '@/components/shadcn/label';
 import { settingsApi } from '../../../api/settings';
+import { propertiesApi } from '../../../api/properties';
 import { useToast } from './Toast';
 
 const STORAGE_KEY = 'addPropertyWizard';
@@ -44,6 +45,121 @@ function StepDots({ current }) {
       {[1, 2, 3].map(s => (
         <div key={s} className={`w-2.5 h-2.5 rounded-full transition-colors ${s === current ? 'bg-coral-400' : s < current ? 'bg-coral-200' : 'bg-warm-200'}`} />
       ))}
+    </div>
+  );
+}
+
+function Step3Content({ name, platform, calConnected, propertyId, onDone, onAnother }) {
+  const [existingCleaners, setExistingCleaners] = useState([]);
+  const [selectedCleaner, setSelectedCleaner] = useState(null);
+  const [assigning, setAssigning] = useState(false);
+  const [assigned, setAssigned] = useState(false);
+  const toast = useToast();
+
+  // Fetch existing cleaners from properties data
+  useEffect(() => {
+    propertiesApi.getAll().then(res => {
+      const props = res?.data?.properties || res?.data || [];
+      const cleanerSet = {};
+      for (const p of props) {
+        if (p.cleaner_name && p.cleaner_email && p.id !== propertyId) {
+          cleanerSet[p.cleaner_email] = { name: p.cleaner_name, email: p.cleaner_email };
+        }
+      }
+      const list = Object.values(cleanerSet);
+      setExistingCleaners(list);
+      if (list.length === 1) setSelectedCleaner(list[0]);
+    }).catch(() => {});
+  }, [propertyId]);
+
+  async function handleAssign() {
+    if (!selectedCleaner || !propertyId) return;
+    setAssigning(true);
+    try {
+      await settingsApi.updateCleaner({
+        property_id: propertyId,
+        name: selectedCleaner.name,
+        email: selectedCleaner.email,
+        notification_method: 'email',
+        role: 'primary',
+      });
+      setAssigned(true);
+      toast(`${selectedCleaner.name} assigned to ${name}`);
+    } catch {
+      toast('Failed to assign cleaner', 'error');
+    }
+    setAssigning(false);
+  }
+
+  return (
+    <div className="text-center space-y-4">
+      <div className="w-16 h-16 mx-auto bg-green-100 rounded-full flex items-center justify-center">
+        <CheckCircle size={32} className="text-green-600" />
+      </div>
+      <h3 className="text-[18px] font-bold text-warm-900">Property added!</h3>
+      <div className="text-[14px] text-warm-600 space-y-1">
+        <div><strong>{name}</strong> · {platform}</div>
+        <div>{calConnected ? 'Calendar connected' : 'No calendar connected yet'}</div>
+      </div>
+
+      {/* Cleaner assignment prompt */}
+      {existingCleaners.length > 0 && !assigned && (
+        <div className="text-left bg-gray-50 rounded-lg p-4 mt-4">
+          {existingCleaners.length === 1 ? (
+            <>
+              <p className="text-[13px] text-gray-700 mb-3">
+                You already work with <strong>{existingCleaners[0].name}</strong> — should they cover <strong>{name}</strong> too?
+              </p>
+              <div className="flex gap-2">
+                <Button size="sm" onClick={handleAssign} loading={assigning}>
+                  Yes, add {existingCleaners[0].name}
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => setExistingCleaners([])}>
+                  Skip for now
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <p className="text-[13px] text-gray-700 mb-2">
+                Which of your cleaners should cover <strong>{name}</strong>?
+              </p>
+              <div className="space-y-1 mb-3">
+                {existingCleaners.map(c => (
+                  <label key={c.email} className="flex items-center gap-2 p-1.5 rounded cursor-pointer hover:bg-white">
+                    <input type="radio" name="assign-cleaner" checked={selectedCleaner?.email === c.email}
+                      onChange={() => setSelectedCleaner(c)} className="accent-coral-400" />
+                    <span className="text-[13px] text-gray-800">{c.name}</span>
+                  </label>
+                ))}
+                <label className="flex items-center gap-2 p-1.5 rounded cursor-pointer hover:bg-white">
+                  <input type="radio" name="assign-cleaner" checked={selectedCleaner === null}
+                    onChange={() => setSelectedCleaner(null)} className="accent-coral-400" />
+                  <span className="text-[13px] text-gray-400">Skip for now</span>
+                </label>
+              </div>
+              <Button size="sm" onClick={selectedCleaner ? handleAssign : () => setExistingCleaners([])} loading={assigning}>
+                {selectedCleaner ? `Add ${selectedCleaner.name}` : 'Continue'}
+              </Button>
+            </>
+          )}
+        </div>
+      )}
+
+      {assigned && (
+        <div className="text-[13px] text-green-600 font-medium">
+          ✓ {selectedCleaner?.name} will cover {name}
+        </div>
+      )}
+
+      <div className="flex flex-col gap-2 pt-2">
+        <Button fullWidth onClick={onDone}>
+          Go to property settings
+        </Button>
+        <Button variant="outline" fullWidth onClick={onAnother}>
+          Add another property
+        </Button>
+      </div>
     </div>
   );
 }
@@ -267,26 +383,11 @@ export function AddPropertyModal({ open, onClose, onCreated }) {
           )}
 
           {/* Step 3 */}
-          {step === 3 && (
-            <div className="text-center space-y-4">
-              <div className="w-16 h-16 mx-auto bg-green-100 rounded-full flex items-center justify-center">
-                <CheckCircle size={32} className="text-green-600" />
-              </div>
-              <h3 className="text-[18px] font-bold text-warm-900">Property added!</h3>
-              <div className="text-[14px] text-warm-600 space-y-1">
-                <div><strong>{name}</strong> · {platform}</div>
-                <div>{calConnected ? 'Calendar connected' : 'No calendar connected yet'}</div>
-              </div>
-              <div className="flex flex-col gap-2 pt-2">
-                <Button fullWidth onClick={() => { handleCompleted(); handleClose(); navigate('/settings/properties'); }}>
-                  Go to property settings
-                </Button>
-                <Button variant="outline" fullWidth onClick={reset}>
-                  Add another property
-                </Button>
-              </div>
-            </div>
-          )}
+          {step === 3 && <Step3Content
+            name={name} platform={platform} calConnected={calConnected} propertyId={propertyId}
+            onDone={() => { handleCompleted(); handleClose(); navigate('/settings/properties'); }}
+            onAnother={reset}
+          />}
         </div>
       </div>
     </div>

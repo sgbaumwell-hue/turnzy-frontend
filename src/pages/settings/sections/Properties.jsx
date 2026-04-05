@@ -118,8 +118,26 @@ function PropertyCard({ property, onRefresh }) {
       </div>
 
       {/* Summary */}
-      <div className="text-[13px] text-warm-500 mb-3">
+      <div className="text-[13px] text-warm-500 mb-2">
         Checkout {fmtTime(property.default_checkout_time)} · Check-in {fmtTime(property.default_checkin_time)} · {property.timezone || 'America/New_York'}
+      </div>
+
+      {/* Cleaner status row */}
+      <div className="text-[13px] mb-3 flex items-center gap-1.5">
+        <span>🧹</span>
+        {property.cleaner_name && property.cleaner_confirmed ? (
+          <span className="text-warm-600">{property.cleaner_name} · <span className="text-green-600 font-medium">Active</span>
+            <a href="/settings/cleaners" className="ml-2 text-[11px] text-coral-400 hover:underline">Change</a>
+          </span>
+        ) : property.cleaner_email ? (
+          <span className="text-warm-500">{property.cleaner_email} · <span className="text-amber-600 font-medium">Invite sent</span>
+            <a href="/settings/cleaners" className="ml-2 text-[11px] text-coral-400 hover:underline">Resend</a>
+          </span>
+        ) : (
+          <span className="text-warm-400">No cleaner assigned
+            <a href="/settings/cleaners" className="ml-2 text-[11px] text-coral-400 hover:underline">+ Add cleaner</a>
+          </span>
+        )}
       </div>
 
       {/* Edit toggle */}

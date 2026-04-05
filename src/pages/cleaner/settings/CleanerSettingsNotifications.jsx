@@ -29,19 +29,11 @@ function Toggle({ checked, onChange, label }) {
   );
 }
 
-function MethodToggle({ value, onChange }) {
-  const options = ['email', 'sms', 'both'];
+function MethodLabel() {
   return (
     <div className="flex items-center gap-1 py-3.5 px-5">
       <span className="text-[14px] text-gray-800 flex-1">Notification method</span>
-      <div className="flex bg-gray-100 rounded-lg p-0.5">
-        {options.map(o => (
-          <button key={o} onClick={() => onChange(o)}
-            className={`px-3 py-1 text-[12px] font-medium rounded-md transition-colors capitalize ${value === o ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500'}`}>
-            {o === 'both' ? 'Both' : o.toUpperCase()}
-          </button>
-        ))}
-      </div>
+      <span className="text-[13px] text-gray-500">Email</span>
     </div>
   );
 }
@@ -98,7 +90,7 @@ export function CleanerSettingsNotifications() {
         <div className="px-5 py-3 border-b border-gray-100 bg-gray-50/50">
           <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Job Notifications</span>
         </div>
-        <MethodToggle value={prefs.notification_method} onChange={(v) => set('notification_method', v)} />
+        <MethodLabel />
         <Toggle label="New job notifications" checked={prefs.new_job} onChange={(v) => set('new_job', v)} />
         <Toggle label="Modified job notifications" checked={prefs.modified_job} onChange={(v) => set('modified_job', v)} />
         <Toggle label="Cancellation notifications" checked={prefs.cancellation} onChange={(v) => set('cancellation', v)} />
