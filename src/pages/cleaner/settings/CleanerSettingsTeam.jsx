@@ -106,6 +106,23 @@ export function CleanerSettingsTeam() {
           </button>
         </div>
 
+        {/* Feature preview when team is off */}
+        {!hasTeam && (
+          <div className="p-5 border-t border-gray-100">
+            <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
+              <p className="text-sm font-semibold text-gray-700 mb-3">With a team you can:</p>
+              <div className="space-y-2">
+                {['Assign specific helpers to each turnover', 'Team members get their own app login', 'They accept, start, and complete jobs', 'You stay in control as the lead cleaner', 'Get notified when team members respond'].map((item, i) => (
+                  <div key={i} className="flex items-start gap-2">
+                    <span className="text-orange-400 text-sm mt-0.5 shrink-0">&rarr;</span>
+                    <p className="text-sm text-gray-500">{item}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Roster */}
         {hasTeam && (
           <div className="border-t border-gray-100">

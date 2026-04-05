@@ -39,7 +39,7 @@ export function Notifications() {
   }
 
   return (
-    <div>
+    <div className="pb-32">
       <h2 className="text-[20px] font-bold text-warm-900 mb-1">Notifications</h2>
       <p className="text-[13px] text-warm-400 mb-5">Configure when and how you receive alerts.</p>
 
@@ -54,6 +54,7 @@ export function Notifications() {
         <div className="px-5 py-3 border-t border-b border-warm-100 bg-warm-50/50">
           <span className="text-[11px] font-bold text-warm-400 uppercase tracking-wider">Late Start Alerts</span>
         </div>
+        <p className="text-xs text-gray-400 px-5 pt-3 pb-1 leading-relaxed">Alert me if cleaning hasn't started by this long after the scheduled checkout. You can enable multiple thresholds to get alerts at each one.</p>
         <Toggle label="Alert after 30 minutes" checked={prefs.late_30min} onChange={(v) => set('late_30min', v)} />
         <Toggle label="Alert after 1 hour" checked={prefs.late_1hr} onChange={(v) => set('late_1hr', v)} />
         <Toggle label="Alert after 2 hours" checked={prefs.late_2hr} onChange={(v) => set('late_2hr', v)} />

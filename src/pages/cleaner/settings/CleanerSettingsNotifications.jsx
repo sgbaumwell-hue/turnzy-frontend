@@ -89,7 +89,7 @@ export function CleanerSettingsNotifications() {
   }
 
   return (
-    <div>
+    <div className="pb-32">
       <h2 className="text-[20px] font-bold text-gray-900 mb-1">Notifications</h2>
       <p className="text-[13px] text-gray-400 mb-5">Configure when and how you receive alerts.</p>
 
@@ -109,7 +109,7 @@ export function CleanerSettingsNotifications() {
         </div>
         <div className="py-3.5 px-5">
           <div className="text-[14px] text-gray-800 mb-2">How far in advance do you want to be notified?</div>
-          <div className="flex gap-1.5 flex-wrap">
+          <div className="grid grid-cols-3 gap-1.5 sm:flex sm:flex-wrap">
             {[7, 14, 30, 60, 90].map(d => (
               <button key={d} onClick={() => set('advance_notice_days', d)}
                 className={`px-3 py-1.5 text-[12px] font-medium rounded-lg border transition-colors ${prefs.advance_notice_days === d ? 'bg-coral-400 text-white border-coral-400' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}>
@@ -125,7 +125,7 @@ export function CleanerSettingsNotifications() {
           <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Reminders</span>
         </div>
         <div>
-          <Toggle label="Day-before reminder" checked={prefs.day_before_reminder} onChange={(v) => set('day_before_reminder', v)} />
+          <Toggle label="Day-before reminder — send at:" checked={prefs.day_before_reminder} onChange={(v) => set('day_before_reminder', v)} />
           {prefs.day_before_reminder && (
             <div className="px-5 pb-3 -mt-1">
               <input type="time" value={prefs.day_before_time} onChange={(e) => set('day_before_time', e.target.value)}

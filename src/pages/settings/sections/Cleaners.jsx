@@ -229,6 +229,7 @@ export function Cleaners() {
         {cleanerCards.map(c => <CleanerCard key={c.key} property={c.property} role={c.role} onRefresh={refresh} />)}
         <UnassignedCleanerCard />
       </div>
+      <p className="text-xs text-gray-400 text-center mt-3 max-w-xs mx-auto">We'll send your cleaner an email invite. They don't need a Turnzy account yet — they'll be guided through setup.</p>
     </div>
   );
 }

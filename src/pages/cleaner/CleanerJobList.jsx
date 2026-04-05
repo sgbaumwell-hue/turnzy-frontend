@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Users } from 'lucide-react';
 import { CleanerJobRow } from './CleanerJobRow';
 import { BookingRowSkeleton } from '../../components/ui/Skeleton';
 import clsx from 'clsx';
@@ -64,10 +64,13 @@ export function CleanerJobList({ jobs, isLoading }) {
 
   if (!jobs?.length) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
-        <div className="text-4xl mb-3">📋</div>
-        <div className="text-[15px] font-medium text-gray-700 mb-1">You're not connected to any properties yet.</div>
-        <div className="text-[13px] text-gray-400">Check your email for an invite from your host.</div>
+      <div className="flex-1 flex flex-col items-center justify-center px-6 text-center py-16">
+        <div className="w-16 h-16 bg-orange-50 rounded-full flex items-center justify-center mb-4">
+          <Users size={28} className="text-orange-400" />
+        </div>
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">You're not connected yet</h3>
+        <p className="text-sm text-gray-500 mb-5 max-w-xs">Ask your host to add you in Turnzy, or invite your host directly.</p>
+        <p className="text-xs text-gray-400">Check your email for an invite from your host</p>
       </div>
     );
   }

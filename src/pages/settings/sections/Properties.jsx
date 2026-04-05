@@ -214,6 +214,7 @@ export function Properties() {
           <span className="text-[14px] font-medium">Add property</span>
         </button>
       </div>
+      <p className="text-xs text-gray-400 text-center mt-3 max-w-xs mx-auto">A property connects to your Airbnb calendar. Add one to start tracking turnovers and notifying your cleaner automatically.</p>
 
       <AddPropertyModal open={showModal} onClose={() => setShowModal(false)} onCreated={refresh} />
     </div>

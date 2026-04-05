@@ -40,7 +40,7 @@ export function Dashboard() {
         </div>
         <BookingList bookings={bookings} properties={properties} isLoading={isLoading} />
       </div>
-      {isDesktop && (
+      {isDesktop && bookings.length > 0 && (
         <div className="flex-1 min-w-0 bg-stone-50 overflow-y-auto">
           {selectedBookingId ? <BookingDetail bookingId={selectedBookingId} onClose={() => setSelectedBooking(null)} /> : <div className="flex items-center justify-center h-full text-gray-400 text-sm">Select a booking to view details</div>}
         </div>
