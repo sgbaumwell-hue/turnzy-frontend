@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { Home, Activity, ExternalLink, Building2, Users, CreditCard, Bell, User, Settings, CalendarDays, LogOut } from 'lucide-react';
+import { Home, Activity, ExternalLink, Building2, Users, CreditCard, Bell, User, Settings, CalendarDays, LogOut, AlertTriangle, Clock, CheckCircle, Archive } from 'lucide-react';
 import clsx from 'clsx';
 import { useAuthStore } from '../../store/authStore';
 
@@ -41,6 +41,25 @@ function HostNav({ isAdmin }) {
           Admin
         </a>
       )}
+
+      <div className="text-[10px] font-black text-warm-300 uppercase tracking-widest px-3 pt-5 pb-1">Bookings</div>
+      <div className="ml-2">
+        <NavLink to="/bookings/urgent" className={subNavClass}>
+          {({ isActive }) => (<><AlertTriangle size={14} className={isActive ? 'text-coral-400' : 'text-warm-300'} />Urgent</>)}
+        </NavLink>
+        <NavLink to="/bookings/needs-action" className={subNavClass}>
+          {({ isActive }) => (<><Clock size={14} className={isActive ? 'text-coral-400' : 'text-warm-300'} />Needs Action</>)}
+        </NavLink>
+        <NavLink to="/bookings/confirmed" className={subNavClass}>
+          {({ isActive }) => (<><CheckCircle size={14} className={isActive ? 'text-coral-400' : 'text-warm-300'} />Confirmed</>)}
+        </NavLink>
+        <NavLink to="/bookings/queued" className={subNavClass}>
+          {({ isActive }) => (<><CalendarDays size={14} className={isActive ? 'text-coral-400' : 'text-warm-300'} />Queued</>)}
+        </NavLink>
+        <NavLink to="/bookings/past" className={subNavClass}>
+          {({ isActive }) => (<><Archive size={14} className={isActive ? 'text-coral-400' : 'text-warm-300'} />Past</>)}
+        </NavLink>
+      </div>
 
       <div className="text-[10px] font-black text-warm-300 uppercase tracking-widest px-3 pt-5 pb-1">Settings</div>
       <div className="ml-2">

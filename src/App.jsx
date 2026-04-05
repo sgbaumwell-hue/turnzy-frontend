@@ -5,6 +5,7 @@ import { AppShell } from './components/layout/AppShell';
 import { Dashboard } from './pages/host/Dashboard';
 import { BookingDetailPage } from './pages/host/BookingDetailPage';
 import { HostActivity } from './pages/host/HostActivity';
+import { BookingSection } from './pages/host/BookingSection';
 import { CleanerDashboard } from './pages/cleaner/CleanerDashboard';
 import { CleanerCalendar } from './pages/cleaner/CleanerCalendar';
 import { CleanerCalendarJobDetail } from './pages/cleaner/CleanerCalendarJobDetail';
@@ -91,11 +92,14 @@ function AppWithAuth() {
       <Route path="/" element={
         <RequireAuth allowedRoles={['host', 'admin']}><AppShell><Dashboard /></AppShell></RequireAuth>
       } />
-      <Route path="/bookings/:id" element={
+      <Route path="/bookings/detail/:id" element={
         <RequireAuth allowedRoles={['host', 'admin']}><BookingDetailPage /></RequireAuth>
       } />
       <Route path="/activity" element={
         <RequireAuth allowedRoles={['host', 'admin']}><AppShell><HostActivity /></AppShell></RequireAuth>
+      } />
+      <Route path="/bookings/:section" element={
+        <RequireAuth allowedRoles={['host', 'admin']}><AppShell><BookingSection /></AppShell></RequireAuth>
       } />
 
       {/* Cleaner pages */}

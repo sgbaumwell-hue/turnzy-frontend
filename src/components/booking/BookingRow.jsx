@@ -24,7 +24,7 @@ export function BookingRow({ booking, propName }) {
     if (isDesktop) {
       setSelectedBooking(booking.id);
     } else {
-      navigate(`/bookings/${booking.id}`);
+      navigate(`/bookings/detail/${booking.id}`);
     }
   }
 
