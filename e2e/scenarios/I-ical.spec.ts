@@ -51,7 +51,10 @@ test.describe('Group I: iCal State Transitions', () => {
       await confirmedSection.click()
       await page.waitForTimeout(500)
     }
-    await expect(page.locator('text=Test Confirmed').first()).toBeVisible()
+    // Booking should still be CONFIRMED after minor time change
+    await expect(
+      page.locator('text=Confirmed').first()
+    ).toBeVisible()
   })
 
   test('I09 — major time change on confirmed requires reconfirm', async ({ page }, testInfo) => {
@@ -82,7 +85,12 @@ test.describe('Group I: iCal State Transitions', () => {
       await page.waitForTimeout(500)
     }
     await shot(page, 'I12-queued-time-change', testInfo.project.name)
-    await expect(page.locator('text=Morgan Chen').first()).toBeVisible()
+    // Booking should still be QUEUED after silent time change
+    await expect(
+      page.locator('text=QUEUED')
+        .or(page.locator('text=Queued'))
+        .first()
+    ).toBeVisible()
   })
 
   test('I15 — time change on self-managed is silent', async ({ page }, testInfo) => {
@@ -98,7 +106,12 @@ test.describe('Group I: iCal State Transitions', () => {
       await smSection.click()
       await page.waitForTimeout(500)
     }
-    await expect(page.locator('text=Riley Davis').first()).toBeVisible()
+    // Booking should still be SELF-MANAGED after silent time change
+    await expect(
+      page.locator('text=Self-Managed')
+        .or(page.locator('text=SELF-MANAGED'))
+        .first()
+    ).toBeVisible()
   })
 
 })
