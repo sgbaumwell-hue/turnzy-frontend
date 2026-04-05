@@ -272,7 +272,6 @@ function AddCleanerInline({ properties, onRefresh, onDone }) {
 // ─── Main Cleaners Page ────────────────────────────────────────
 export function Cleaners() {
   const queryClient = useQueryClient();
-  const isDesktop = useMediaQuery('(min-width: 1024px)');
   const [selectedIdx, setSelectedIdx] = useState(null);
   const [showAdd, setShowAdd] = useState(false);
 
@@ -284,8 +283,8 @@ export function Cleaners() {
   const selected = selectedIdx !== null ? cleaners[selectedIdx] : null;
 
   useEffect(() => {
-    if (isDesktop && selectedIdx === null && cleaners.length > 0) setSelectedIdx(0);
-  }, [isDesktop, cleaners.length]);
+    if (window.innerWidth >= 1024 && selectedIdx === null && cleaners.length > 0) setSelectedIdx(0);
+  }, [cleaners.length]);
 
   useEffect(() => {
     if (selectedIdx !== null && selectedIdx >= cleaners.length) setSelectedIdx(cleaners.length > 0 ? 0 : null);
@@ -293,13 +292,10 @@ export function Cleaners() {
 
   if (isLoading) return <div className="text-gray-400 text-sm p-6">Loading...</div>;
 
-  // Empty state
   if (cleaners.length === 0 && !showAdd) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 px-6 text-center">
-        <div className="w-16 h-16 bg-orange-50 rounded-full flex items-center justify-center mb-4">
-          <Users size={28} className="text-orange-400" />
-        </div>
+      <div className="flex flex-col items-center justify-center h-full px-6 text-center">
+        <div className="w-16 h-16 bg-orange-50 rounded-full flex items-center justify-center mb-4"><Users size={28} className="text-orange-400" /></div>
         <h3 className="text-lg font-semibold text-gray-900 mb-2">No cleaners yet</h3>
         <p className="text-sm text-gray-500 mb-6 max-w-xs">Add your first cleaner to start coordinating turnovers.</p>
         <Button onClick={() => setShowAdd(true)}><Plus size={16} /> Add cleaner</Button>
@@ -307,43 +303,22 @@ export function Cleaners() {
     );
   }
 
-  // Mobile: full-screen panel or add form
-  if (!isDesktop && (selected || showAdd)) {
-    return (
-      <div className="fixed inset-0 z-30 bg-white flex flex-col">
-        {showAdd ? (
-          <>
-            <div className="shrink-0 bg-white px-4 py-3 border-b border-gray-100 flex items-center gap-3">
-              <button onClick={() => setShowAdd(false)} className="p-1 -ml-1 text-gray-500"><ArrowLeft size={20} /></button>
-              <span className="text-[15px] font-semibold text-gray-900">Add cleaner</span>
-            </div>
-            <div className="flex-1 overflow-y-auto">
-              <AddCleanerInline properties={properties} onRefresh={refresh} onDone={() => setShowAdd(false)} />
-            </div>
-          </>
-        ) : selected ? (
-          <CleanerPanel key={selected.email} cleaner={selected} allProperties={properties}
-            onRefresh={refresh} onClose={() => setSelectedIdx(null)} isMobile={true} />
-        ) : null}
-      </div>
-    );
-  }
+  const panelOpen = selected || showAdd;
 
   return (
-    <div className={isDesktop ? 'flex h-[calc(100vh-80px)] -mx-8 -my-8' : ''}>
-      {/* List */}
-      <div className={`${isDesktop ? 'w-[280px] shrink-0 border-r border-gray-200 flex flex-col' : 'flex flex-col'} bg-white`}>
-        <div className="px-4 pt-4 pb-2 shrink-0">
+    <div className="flex h-full overflow-hidden">
+      {/* List — hidden on mobile when panel is open */}
+      <div className={`w-full lg:w-[280px] lg:shrink-0 lg:border-r lg:border-gray-200 flex flex-col bg-white h-full ${panelOpen ? 'hidden lg:flex' : 'flex'}`}>
+        <div className="px-4 pt-5 pb-2 shrink-0">
           <h2 className="text-[16px] font-semibold text-gray-900">Cleaners</h2>
         </div>
         <div className="flex-1 overflow-y-auto">
           {cleaners.map((c, i) => {
             const isActive = c.userId && c.confirmed;
-            const isSelected = selectedIdx === i;
             const propCount = c.properties.length;
             return (
               <button key={c.email || i} onClick={() => { setSelectedIdx(i); setShowAdd(false); }}
-                className={`w-full text-left px-4 py-3 flex items-center gap-2 transition-colors ${isSelected ? 'bg-coral-50 border-l-2 border-l-coral-500' : 'hover:bg-gray-50 border-l-2 border-l-transparent'}`}>
+                className={`w-full text-left px-4 py-3 flex items-center gap-2 transition-colors border-l-2 ${selectedIdx === i ? 'bg-coral-50 border-l-coral-500' : 'hover:bg-gray-50 border-l-transparent'}`}>
                 <div className="flex-1 min-w-0">
                   <div className="text-[13px] font-medium text-gray-900 truncate">{c.name || c.email}</div>
                   <div className="text-[11px] text-gray-400">{propCount} {propCount === 1 ? 'property' : 'properties'}</div>
@@ -354,30 +329,37 @@ export function Cleaners() {
               </button>
             );
           })}
-        </div>
-        <div className="px-4 py-3 border-t border-gray-100 shrink-0">
           <button onClick={() => { setShowAdd(true); setSelectedIdx(null); }}
-            className="flex items-center gap-1.5 text-[13px] text-coral-400 font-medium hover:text-coral-500">
+            className="w-full text-left px-4 py-3 flex items-center gap-1.5 text-[13px] text-coral-400 font-medium hover:text-coral-500 hover:bg-gray-50">
             <Plus size={14} /> Add cleaner
           </button>
         </div>
       </div>
 
-      {/* Panel — desktop only */}
-      {isDesktop && (
-        <div className="flex-1 min-w-0 bg-gray-50">
+      {/* Panel — full screen on mobile, side panel on desktop */}
+      {panelOpen && (
+        <div className="fixed inset-0 z-30 bg-white lg:static lg:z-auto lg:flex-1 lg:min-w-0 lg:bg-gray-50 h-full flex flex-col">
           {showAdd ? (
-            <div className="h-full overflow-y-auto">
-              <AddCleanerInline properties={properties} onRefresh={refresh} onDone={() => setShowAdd(false)} />
-            </div>
+            <>
+              <div className="shrink-0 bg-white px-4 py-3 border-b border-gray-100 flex items-center gap-3 lg:hidden">
+                <button onClick={() => setShowAdd(false)} className="p-1 -ml-1 text-gray-500"><ArrowLeft size={20} /></button>
+                <span className="text-[15px] font-semibold text-gray-900">Add cleaner</span>
+              </div>
+              <div className="flex-1 overflow-y-auto">
+                <AddCleanerInline properties={properties} onRefresh={refresh} onDone={() => setShowAdd(false)} />
+              </div>
+            </>
           ) : selected ? (
             <CleanerPanel key={selected.email} cleaner={selected} allProperties={properties}
-              onRefresh={refresh} onClose={() => setSelectedIdx(null)} isMobile={false} />
-          ) : (
-            <div className="flex items-center justify-center h-full text-gray-400 text-sm">
-              Select a cleaner to view details
-            </div>
-          )}
+              onRefresh={refresh} onClose={() => setSelectedIdx(null)} isMobile={window.innerWidth < 1024} />
+          ) : null}
+        </div>
+      )}
+
+      {/* Desktop placeholder */}
+      {!panelOpen && (
+        <div className="hidden lg:flex flex-1 items-center justify-center text-gray-400 text-sm bg-gray-50">
+          Select a cleaner to view details
         </div>
       )}
     </div>

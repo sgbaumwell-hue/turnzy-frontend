@@ -20,6 +20,9 @@ const SECTION_LABELS = {
   '/settings/account': 'Account',
 };
 
+// Pages that use their own full-height list+panel layout
+const FULL_HEIGHT_PAGES = ['/settings/properties', '/settings/cleaners'];
+
 function MobileMenu() {
   const navigate = useNavigate();
   return (
@@ -47,31 +50,46 @@ export function SettingsLayout() {
   const navigate = useNavigate();
   const isRoot = location.pathname === '/settings' || location.pathname === '/settings/';
   const sectionLabel = SECTION_LABELS[location.pathname] || 'Settings';
+  const isFullHeight = FULL_HEIGHT_PAGES.includes(location.pathname);
 
   return (
     <ToastProvider>
       <div className="flex flex-1 overflow-hidden h-full">
         {isDesktop ? (
-          <div className="flex-1 overflow-y-auto px-8 py-8">
-            <div className="max-w-4xl">
+          isFullHeight ? (
+            // Full-height pages get no padding/scroll wrapper — they manage their own layout
+            <div className="flex-1 flex flex-col overflow-hidden">
               <Outlet />
             </div>
-          </div>
+          ) : (
+            <div className="flex-1 overflow-y-auto px-8 py-8">
+              <div className="max-w-4xl">
+                <Outlet />
+              </div>
+            </div>
+          )
         ) : (
           isRoot ? (
             <MobileMenu />
           ) : (
-            <div className="flex-1 flex flex-col overflow-hidden">
-              <div className="flex items-center gap-2 px-4 py-3 border-b border-warm-100 bg-white">
-                <button onClick={() => navigate('/settings')} className="p-1 text-warm-500 hover:text-warm-700">
-                  <ArrowLeft size={18} />
-                </button>
-                <span className="text-[15px] font-semibold text-warm-900">{sectionLabel}</span>
-              </div>
-              <div className="flex-1 overflow-y-auto p-4">
+            isFullHeight ? (
+              // Full-height pages on mobile — no back button header, component handles its own
+              <div className="flex-1 flex flex-col overflow-hidden">
                 <Outlet />
               </div>
-            </div>
+            ) : (
+              <div className="flex-1 flex flex-col overflow-hidden">
+                <div className="flex items-center gap-2 px-4 py-3 border-b border-warm-100 bg-white">
+                  <button onClick={() => navigate('/settings')} className="p-1 text-warm-500 hover:text-warm-700">
+                    <ArrowLeft size={18} />
+                  </button>
+                  <span className="text-[15px] font-semibold text-warm-900">{sectionLabel}</span>
+                </div>
+                <div className="flex-1 overflow-y-auto p-4">
+                  <Outlet />
+                </div>
+              </div>
+            )
           )
         )}
       </div>
