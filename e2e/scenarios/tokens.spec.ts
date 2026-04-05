@@ -73,7 +73,25 @@ test.describe('Group G: Email Flow Tests (Mailpit)', () => {
 
     const submitBtn = page.locator('button[type="submit"], button:has-text("Save"), button:has-text("Send")').first()
     if (await submitBtn.count() > 0) await submitBtn.click()
+    console.log('[G10] Form submitted, waiting...')
+    const errorMsg = await page.locator(
+      '[class*="error"], [class*="Error"], text=error, text=Error'
+    ).first().textContent().catch(() => null)
+    if (errorMsg) console.log('[G10] Error on page:', errorMsg)
     await page.waitForTimeout(3000)
+    const mailpitUrl = process.env.MAILPIT_URL
+    console.log('[G10] Checking Mailpit at:', mailpitUrl)
+    const allEmails = await fetch(`${mailpitUrl}/api/v1/messages`)
+      .then(r => r.json()).catch(e => ({ error: e.message }))
+    console.log(
+      '[G10] All emails in Mailpit:',
+      JSON.stringify(
+        allEmails?.messages?.map((m: any) => ({
+          to: m.To,
+          subject: m.Subject
+        })) || allEmails
+      )
+    )
 
     // Subject: "[host] invited you to join Turnzy" (or [DEV] prefix)
     const email = await waitForEmail(cleanerEmail, 'join Turnzy')
@@ -143,6 +161,19 @@ test.describe('Group G: Email Flow Tests (Mailpit)', () => {
     const resendBtn = page.locator('text=Resend Notification').first()
     if (await resendBtn.count() === 0) { test.skip(true, 'No Resend button'); return }
     await resendBtn.click()
+    console.log('[G12] Resend clicked')
+    const allEmails2 = await fetch(
+      `${process.env.MAILPIT_URL}/api/v1/messages`
+    ).then(r => r.json()).catch(e => ({ error: e.message }))
+    console.log(
+      '[G12] Mailpit after resend:',
+      JSON.stringify(
+        allEmails2?.messages?.map((m: any) => ({
+          to: m.To,
+          subject: m.Subject
+        })) || allEmails2
+      )
+    )
     await page.waitForTimeout(3000)
 
     // Subject: "🏠 New Booking: [guest] arrives [date]" (or [DEV] prefix)
