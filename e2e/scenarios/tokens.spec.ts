@@ -75,7 +75,8 @@ test.describe('Group G: Email Flow Tests (Mailpit)', () => {
     if (await submitBtn.count() > 0) await submitBtn.click()
     await page.waitForTimeout(3000)
 
-    const email = await waitForEmail(cleanerEmail, 'invited')
+    // Subject: "[host] invited you to join Turnzy" (or [DEV] prefix)
+    const email = await waitForEmail(cleanerEmail, 'join Turnzy')
     await shot(page, 'G10-invite-email-sent', testInfo.project.name)
     expect(email).not.toBeNull()
     if (email) console.log('[G10] Email received:', email.Subject)
@@ -104,7 +105,7 @@ test.describe('Group G: Email Flow Tests (Mailpit)', () => {
     if (await submitBtn.count() > 0) await submitBtn.click()
     await page.waitForTimeout(3000)
 
-    const email = await waitForEmail(cleanerEmail, 'invited')
+    const email = await waitForEmail(cleanerEmail, 'join Turnzy')
     if (!email) { test.skip(true, 'Email not received in time'); return }
 
     const acceptLink = await extractLink(email, '/cleaner/accept')
@@ -144,7 +145,9 @@ test.describe('Group G: Email Flow Tests (Mailpit)', () => {
     await resendBtn.click()
     await page.waitForTimeout(3000)
 
-    const email = await waitForEmail(ACCOUNTS.cleaner.email, 'turnover', 15000)
+    // Subject: "🏠 New Booking: [guest] arrives [date]" (or [DEV] prefix)
+    const email = await waitForEmail(ACCOUNTS.cleaner.email, 'New Booking', 15000)
+      || await waitForEmail(ACCOUNTS.cleaner.email, 'Booking', 5000)
     await shot(page, 'G12-notification-email-sent', testInfo.project.name)
     expect(email).not.toBeNull()
     if (email) console.log('[G12] Notification email received:', email.Subject)
@@ -167,7 +170,7 @@ test.describe('Group G: Email Flow Tests (Mailpit)', () => {
     await resendBtn.click()
     await page.waitForTimeout(3000)
 
-    const email = await waitForEmail(ACCOUNTS.cleaner.email, 'turnover', 15000)
+    const email = await waitForEmail(ACCOUNTS.cleaner.email, 'Booking', 15000)
     if (!email) { test.skip(true, 'Email not received'); return }
 
     const acceptLink = await extractLink(email, 'action=accept')
@@ -203,7 +206,7 @@ test.describe('Group G: Email Flow Tests (Mailpit)', () => {
     await resendBtn.click()
     await page.waitForTimeout(3000)
 
-    const email = await waitForEmail(ACCOUNTS.cleaner.email, 'turnover', 15000)
+    const email = await waitForEmail(ACCOUNTS.cleaner.email, 'Booking', 15000)
     if (!email) { test.skip(true, 'Email not received'); return }
 
     const declineLink = await extractLink(email, 'action=decline')
