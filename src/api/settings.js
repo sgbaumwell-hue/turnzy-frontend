@@ -26,7 +26,7 @@ export const settingsApi = {
 
   // Cleaners
   updateCleaner: (data) =>
-    postLegacySettingsRoute('/settings/cleaner/update', data),
+    client.post('/settings/cleaner/update', data),
   deleteCleaner: (property_id, role) =>
     client.post('/settings/cleaner/delete', { property_id, role }),
   saveBackupCleaner: (data) =>
