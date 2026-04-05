@@ -1,4 +1,7 @@
+import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
+import { ChevronRight } from 'lucide-react';
 import { cleanerApi } from '../../api/cleaner';
 import { getActivityDescription, getActivityMeta } from '../../utils/activityDescriptions';
 
@@ -17,7 +20,33 @@ function timeAgo(dateStr) {
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
+function consolidatePaymentReminders(activities) {
+  const seen = {};
+  return activities.reduce((acc, a) => {
+    if (a.event_type === 'payment_reminder' && a.booking_id) {
+      const key = `pr-${a.booking_id}`;
+      if (!seen[key]) {
+        seen[key] = { count: 1, latest: a };
+        acc.push(a);
+      } else {
+        seen[key].count++;
+        const idx = acc.indexOf(seen[key].latest);
+        if (idx >= 0 && new Date(a.created_at) > new Date(seen[key].latest.created_at)) {
+          acc[idx] = a;
+          seen[key].latest = a;
+        }
+      }
+      const idx = acc.indexOf(seen[key].latest);
+      if (idx >= 0) acc[idx]._reminderCount = seen[key].count;
+      return acc;
+    }
+    acc.push(a);
+    return acc;
+  }, []);
+}
+
 export function CleanerActivity() {
+  const navigate = useNavigate();
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['cleaner-activity'],
     queryFn: () => cleanerApi.getActivity(),
@@ -28,7 +57,8 @@ export function CleanerActivity() {
     console.error('CleanerActivity fetch error:', error);
   }
 
-  const activities = Array.isArray(data?.data?.activities) ? data.data.activities : [];
+  const rawActivities = Array.isArray(data?.data?.activities) ? data.data.activities : [];
+  const activities = useMemo(() => consolidatePaymentReminders(rawActivities), [rawActivities]);
 
   return (
     <div className="flex w-full h-screen overflow-hidden">
@@ -60,12 +90,32 @@ export function CleanerActivity() {
 
           {!isLoading && !isError && activities.map((a, i) => {
             const meta = getActivityMeta(a.event_type);
-            const description = getActivityDescription(a);
+            let description = getActivityDescription(a);
+            if (a._reminderCount && a._reminderCount > 1) {
+              description += ` (reminder ${a._reminderCount} of 3)`;
+            }
+            const isTappable = !!a.booking_id;
+
             return (
-              <div key={a.id || i} className="flex gap-3 py-3 border-b border-gray-100">
+              <div
+                key={a.id || i}
+                className={`flex gap-3 py-3 border-b border-gray-100 ${isTappable ? 'cursor-pointer hover:bg-gray-50 -mx-2 px-2 rounded-lg transition-colors' : ''}`}
+                onClick={isTappable ? () => navigate(`/cleaner/calendar/job/${a.booking_id}`) : undefined}
+              >
                 <div className={`w-3 h-3 rounded-full flex-shrink-0 mt-1 ${meta.dotColor}`} />
                 <div className="flex-1 min-w-0">
-                  <div className="text-[14px] text-gray-700">{description}</div>
+                  <div className="text-[14px] text-gray-700">
+                    {a.property_name ? (
+                      <>
+                        {description.split(a.property_name).map((part, j, arr) => (
+                          <span key={j}>
+                            {part}
+                            {j < arr.length - 1 && <span className="font-medium">{a.property_name}</span>}
+                          </span>
+                        ))}
+                      </>
+                    ) : description}
+                  </div>
                   <div className="flex items-center gap-2 mt-1">
                     {a.property_name && (
                       <span className="text-[11px] font-medium text-orange-600 bg-orange-50 px-2 py-0.5 rounded">{a.property_name}</span>
@@ -75,6 +125,7 @@ export function CleanerActivity() {
                     </span>
                   </div>
                 </div>
+                {isTappable && <ChevronRight size={14} className="text-gray-300 flex-shrink-0 mt-1" />}
               </div>
             );
           })}

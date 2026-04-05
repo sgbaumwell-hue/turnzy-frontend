@@ -16,13 +16,43 @@ const localizer = dateFnsLocalizer({
   locales: { 'en-US': enUS },
 });
 
-function getEventColor(status) {
-  return {
-    pending: '#f97316',
-    accepted: '#22c55e',
-    declined: '#ef4444',
-    completed: '#9ca3af',
-  }[status] ?? '#f97316';
+const STATUS_COLORS = {
+  pending:   { bg: '#fef3c7', text: '#92400e' },
+  accepted:  { bg: '#dcfce7', text: '#15803d' },
+  completed: { bg: '#f3f4f6', text: '#6b7280' },
+  declined:  { bg: '#fee2e2', text: '#b91c1c' },
+};
+
+function getEventStyle(status) {
+  const c = STATUS_COLORS[status] || { bg: '#f3f4f6', text: '#6b7280' };
+  return { backgroundColor: c.bg, color: c.text };
+}
+
+function StatusLegend() {
+  const items = [
+    { label: 'Pending', color: 'bg-amber-400' },
+    { label: 'Confirmed', color: 'bg-green-500' },
+    { label: 'Completed', color: 'bg-gray-400' },
+    { label: 'Declined', color: 'bg-red-500' },
+  ];
+  return (
+    <div className="flex items-center gap-4 mb-3">
+      {items.map(i => (
+        <div key={i.label} className="flex items-center gap-1.5">
+          <div className={`w-2 h-2 rounded-full ${i.color}`} />
+          <span className="text-[10px] text-gray-400">{i.label}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function fmtShortDate(dateStr) {
+  if (!dateStr) return '';
+  const clean = dateStr.toString().slice(0, 10);
+  const [y, m, d] = clean.split('-').map(Number);
+  const date = new Date(y, m - 1, d);
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
 function CustomToolbar({ label, onNavigate, onView, view }) {
@@ -89,7 +119,9 @@ export function CleanerCalendar() {
       const [ciH, ciM] = ciTime.split(':').map(Number);
       const [y, m, d] = coDate.split('-').map(Number);
 
-      let title = job.property_name || 'Turnover';
+      const dateLabel = fmtShortDate(coDate);
+      const prop = job.property_name || 'Turnover';
+      let title = `${dateLabel} · ${prop}`;
       if (showTeam && hasTeam && job.team_assignment_name) {
         title += ` · ${job.team_assignment_name}`;
       }
@@ -130,6 +162,7 @@ export function CleanerCalendar() {
               </label>
             )}
           </div>
+          <StatusLegend />
           <div className="flex-1 min-h-0 h-[calc(100vh-220px)] md:h-auto">
             <Calendar
               localizer={localizer}
@@ -137,15 +170,22 @@ export function CleanerCalendar() {
               defaultView="month"
               views={isDesktop ? ['month', 'week'] : ['month']}
               style={{ height: '100%' }}
-              eventPropGetter={(event) => ({
-                style: {
-                  backgroundColor: getEventColor(event.resource.cleaner_status),
-                  borderRadius: '6px',
-                  border: 'none',
-                  fontSize: '12px',
-                  fontFamily: 'Manrope, sans-serif',
-                },
-              })}
+              eventPropGetter={(event) => {
+                const colors = getEventStyle(event.resource.cleaner_status);
+                return {
+                  style: {
+                    ...colors,
+                    borderRadius: '6px',
+                    border: 'none',
+                    fontSize: '11px',
+                    fontWeight: '600',
+                    fontFamily: 'Manrope, sans-serif',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  },
+                };
+              }}
               onSelectEvent={handleSelectEvent}
               components={{ toolbar: CustomToolbar }}
             />

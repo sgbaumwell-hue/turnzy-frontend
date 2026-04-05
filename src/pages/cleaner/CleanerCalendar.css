@@ -15,6 +15,24 @@
 .rbc-today {
   background-color: #fff7ed;
 }
+.rbc-today .rbc-date-cell,
+.rbc-today .rbc-button-link {
+  position: relative;
+  z-index: 1;
+}
+.rbc-today .rbc-button-link {
+  background: #f97316;
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1;
+}
 .rbc-off-range-bg {
   background-color: #fafafa;
 }
