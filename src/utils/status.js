@@ -1,5 +1,5 @@
 export const STATUS_CONFIG = {
-  pending: { label: 'Awaiting response', bg: 'bg-amber-50', text: 'text-amber-800', border: 'border-l-amber-400' },
+  pending: { label: 'Awaiting response', bg: 'bg-amber-100', text: 'text-amber-900 font-semibold', border: 'border-l-amber-400' },
   accepted: { label: 'Confirmed', bg: 'bg-green-100', text: 'text-green-700 font-semibold', border: 'border-l-green-500' },
   declined: { label: 'Declined', bg: 'bg-red-100', text: 'text-red-700 font-semibold', border: 'border-l-red-500' },
   self_managed: { label: 'Self-managed', bg: 'bg-gray-100', text: 'text-gray-600', border: 'border-l-gray-300' },

@@ -23,7 +23,7 @@ function SectionHeader({ label, count, color = 'warm', open, onToggle, helperTex
           <span className="text-sm font-semibold text-gray-600 uppercase tracking-wide">{label}</span>
           {count > 0 && <span className={`text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center ${badgeColors[color]}`}>{count}</span>}
         </div>
-        {helperText && open && <div className="text-[11px] text-gray-400 mt-0.5">{helperText}</div>}
+        {helperText && open && <div className="text-xs text-gray-500 mt-0.5">{helperText}</div>}
       </div>
       <ChevronDown size={14} className={clsx('text-gray-400 transition-transform duration-200', open && 'rotate-180')} />
     </button>
@@ -94,7 +94,7 @@ export function BookingList({ bookings, properties, isLoading }) {
   };
 
   return (
-    <div className="flex-1 overflow-y-auto scrollbar-hide bg-gray-50">
+    <div className="flex-1 overflow-y-auto scrollbar-hide bg-gray-50 pl-0.5">
       {renderSection('urgent', 'Urgent (< 3 days)', 'danger')}
       {renderSection('needsAction', 'Needs Action', 'amber')}
       {renderSection('confirmed', 'Confirmed', 'sage')}

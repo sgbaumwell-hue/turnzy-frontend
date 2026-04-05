@@ -313,7 +313,7 @@ export function BookingDetail({ bookingId, onClose }) {
       <div className="grid grid-cols-2 gap-6 p-4 bg-gray-50 rounded-lg">
         {/* Checkout */}
         <div>
-          <div className="text-xs text-gray-400 uppercase tracking-widest mb-1">Checkout</div>
+          <div className="text-xs font-medium text-gray-400 mb-1">Checkout</div>
           {editingCheckout ? (
             <TimeEditForm
               type="late_checkout" currentTime={coTimeRaw} bookingId={bookingId}
@@ -340,7 +340,7 @@ export function BookingDetail({ bookingId, onClose }) {
         </div>
         {/* Next Check-in */}
         <div>
-          <div className="text-xs text-gray-400 uppercase tracking-widest mb-1">Next Check-in</div>
+          <div className="text-xs font-medium text-gray-400 mb-1">Next check-in</div>
           {editingCheckin ? (
             <TimeEditForm
               type="early_checkin" currentTime={ciTimeRaw} bookingId={bookingId}

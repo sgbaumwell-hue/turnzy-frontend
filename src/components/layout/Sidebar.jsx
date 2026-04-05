@@ -139,10 +139,7 @@ export function Sidebar({ properties, activeProperty, onPropertyChange }) {
           <div className="w-8 h-8 bg-coral-400 rounded-lg flex items-center justify-center flex-shrink-0">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1L13 4.5V9.5L7 13L1 9.5V4.5L7 1Z" fill="white"/></svg>
           </div>
-          <div>
-            <span className="font-black text-[22px] text-warm-800 tracking-tight leading-none block">Turnzy</span>
-            <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-warm-300 leading-none">Premium Management</span>
-          </div>
+          <span className="font-black text-[22px] text-warm-800 tracking-tight leading-none">Turnzy</span>
         </div>
       </div>
 
