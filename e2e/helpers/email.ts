@@ -17,7 +17,7 @@ export async function waitForEmail(to: string, subjectContains: string, timeoutM
 
       if (match) {
         const id = match.ID || match.id;
-        const full = await fetch(`${MAILPIT_URL}/api/v1/messages/${id}`).then((r) => r.json());
+        const full = await fetch(`${MAILPIT_URL}/api/v1/message/${id}`).then((r) => r.json());
         return full;
       }
     } catch (e: any) {
