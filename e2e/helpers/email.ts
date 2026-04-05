@@ -1,4 +1,4 @@
-const MAILPIT_URL = (process.env.MAILPIT_URL || 'http://localhost:8025').trim().replace(/\/+$/, '');
+const MAILPIT_URL = (process.env.MAILPIT_URL || '').trim().replace(/\/+$/, '') || 'http://localhost:8025';
 
 export async function waitForEmail(to: string, subjectContains: string, timeoutMs = 15000) {
   const start = Date.now();
