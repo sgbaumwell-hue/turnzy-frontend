@@ -14,7 +14,12 @@
     "test:e2e:desktop": "playwright test --project=desktop",
     "test:e2e:mobile": "playwright test --project=mobile-iphone",
     "test:e2e:report": "playwright show-report",
-    "ux-audit": "npx tsx e2e/ux-audit.ts"
+    "ux-audit": "npx tsx e2e/ux-audit.ts",
+    "test:qa": "playwright test e2e/scenarios",
+    "test:qa:smoke": "playwright test e2e/scenarios/auth.spec.ts e2e/scenarios/host-dashboard.spec.ts --project=desktop",
+    "test:qa:full": "playwright test e2e/scenarios --project=desktop",
+    "test:qa:mobile": "playwright test e2e/scenarios --project=mobile-iphone",
+    "test:qa:all-devices": "playwright test e2e/scenarios"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.0.0",
