@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { CheckCircle } from 'lucide-react';
-import { Button } from '../../components/ui/Button';
+import { Button } from '@/components/shadcn/button';
+import { Input } from '@/components/shadcn/input';
+import { Label } from '@/components/shadcn/label';
+import { Card, CardContent } from '@/components/shadcn/card';
 import client from '../../api/client';
 
 export function ForgotPassword() {
@@ -32,7 +35,7 @@ export function ForgotPassword() {
   return (
     <div className="min-h-screen bg-warm-50 flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
-        <div className="bg-white rounded-2xl border border-warm-200 p-8 shadow-sm">
+        <Card className="rounded-2xl border-warm-200 shadow-sm"><CardContent className="p-8">
           <div className="flex items-center justify-center gap-2.5 mb-8">
             <div className="w-9 h-9 bg-coral-400 rounded-xl flex items-center justify-center"><svg width="16" height="16" viewBox="0 0 14 14" fill="none"><path d="M7 1L13 4.5V9.5L7 13L1 9.5V4.5L7 1Z" fill="white"/></svg></div>
             <span className="font-bold text-2xl text-warm-800 tracking-tight">Turnzy</span>
@@ -60,8 +63,8 @@ export function ForgotPassword() {
               <p className="text-xs text-warm-400 text-center mb-6">Enter your email and we'll send you a reset link.</p>
               <form onSubmit={handleSubmit} className="space-y-3">
                 <div>
-                  <label htmlFor="email" className="block text-xs font-bold text-warm-500 uppercase tracking-wider mb-1.5">Email</label>
-                  <input id="email" type="email" required value={email} onChange={e => setEmail(e.target.value)} className="w-full border border-warm-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-coral-400 focus:ring-1 focus:ring-coral-400/30 transition-colors" placeholder="you@example.com" />
+                  <Label htmlFor="email" className="mb-1.5">Email</Label>
+                  <Input id="email" type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" />
                 </div>
                 {error && <p className="text-xs text-danger-600 bg-danger-50 px-3 py-2 rounded-lg">{error}</p>}
                 <Button type="submit" fullWidth loading={loading} className="mt-1">{loading ? 'Sending...' : 'Send reset link'}</Button>
@@ -72,7 +75,7 @@ export function ForgotPassword() {
           <div className="mt-4 text-center">
             <a href="/login" className="text-xs text-warm-400 hover:text-warm-600">← Back to sign in</a>
           </div>
-        </div>
+        </CardContent></Card>
       </div>
     </div>
   );

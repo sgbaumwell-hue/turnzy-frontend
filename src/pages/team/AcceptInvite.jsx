@@ -1,5 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
+import { Button } from '@/components/shadcn/button';
+import { Input } from '@/components/shadcn/input';
+import { Label } from '@/components/shadcn/label';
+import { Card, CardContent } from '@/components/shadcn/card';
 import { teamApi } from '../../api/cleaner';
 import { useAuthStore } from '../../store/authStore';
 
@@ -119,31 +124,28 @@ export function AcceptInvite() {
 
             <form onSubmit={handleSubmit} className="space-y-3">
               <div>
-                <label className="text-[12px] text-gray-500 block mb-1">Name</label>
-                <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" required
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-[14px] focus:outline-none focus:ring-2 focus:ring-coral-400" />
+                <Label className="mb-1">Name</Label>
+                <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" required />
               </div>
               {prefill.email && (
                 <div>
-                  <label className="text-[12px] text-gray-500 block mb-1">Email</label>
-                  <input value={prefill.email} disabled className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-[14px] bg-gray-50 text-gray-500" />
+                  <Label className="mb-1">Email</Label>
+                  <Input value={prefill.email} disabled />
                 </div>
               )}
               <div>
-                <label className="text-[12px] text-gray-500 block mb-1">Password</label>
-                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min 8 characters" required minLength={8}
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-[14px] focus:outline-none focus:ring-2 focus:ring-coral-400" />
+                <Label className="mb-1">Password</Label>
+                <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min 8 characters" required minLength={8} />
               </div>
               <div>
-                <label className="text-[12px] text-gray-500 block mb-1">Confirm password</label>
-                <input type="password" value={confirmPw} onChange={(e) => setConfirmPw(e.target.value)} placeholder="Confirm password" required
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-[14px] focus:outline-none focus:ring-2 focus:ring-coral-400" />
+                <Label className="mb-1">Confirm password</Label>
+                <Input type="password" value={confirmPw} onChange={(e) => setConfirmPw(e.target.value)} placeholder="Confirm password" required />
               </div>
               {password && confirmPw && password !== confirmPw && <div className="text-[12px] text-red-600">Passwords do not match</div>}
               {error && <div className="text-[12px] text-red-600">{error}</div>}
-              <button type="submit" disabled={saving} className="w-full py-2.5 bg-coral-400 text-white font-semibold text-[14px] rounded-lg hover:bg-coral-500 disabled:opacity-50 mt-2">
+              <Button type="submit" loading={saving} fullWidth className="mt-2">
                 {saving ? 'Creating account...' : 'Create my account'}
-              </button>
+              </Button>
             </form>
           </>
         )}

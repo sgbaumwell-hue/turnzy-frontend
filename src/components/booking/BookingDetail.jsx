@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { X, Mail, MapPin, UserPlus, Clock, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Badge } from '@/components/shadcn/badge';
 import { bookingsApi } from '../../api/bookings';
 import { fmtDateLong, fmtTime, getMonthDay } from '../../utils/dates';
 import { getStatusConfig, isUrgent } from '../../utils/status';

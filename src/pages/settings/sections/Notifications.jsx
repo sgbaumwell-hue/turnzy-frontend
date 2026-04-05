@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { Switch } from '@/components/shadcn/switch';
+import { Button } from '@/components/shadcn/button';
 import { settingsApi } from '../../../api/settings';
 import { useToast } from '../components/Toast';
 
@@ -17,9 +19,7 @@ function Toggle({ checked, onChange, label }) {
   return (
     <label className="flex items-center justify-between py-3.5 px-5 cursor-pointer hover:bg-warm-50 transition-colors">
       <span className="text-[14px] text-warm-800">{label}</span>
-      <div className={`relative w-10 h-6 rounded-full transition-colors ${checked ? 'bg-coral-400' : 'bg-warm-200'}`} onClick={(e) => { e.preventDefault(); onChange(!checked); }}>
-        <div className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${checked ? 'translate-x-4' : ''}`} />
-      </div>
+      <Switch checked={checked} onCheckedChange={onChange} />
     </label>
   );
 }
@@ -66,9 +66,9 @@ export function Notifications() {
         <Toggle label="Notify when issue reported" checked={prefs.issue_reported} onChange={(v) => set('issue_reported', v)} />
 
         <div className="px-5 py-4 border-t border-warm-100">
-          <button onClick={save} disabled={saving} className="px-6 py-2.5 bg-coral-400 text-white text-[14px] font-semibold rounded-lg hover:bg-coral-500 disabled:opacity-50">
+          <Button onClick={save} loading={saving}>
             {saving ? 'Saving...' : 'Save preferences'}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

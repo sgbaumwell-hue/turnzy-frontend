@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { Switch } from '@/components/shadcn/switch';
+import { Button } from '@/components/shadcn/button';
 import { cleanerApi } from '../../../api/cleaner';
 import { useAuthStore } from '../../../store/authStore';
 
@@ -22,9 +24,7 @@ function Toggle({ checked, onChange, label }) {
   return (
     <label className="flex items-center justify-between py-3.5 px-5 cursor-pointer hover:bg-gray-50 transition-colors">
       <span className="text-[14px] text-gray-800">{label}</span>
-      <div className={`relative w-10 h-6 rounded-full transition-colors ${checked ? 'bg-coral-400' : 'bg-gray-200'}`} onClick={(e) => { e.preventDefault(); onChange(!checked); }}>
-        <div className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${checked ? 'translate-x-4' : ''}`} />
-      </div>
+      <Switch checked={checked} onCheckedChange={onChange} />
     </label>
   );
 }
@@ -158,9 +158,9 @@ export function CleanerSettingsNotifications() {
 
         {/* Save */}
         <div className="px-5 py-4 border-t border-gray-100">
-          <button onClick={save} disabled={saving} className="w-full py-2.5 bg-coral-400 text-white text-[14px] font-semibold rounded-lg hover:bg-coral-500 disabled:opacity-50">
+          <Button onClick={save} loading={saving} fullWidth>
             {saving ? 'Saving...' : saved ? 'Saved!' : 'Save preferences'}
-          </button>
+          </Button>
         </div>
       </div>
     </div>
