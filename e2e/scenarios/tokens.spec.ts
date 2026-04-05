@@ -48,6 +48,8 @@ import { seedScenario, shot, loginAs } from '../helpers/testState'
 import { waitForEmail, extractLink, clearEmails } from '../helpers/email'
 
 const MAILPIT = !!process.env.MAILPIT_URL
+const isCleanerInviteUpdate = (url: string) =>
+  url.includes('/settings/cleaner/update') || url.includes('/api/settings/cleaner/update')
 
 test.describe('Group G: Email Flow Tests (Mailpit)', () => {
 
@@ -72,8 +74,38 @@ test.describe('Group G: Email Flow Tests (Mailpit)', () => {
     if (await emailInput.count() > 0) await emailInput.fill(cleanerEmail)
 
     const submitBtn = page.locator('button[type="submit"], button:has-text("Save"), button:has-text("Send")').first()
+    const inviteRequestPromise = page.waitForRequest(
+      req => isCleanerInviteUpdate(req.url()),
+      { timeout: 5000 }
+    ).catch(() => null)
+    const inviteResponsePromise = page.waitForResponse(
+      res => isCleanerInviteUpdate(res.url()),
+      { timeout: 5000 }
+    ).catch(() => null)
     if (await submitBtn.count() > 0) await submitBtn.click()
     console.log('[G10] Form submitted, waiting...')
+    const inviteRequest = await inviteRequestPromise
+    if (inviteRequest) {
+      console.log('[G10] Invite request:', JSON.stringify({
+        url: inviteRequest.url(),
+        method: inviteRequest.method(),
+        body: inviteRequest.postData() || null
+      }))
+    } else {
+      console.log('[G10] Invite request: none observed')
+    }
+    const inviteResponse = await inviteResponsePromise
+    if (inviteResponse) {
+      const responseBody = await inviteResponse.text().catch((e: any) => `[response text failed: ${e.message}]`)
+      console.log('[G10] Invite response:', JSON.stringify({
+        url: inviteResponse.url(),
+        status: inviteResponse.status(),
+        ok: inviteResponse.ok(),
+        body: responseBody
+      }))
+    } else {
+      console.log('[G10] Invite response: none observed')
+    }
     const errorMsg = await page.locator(
       '[class*="error"], [class*="Error"], text=error, text=Error'
     ).first().textContent().catch(() => null)
@@ -94,7 +126,8 @@ test.describe('Group G: Email Flow Tests (Mailpit)', () => {
     )
 
     // Subject: "[host] invited you to join Turnzy" (or [DEV] prefix)
-    const email = await waitForEmail(cleanerEmail, 'join Turnzy')
+    // DEV mode redirects all emails to admin — check there
+    const email = await waitForEmail('sgbaumwell@gmail.com', 'join Turnzy')
     await shot(page, 'G10-invite-email-sent', testInfo.project.name)
     expect(email).not.toBeNull()
     if (email) console.log('[G10] Email received:', email.Subject)
@@ -123,7 +156,7 @@ test.describe('Group G: Email Flow Tests (Mailpit)', () => {
     if (await submitBtn.count() > 0) await submitBtn.click()
     await page.waitForTimeout(3000)
 
-    const email = await waitForEmail(cleanerEmail, 'join Turnzy')
+    const email = await waitForEmail('sgbaumwell@gmail.com', 'join Turnzy')
     if (!email) { test.skip(true, 'Email not received in time'); return }
 
     const acceptLink = await extractLink(email, '/cleaner/accept')
@@ -160,8 +193,36 @@ test.describe('Group G: Email Flow Tests (Mailpit)', () => {
 
     const resendBtn = page.locator('text=Resend Notification').first()
     if (await resendBtn.count() === 0) { test.skip(true, 'No Resend button'); return }
+    const resendRequestPromise = page.waitForRequest(req =>
+      req.url().includes('/api/bookings/') && req.url().includes('/resend')
+    ).catch(() => null)
+    const resendResponsePromise = page.waitForResponse(res =>
+      res.url().includes('/api/bookings/') && res.url().includes('/resend')
+    ).catch(() => null)
     await resendBtn.click()
     console.log('[G12] Resend clicked')
+    const resendRequest = await resendRequestPromise
+    if (resendRequest) {
+      console.log('[G12] Resend request:', JSON.stringify({
+        url: resendRequest.url(),
+        method: resendRequest.method(),
+        body: resendRequest.postData() || null
+      }))
+    } else {
+      console.log('[G12] Resend request: none observed')
+    }
+    const resendResponse = await resendResponsePromise
+    if (resendResponse) {
+      const responseBody = await resendResponse.text().catch((e: any) => `[response text failed: ${e.message}]`)
+      console.log('[G12] Resend response:', JSON.stringify({
+        url: resendResponse.url(),
+        status: resendResponse.status(),
+        ok: resendResponse.ok(),
+        body: responseBody
+      }))
+    } else {
+      console.log('[G12] Resend response: none observed')
+    }
     const allEmails2 = await fetch(
       `${process.env.MAILPIT_URL}/api/v1/messages`
     ).then(r => r.json()).catch(e => ({ error: e.message }))
@@ -177,8 +238,8 @@ test.describe('Group G: Email Flow Tests (Mailpit)', () => {
     await page.waitForTimeout(3000)
 
     // Subject: "🏠 New Booking: [guest] arrives [date]" (or [DEV] prefix)
-    const email = await waitForEmail(ACCOUNTS.cleaner.email, 'New Booking', 15000)
-      || await waitForEmail(ACCOUNTS.cleaner.email, 'Booking', 5000)
+    const email = await waitForEmail('sgbaumwell@gmail.com', 'New Booking', 15000)
+      || await waitForEmail('sgbaumwell@gmail.com', 'Booking', 5000)
     await shot(page, 'G12-notification-email-sent', testInfo.project.name)
     expect(email).not.toBeNull()
     if (email) console.log('[G12] Notification email received:', email.Subject)
@@ -201,7 +262,7 @@ test.describe('Group G: Email Flow Tests (Mailpit)', () => {
     await resendBtn.click()
     await page.waitForTimeout(3000)
 
-    const email = await waitForEmail(ACCOUNTS.cleaner.email, 'Booking', 15000)
+    const email = await waitForEmail('sgbaumwell@gmail.com', 'Booking', 15000)
     if (!email) { test.skip(true, 'Email not received'); return }
 
     const acceptLink = await extractLink(email, 'action=accept')
@@ -237,7 +298,7 @@ test.describe('Group G: Email Flow Tests (Mailpit)', () => {
     await resendBtn.click()
     await page.waitForTimeout(3000)
 
-    const email = await waitForEmail(ACCOUNTS.cleaner.email, 'Booking', 15000)
+    const email = await waitForEmail('sgbaumwell@gmail.com', 'Booking', 15000)
     if (!email) { test.skip(true, 'Email not received'); return }
 
     const declineLink = await extractLink(email, 'action=decline')
@@ -269,7 +330,7 @@ test.describe('Group G: Email Flow Tests (Mailpit)', () => {
     await markPaidBtn.click()
     await page.waitForTimeout(3000)
 
-    const email = await waitForEmail(ACCOUNTS.cleaner.email, 'payment', 15000)
+    const email = await waitForEmail('sgbaumwell@gmail.com', 'payment', 15000)
     await shot(page, 'G15-payment-email-sent', testInfo.project.name)
     expect(email).not.toBeNull()
     if (email) console.log('[G15] Payment email received:', email.Subject)
