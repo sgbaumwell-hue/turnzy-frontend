@@ -22,7 +22,9 @@
     "test:qa:mobile": "playwright test e2e/scenarios --project=mobile-iphone",
     "test:qa:all-devices": "playwright test e2e/scenarios",
     "test:qa:gallery": "start e2e/screenshots/index.html",
-    "test:qa:update-snapshots": "playwright test --update-snapshots"
+    "test:qa:update-snapshots": "playwright test --update-snapshots",
+    "test:qa:flows": "playwright test e2e/scenarios/E2E-flows.spec.ts --project=desktop",
+    "test:qa:flows:headed": "playwright test e2e/scenarios/E2E-flows.spec.ts --project=desktop --headed"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.0.0",
