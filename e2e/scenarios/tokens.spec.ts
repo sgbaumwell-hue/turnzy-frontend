@@ -56,21 +56,21 @@ test.describe('Group G: Email Flow Tests (Mailpit)', () => {
   test('G10 — host invite email arrives in Mailpit', async ({ page }, testInfo) => {
     if (!MAILPIT) { test.skip(true, 'MAILPIT_URL not set'); return }
     await clearEmails()
-    await seedScenario('full_host')
+    const seed = await seedScenario('full_host')
+    const propertyId = seed?.property_id
     await loginAs(page, ACCOUNTS.host)
 
     // Use direct API call to invite cleaner (bypasses UI form property_id issues)
     const cleanerEmail = `sgbaumwell+qa-${Date.now()}@gmail.com`
-    const result = await page.evaluate(async (email) => {
+    const result = await page.evaluate(async ([email, propId, backend]) => {
       const token = localStorage.getItem('turnzy_token')
-      const backendUrl = import.meta.env?.VITE_BACKEND_URL || 'https://cleaningmanagement-dev.up.railway.app'
-      const res = await fetch(`${backendUrl}/api/settings/cleaner/update`, {
+      const res = await fetch(`${backend}/api/settings/cleaner/update`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ name: 'QA Test Cleaner', email, notification_method: 'email', role: 'primary' })
+        body: JSON.stringify({ property_id: propId, name: 'QA Test Cleaner', email, notification_method: 'email', role: 'primary' })
       })
       return { status: res.status, body: await res.json().catch(() => null) }
-    }, cleanerEmail)
+    }, [cleanerEmail, propertyId, BACKEND])
     console.log('[G10] API invite result:', JSON.stringify(result))
 
     await page.waitForTimeout(3000)
@@ -85,20 +85,20 @@ test.describe('Group G: Email Flow Tests (Mailpit)', () => {
   test('G11 — cleaner accept link from invite email works', async ({ page, context }, testInfo) => {
     if (!MAILPIT) { test.skip(true, 'MAILPIT_URL not set'); return }
     await clearEmails()
-    await seedScenario('full_host')
+    const seed = await seedScenario('full_host')
+    const propertyId = seed?.property_id
     await loginAs(page, ACCOUNTS.host)
 
     // Use direct API call to invite cleaner
     const cleanerEmail = `sgbaumwell+qa-${Date.now()}@gmail.com`
-    await page.evaluate(async (email) => {
+    await page.evaluate(async ([email, propId, backend]) => {
       const token = localStorage.getItem('turnzy_token')
-      const backendUrl = import.meta.env?.VITE_BACKEND_URL || 'https://cleaningmanagement-dev.up.railway.app'
-      await fetch(`${backendUrl}/api/settings/cleaner/update`, {
+      await fetch(`${backend}/api/settings/cleaner/update`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ name: 'QA Cleaner', email, notification_method: 'email', role: 'primary' })
+        body: JSON.stringify({ property_id: propId, name: 'QA Cleaner', email, notification_method: 'email', role: 'primary' })
       })
-    }, cleanerEmail)
+    }, [cleanerEmail, propertyId, BACKEND])
     await page.waitForTimeout(3000)
 
     const email = await waitForEmail('sgbaumwell@gmail.com', 'join Turnzy')
