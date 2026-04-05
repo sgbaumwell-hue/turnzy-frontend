@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Plus, X, Send, Users } from 'lucide-react';
+import { Button } from '@/components/shadcn/button';
+import { Input } from '@/components/shadcn/input';
+import { Switch } from '@/components/shadcn/switch';
+import { Badge } from '@/components/shadcn/badge';
 import { cleanerApi } from '../../../api/cleaner';
 import { useAuthStore } from '../../../store/authStore';
 
@@ -100,10 +104,7 @@ export function CleanerSettingsTeam() {
               </div>
             </div>
           </div>
-          <button onClick={handleToggle} disabled={toggling}
-            className={`relative w-10 h-6 rounded-full transition-colors ${hasTeam ? 'bg-coral-400' : 'bg-gray-200'}`}>
-            <div className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${hasTeam ? 'translate-x-4' : ''}`} />
-          </button>
+          <Switch checked={hasTeam} onCheckedChange={handleToggle} disabled={toggling} />
         </div>
 
         {/* Feature preview when team is off */}
@@ -148,15 +149,15 @@ export function CleanerSettingsTeam() {
             {adding ? (
               <div className="p-5 space-y-2">
                 <div className="grid grid-cols-2 gap-2">
-                  <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" className="px-3 py-2 border border-gray-200 rounded-lg text-[13px] focus:outline-none focus:ring-2 focus:ring-coral-400" autoFocus />
-                  <input value={email} onChange={(e) => { setEmail(e.target.value); setAddError(null); }} placeholder="Email" type="email" className="px-3 py-2 border border-gray-200 rounded-lg text-[13px] focus:outline-none focus:ring-2 focus:ring-coral-400" />
+                  <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" autoFocus />
+                  <Input value={email} onChange={(e) => { setEmail(e.target.value); setAddError(null); }} placeholder="Email" type="email" />
                 </div>
                 {addError && <div className="text-[12px] text-red-600">{addError}</div>}
                 <div className="flex gap-2">
-                  <button onClick={handleAdd} disabled={saving || !email.trim()} className="flex items-center gap-1 px-4 py-1.5 bg-coral-400 text-white text-[12px] font-medium rounded-lg hover:bg-coral-500 disabled:opacity-50">
+                  <Button size="sm" onClick={handleAdd} loading={saving} disabled={!email.trim()}>
                     <Send size={12} /> {saving ? 'Sending...' : 'Send invite'}
-                  </button>
-                  <button onClick={() => { setAdding(false); setAddError(null); }} className="px-4 py-1.5 border border-gray-200 text-[12px] font-medium rounded-lg text-gray-600 hover:bg-gray-50">Cancel</button>
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => { setAdding(false); setAddError(null); }}>Cancel</Button>
                 </div>
               </div>
             ) : (

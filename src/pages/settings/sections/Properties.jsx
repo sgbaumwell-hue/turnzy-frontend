@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Pencil, Check, X, Link, Unlink, Plus, Settings } from 'lucide-react';
+import { Button } from '@/components/shadcn/button';
+import { Input } from '@/components/shadcn/input';
+import { Badge } from '@/components/shadcn/badge';
 import { propertiesApi } from '../../../api/properties';
 import { settingsApi } from '../../../api/settings';
 import { useToast } from '../components/Toast';
@@ -98,7 +101,7 @@ function PropertyCard({ property, onRefresh }) {
       <div className="flex items-start justify-between mb-3">
         {editingName ? (
           <div className="flex items-center gap-2 flex-1 mr-2">
-            <input value={name} onChange={(e) => setName(e.target.value)} className="flex-1 px-2 py-1 border border-warm-200 rounded text-[14px] font-semibold focus:outline-none focus:ring-2 focus:ring-coral-400" autoFocus />
+            <Input value={name} onChange={(e) => setName(e.target.value)} className="flex-1 h-8 text-[14px] font-semibold" autoFocus />
             <button onClick={saveName} disabled={saving === 'name'} className="p-1 text-green-600"><Check size={16} /></button>
             <button onClick={() => { setEditingName(false); setName(property.name); }} className="p-1 text-warm-400"><X size={16} /></button>
           </div>
@@ -142,26 +145,26 @@ function PropertyCard({ property, onRefresh }) {
             </div>
           </div>
           <div className="flex items-end gap-3">
-            <div><label className="text-[11px] text-warm-500 block mb-1">Checkout</label><input type="time" value={coTime} onChange={(e) => setCoTime(e.target.value)} className="px-2 py-1.5 border border-warm-200 rounded text-[13px]" /></div>
-            <div><label className="text-[11px] text-warm-500 block mb-1">Check-in</label><input type="time" value={ciTime} onChange={(e) => setCiTime(e.target.value)} className="px-2 py-1.5 border border-warm-200 rounded text-[13px]" /></div>
-            <button onClick={saveTimes} disabled={saving === 'times'} className="px-3 py-1.5 bg-coral-400 text-white text-[12px] font-medium rounded-lg hover:bg-coral-500 disabled:opacity-50">{saving === 'times' ? 'Saving...' : 'Save times'}</button>
+            <div><label className="text-[11px] text-warm-500 block mb-1">Checkout</label><Input type="time" value={coTime} onChange={(e) => setCoTime(e.target.value)} className="h-8 text-[13px] w-28" /></div>
+            <div><label className="text-[11px] text-warm-500 block mb-1">Check-in</label><Input type="time" value={ciTime} onChange={(e) => setCiTime(e.target.value)} className="h-8 text-[13px] w-28" /></div>
+            <Button size="sm" onClick={saveTimes} disabled={saving === 'times'}>{saving === 'times' ? 'Saving...' : 'Save times'}</Button>
           </div>
           <div>
             <div className="text-[11px] text-warm-500 mb-1">Calendar (iCal)</div>
             {property.ical_url && !editingIcal && <div className="text-[12px] text-warm-600 mb-2 truncate">{property.ical_url}</div>}
             {editingIcal ? (
               <div className="space-y-2">
-                <input value={icalUrl} onChange={(e) => setIcalUrl(e.target.value)} placeholder="https://..." className="w-full px-3 py-2 border border-warm-200 rounded-lg text-[13px] focus:outline-none focus:ring-2 focus:ring-coral-400" autoFocus />
+                <Input value={icalUrl} onChange={(e) => setIcalUrl(e.target.value)} placeholder="https://..." className="text-[13px]" autoFocus />
                 <div className="flex gap-2">
-                  <button onClick={saveIcal} disabled={saving === 'ical'} className="px-3 py-1.5 bg-coral-400 text-white text-[12px] font-medium rounded-lg disabled:opacity-50">Save</button>
-                  <button onClick={() => setEditingIcal(false)} className="px-3 py-1.5 border border-warm-200 text-[12px] rounded-lg text-warm-600">Cancel</button>
+                  <Button size="sm" onClick={saveIcal} disabled={saving === 'ical'}>Save</Button>
+                  <Button size="sm" variant="outline" onClick={() => setEditingIcal(false)}>Cancel</Button>
                 </div>
               </div>
             ) : (
               <div className="flex gap-2 flex-wrap">
-                <button onClick={() => setEditingIcal(true)} className="flex items-center gap-1 px-3 py-1.5 border border-warm-200 text-[12px] font-medium rounded-lg text-warm-700 hover:bg-warm-50"><Link size={12} /> {property.ical_url ? 'Edit URL' : 'Connect'}</button>
-                {property.ical_url && <button onClick={disconnectIcal} className="flex items-center gap-1 px-3 py-1.5 border border-warm-200 text-[12px] font-medium rounded-lg text-red-600 hover:bg-red-50"><Unlink size={12} /> Disconnect</button>}
-                <button onClick={switchToTest} disabled={saving === 'test'} className="px-3 py-1.5 border border-blue-300 text-[12px] font-medium rounded-lg text-blue-600 hover:bg-blue-50 disabled:opacity-50">Test calendar</button>
+                <Button size="sm" variant="outline" onClick={() => setEditingIcal(true)}><Link size={12} /> {property.ical_url ? 'Edit URL' : 'Connect'}</Button>
+                {property.ical_url && <Button size="sm" variant="outline" onClick={disconnectIcal} className="text-red-600 hover:bg-red-50 border-red-200"><Unlink size={12} /> Disconnect</Button>}
+                <Button size="sm" variant="outline" onClick={switchToTest} disabled={saving === 'test'} className="text-blue-600 border-blue-300 hover:bg-blue-50">Test calendar</Button>
               </div>
             )}
           </div>

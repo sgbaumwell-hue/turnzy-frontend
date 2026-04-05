@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Pencil, Trash2, ArrowUpDown, ArrowUp, Plus } from 'lucide-react';
+import { Button } from '@/components/shadcn/button';
+import { Input } from '@/components/shadcn/input';
 import { propertiesApi } from '../../../api/properties';
 import { settingsApi } from '../../../api/settings';
 import { useToast } from '../components/Toast';
@@ -121,9 +123,9 @@ function CleanerCard({ property, role, onRefresh }) {
         </>
       ) : (
         <div className="space-y-2 mt-2">
-          <input value={formName} onChange={(e) => setFormName(e.target.value)} placeholder="Name" className="w-full px-3 py-2 border border-warm-200 rounded-lg text-[13px] focus:outline-none focus:ring-2 focus:ring-coral-400" />
-          <input value={formEmail} onChange={(e) => setFormEmail(e.target.value)} placeholder="Email" type="email" className="w-full px-3 py-2 border border-warm-200 rounded-lg text-[13px] focus:outline-none focus:ring-2 focus:ring-coral-400" />
-          <input value={formPhone} onChange={(e) => setFormPhone(e.target.value)} placeholder="Phone (optional)" className="w-full px-3 py-2 border border-warm-200 rounded-lg text-[13px] focus:outline-none focus:ring-2 focus:ring-coral-400" />
+          <Input value={formName} onChange={(e) => setFormName(e.target.value)} placeholder="Name" className="text-[13px]" />
+          <Input value={formEmail} onChange={(e) => setFormEmail(e.target.value)} placeholder="Email" type="email" className="text-[13px]" />
+          <Input value={formPhone} onChange={(e) => setFormPhone(e.target.value)} placeholder="Phone (optional)" className="text-[13px]" />
           <div className="flex items-center gap-3">
             <span className="text-[12px] text-warm-500">Notify via:</span>
             {['email', 'sms', 'both'].map(m => (
@@ -134,8 +136,8 @@ function CleanerCard({ property, role, onRefresh }) {
             ))}
           </div>
           <div className="flex gap-2">
-            <button onClick={save} disabled={loading === 'save'} className="px-4 py-1.5 bg-coral-400 text-white text-[12px] font-medium rounded-lg hover:bg-coral-500 disabled:opacity-50">{loading === 'save' ? 'Saving...' : 'Save'}</button>
-            <button onClick={() => setEditing(false)} className="px-4 py-1.5 border border-warm-200 text-[12px] font-medium rounded-lg text-warm-600 hover:bg-warm-50">Cancel</button>
+            <Button size="sm" onClick={save} disabled={loading === 'save'}>{loading === 'save' ? 'Saving...' : 'Save'}</Button>
+            <Button size="sm" variant="outline" onClick={() => setEditing(false)}>Cancel</Button>
           </div>
         </div>
       )}
@@ -182,8 +184,8 @@ function UnassignedCleanerCard() {
         This cleaner isn't linked to a property yet. You can link them after adding a property.
       </div>
       <div className="space-y-2">
-        <input value={formName} onChange={(e) => setFormName(e.target.value)} placeholder="Name" className="w-full px-3 py-2 border border-warm-200 rounded-lg text-[13px] focus:outline-none focus:ring-2 focus:ring-coral-400" autoFocus />
-        <input value={formEmail} onChange={(e) => setFormEmail(e.target.value)} placeholder="Email" type="email" className="w-full px-3 py-2 border border-warm-200 rounded-lg text-[13px] focus:outline-none focus:ring-2 focus:ring-coral-400" />
+        <input value={formName} onChange={(e) => setFormName(e.target.value)} placeholder="Name" className="text-[13px]" autoFocus />
+        <input value={formEmail} onChange={(e) => setFormEmail(e.target.value)} placeholder="Email" type="email" className="text-[13px]" />
         <div className="flex items-center gap-3">
           <span className="text-[12px] text-warm-500">Notify via:</span>
           {['email', 'sms', 'both'].map(m => (
@@ -194,8 +196,8 @@ function UnassignedCleanerCard() {
           ))}
         </div>
         <div className="flex gap-2">
-          <button onClick={save} disabled={loading} className="px-4 py-1.5 bg-coral-400 text-white text-[12px] font-medium rounded-lg hover:bg-coral-500 disabled:opacity-50">{loading ? 'Saving...' : 'Save'}</button>
-          <button onClick={() => setEditing(false)} className="px-4 py-1.5 border border-warm-200 text-[12px] font-medium rounded-lg text-warm-600 hover:bg-warm-50">Cancel</button>
+          <Button size="sm" onClick={save} disabled={loading}>{loading ? 'Saving...' : 'Save'}</Button>
+          <Button size="sm" variant="outline" onClick={() => setEditing(false)}>Cancel</Button>
         </div>
       </div>
     </div>

@@ -2,6 +2,9 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { X, CheckCircle, Loader2 } from 'lucide-react';
+import { Button } from '@/components/shadcn/button';
+import { Input } from '@/components/shadcn/input';
+import { Label } from '@/components/shadcn/label';
 import { settingsApi } from '../../../api/settings';
 import { useToast } from './Toast';
 
@@ -188,8 +191,8 @@ export function AddPropertyModal({ open, onClose, onCreated }) {
           {step === 1 && (
             <div className="space-y-4">
               <div>
-                <label className="text-[12px] text-warm-500 block mb-1">Property name *</label>
-                <input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Beach House" className="w-full px-3 py-2.5 border border-warm-200 rounded-lg text-[14px] focus:outline-none focus:ring-2 focus:ring-coral-400" autoFocus />
+                <Label className="mb-1">Property name *</Label>
+                <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Beach House" autoFocus />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -209,17 +212,17 @@ export function AddPropertyModal({ open, onClose, onCreated }) {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-[12px] text-warm-500 block mb-1">Default checkout</label>
-                  <input type="time" value={coTime} onChange={(e) => setCoTime(e.target.value)} className="w-full px-3 py-2.5 border border-warm-200 rounded-lg text-[14px]" />
+                  <Label className="mb-1">Default checkout</Label>
+                  <Input type="time" value={coTime} onChange={(e) => setCoTime(e.target.value)} />
                 </div>
                 <div>
-                  <label className="text-[12px] text-warm-500 block mb-1">Default check-in</label>
-                  <input type="time" value={ciTime} onChange={(e) => setCiTime(e.target.value)} className="w-full px-3 py-2.5 border border-warm-200 rounded-lg text-[14px]" />
+                  <Label className="mb-1">Default check-in</Label>
+                  <Input type="time" value={ciTime} onChange={(e) => setCiTime(e.target.value)} />
                 </div>
               </div>
-              <button onClick={handleStep1} disabled={!name.trim() || saving} className="w-full py-2.5 bg-coral-400 text-white text-[14px] font-semibold rounded-lg hover:bg-coral-500 disabled:opacity-50 mt-2">
+              <Button onClick={handleStep1} disabled={!name.trim()} loading={saving} fullWidth className="mt-2">
                 {saving ? 'Creating...' : 'Next'}
-              </button>
+              </Button>
             </div>
           )}
 
@@ -229,11 +232,10 @@ export function AddPropertyModal({ open, onClose, onCreated }) {
               <p className="text-[14px] text-warm-600">
                 In Airbnb, go to <strong>Calendar → Availability Settings → Export Calendar</strong>. Paste the .ics link below.
               </p>
-              <input
+              <Input
                 value={icalUrl}
                 onChange={(e) => { setIcalUrl(e.target.value); setIcalStatus(null); setIcalError(''); }}
                 placeholder="https://www.airbnb.com/calendar/ical/..."
-                className="w-full px-3 py-2.5 border border-warm-200 rounded-lg text-[14px] focus:outline-none focus:ring-2 focus:ring-coral-400"
                 autoFocus
               />
               {icalStatus === 'success' && (
@@ -245,22 +247,22 @@ export function AddPropertyModal({ open, onClose, onCreated }) {
               {icalStatus === 'warning' && (
                 <div className="text-amber-600 text-[13px] bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">{icalError}</div>
               )}
-              <button
+              <Button
                 onClick={handleConnectCalendar}
-                disabled={!icalUrl.trim() || icalStatus === 'loading'}
-                className="w-full py-2.5 bg-coral-400 text-white text-[14px] font-semibold rounded-lg hover:bg-coral-500 disabled:opacity-50 flex items-center justify-center gap-2"
+                disabled={!icalUrl.trim()}
+                loading={icalStatus === 'loading'}
+                fullWidth
               >
-                {icalStatus === 'loading' && <Loader2 size={16} className="animate-spin" />}
                 {icalStatus === 'loading' ? 'Validating...' : 'Validate & Connect'}
-              </button>
+              </Button>
               {icalStatus === 'warning' && (
-                <button onClick={() => setStep(3)} className="w-full py-2.5 border border-amber-300 text-amber-700 text-[14px] font-medium rounded-lg hover:bg-amber-50">
+                <Button variant="outline" fullWidth onClick={() => setStep(3)} className="border-amber-300 text-amber-700 hover:bg-amber-50">
                   Continue anyway
-                </button>
+                </Button>
               )}
-              <button onClick={() => setStep(3)} className="w-full text-center text-[13px] text-warm-400 hover:text-warm-600 font-medium">
+              <Button variant="ghost" fullWidth onClick={() => setStep(3)} className="text-[13px] text-warm-400">
                 Skip for now
-              </button>
+              </Button>
             </div>
           )}
 
@@ -276,18 +278,12 @@ export function AddPropertyModal({ open, onClose, onCreated }) {
                 <div>{calConnected ? 'Calendar connected' : 'No calendar connected yet'}</div>
               </div>
               <div className="flex flex-col gap-2 pt-2">
-                <button
-                  onClick={() => { handleCompleted(); handleClose(); navigate('/settings/properties'); }}
-                  className="w-full py-2.5 bg-coral-400 text-white text-[14px] font-semibold rounded-lg hover:bg-coral-500"
-                >
+                <Button fullWidth onClick={() => { handleCompleted(); handleClose(); navigate('/settings/properties'); }}>
                   Go to property settings
-                </button>
-                <button
-                  onClick={reset}
-                  className="w-full py-2.5 border border-warm-200 text-[14px] font-medium text-warm-600 rounded-lg hover:bg-warm-50"
-                >
+                </Button>
+                <Button variant="outline" fullWidth onClick={reset}>
                   Add another property
-                </button>
+                </Button>
               </div>
             </div>
           )}

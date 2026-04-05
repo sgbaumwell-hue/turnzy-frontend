@@ -2,6 +2,9 @@ import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { X, Mail, MapPin, UserPlus, Clock, AlertTriangle, CheckCircle } from 'lucide-react';
 import { Badge } from '@/components/shadcn/badge';
+import { Button } from '@/components/shadcn/button';
+import { Input } from '@/components/shadcn/input';
+import { Textarea } from '@/components/shadcn/textarea';
 import { bookingsApi } from '../../api/bookings';
 import { fmtDateLong, fmtTime, getMonthDay } from '../../utils/dates';
 import { getStatusConfig, isUrgent } from '../../utils/status';
@@ -52,23 +55,19 @@ function TimeEditForm({ type, currentTime, bookingId, onCancel, onSent }) {
       <div className="text-[11px] font-semibold text-gray-600 uppercase tracking-wide">{label}</div>
       <div>
         <label className="text-[11px] text-gray-500 block mb-0.5">New time</label>
-        <input type="time" value={requestedTime} onChange={(e) => setRequestedTime(e.target.value)}
-          className="w-full text-[14px] font-medium bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-coral-400" />
+        <Input type="time" value={requestedTime} onChange={(e) => setRequestedTime(e.target.value)} />
       </div>
       <div>
         <label className="text-[11px] text-gray-500 block mb-0.5">Note to cleaner (optional)</label>
-        <textarea rows={2} value={note} onChange={(e) => setNote(e.target.value)} placeholder="e.g. Guest requested late checkout..."
-          className="w-full text-[13px] bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-gray-900 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-coral-400 resize-none" />
+        <Textarea rows={2} value={note} onChange={(e) => setNote(e.target.value)} placeholder="e.g. Guest requested late checkout..." />
       </div>
       <div className="flex gap-2">
-        <button disabled={sending || !requestedTime} onClick={handleSend}
-          className="flex-1 h-[36px] rounded-lg font-semibold text-[13px] bg-coral-400 text-white hover:bg-coral-500 transition-colors disabled:opacity-50">
+        <Button size="sm" className="flex-1" disabled={!requestedTime} loading={sending} onClick={handleSend}>
           {sending ? 'Sending...' : 'Send Request'}
-        </button>
-        <button onClick={onCancel}
-          className="h-[36px] px-4 rounded-lg font-medium text-[13px] border border-gray-300 text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition-colors">
+        </Button>
+        <Button size="sm" variant="outline" onClick={onCancel}>
           Cancel
-        </button>
+        </Button>
       </div>
     </div>
   );

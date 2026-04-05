@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import { useNavigate } from 'react-router-dom';
 import { getMonthDay, fmtTime, fmtDateShort } from '../../utils/dates';
 import { getStatusConfig, isUrgent as checkUrgent } from '../../utils/status';
-import { Pill } from '../ui/Pill';
+import { Badge } from '@/components/shadcn/badge';
 import { useUiStore } from '../../store/uiStore';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 
@@ -46,7 +46,7 @@ export function BookingRow({ booking, propName }) {
     >
       {/* Badge — top right */}
       <div className="absolute top-3 right-3">
-        <Pill label={sc.label} bg={sc.bg} text={sc.text} size="sm" />
+        <Badge className={`${sc.bg} ${sc.text} text-[10px] px-2 py-0.5`}>{sc.label}</Badge>
       </div>
 
       {/* Title */}

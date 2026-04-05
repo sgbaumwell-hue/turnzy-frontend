@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/shadcn/button';
+import { Input } from '@/components/shadcn/input';
 import { useAuthStore } from '../../../store/authStore';
 import { authApi } from '../../../api/auth';
 import { settingsApi } from '../../../api/settings';
@@ -118,15 +120,15 @@ export function CleanerSettingsAccount() {
             </div>
             {showPwForm && (
               <div className="px-4 pb-4 space-y-2">
-                <input type="password" value={currentPw} onChange={(e) => setCurrentPw(e.target.value)} placeholder="Current password" className="w-full max-w-sm px-3 py-2 border border-gray-200 rounded-lg text-[14px] focus:outline-none focus:ring-2 focus:ring-coral-400" />
-                <input type="password" value={newPw} onChange={(e) => setNewPw(e.target.value)} placeholder="New password (8+ characters)" className="w-full max-w-sm px-3 py-2 border border-gray-200 rounded-lg text-[14px] focus:outline-none focus:ring-2 focus:ring-coral-400" />
-                <input type="password" value={confirmPw} onChange={(e) => setConfirmPw(e.target.value)} placeholder="Confirm new password" className="w-full max-w-sm px-3 py-2 border border-gray-200 rounded-lg text-[14px] focus:outline-none focus:ring-2 focus:ring-coral-400" />
+                <Input type="password" value={currentPw} onChange={(e) => setCurrentPw(e.target.value)} placeholder="Current password" className="max-w-sm" />
+                <Input type="password" value={newPw} onChange={(e) => setNewPw(e.target.value)} placeholder="New password (8+ characters)" className="max-w-sm" />
+                <Input type="password" value={confirmPw} onChange={(e) => setConfirmPw(e.target.value)} placeholder="Confirm new password" className="max-w-sm" />
                 {newPw && confirmPw && newPw !== confirmPw && <div className="text-[12px] text-red-600">Passwords do not match</div>}
                 {newPw && newPw.length > 0 && newPw.length < 8 && <div className="text-[12px] text-red-600">Must be at least 8 characters</div>}
                 {pwError && <div className="text-[12px] text-red-600">{pwError}</div>}
                 <div className="flex gap-2">
-                  <button onClick={handleSavePassword} disabled={saving} className="px-4 py-1.5 bg-coral-400 text-white text-[13px] font-medium rounded-lg hover:bg-coral-500 disabled:opacity-50">{saving ? 'Saving...' : 'Save'}</button>
-                  <button onClick={() => setShowPwForm(false)} className="px-4 py-1.5 border border-gray-200 text-[13px] font-medium rounded-lg text-gray-600 hover:bg-gray-50">Cancel</button>
+                  <Button size="sm" onClick={handleSavePassword} loading={saving}>{saving ? 'Saving...' : 'Save'}</Button>
+                  <Button size="sm" variant="outline" onClick={() => setShowPwForm(false)}>Cancel</Button>
                 </div>
               </div>
             )}
@@ -143,10 +145,9 @@ export function CleanerSettingsAccount() {
       {/* Danger Zone */}
       <div className="border border-red-100 bg-red-50 rounded-lg p-4">
         <div className="text-sm font-semibold text-red-600 mb-3">Danger Zone</div>
-        <button onClick={handleDeactivate}
-          className="border border-gray-300 bg-white text-gray-600 rounded-lg px-4 py-2 text-[13px] font-medium hover:bg-gray-50 transition-colors mb-3 block">
+        <Button variant="outline" onClick={handleDeactivate} className="mb-3 block">
           Deactivate account
-        </button>
+        </Button>
         <button onClick={() => navigate('/account/delete-confirm')}
           className="text-[12px] text-red-600 hover:text-red-700 font-medium">
           Permanently delete account
