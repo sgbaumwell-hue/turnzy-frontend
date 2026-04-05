@@ -1,3 +1,6 @@
+import * as fs from 'fs'
+import { loginAs as authLogin } from './auth'
+
 const BACKEND = process.env.VITE_BACKEND_URL || 'https://cleaningmanagement-dev.up.railway.app'
 
 export async function seedScenario(scenario: string) {
@@ -12,9 +15,13 @@ export async function seedScenario(scenario: string) {
   }
 }
 
-export async function takeScreenshot(page: any, name: string, device = 'desktop') {
-  const fs = require('fs')
+export async function shot(page: any, name: string, device = 'desktop') {
   const dir = `e2e/screenshots/${name.replace(/[^a-z0-9-]/gi, '-').toLowerCase()}`
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true })
   await page.screenshot({ path: `${dir}/${device}.jpg`, type: 'jpeg', quality: 80 })
 }
+
+// Alias for backward compat
+export const takeScreenshot = shot
+
+export { authLogin as loginAs }
