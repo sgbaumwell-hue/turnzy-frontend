@@ -60,7 +60,13 @@ function CleanerPanel({ cleaner, allProperties, onRefresh, onClose, isMobile }) 
   async function handleAssignToProperty(propId) {
     setLoading(`assign-${propId}`);
     try {
-      await settingsApi.updateCleaner({ property_id: propId, name: cleaner.name || '', email: cleaner.email || '', notification_method: 'email', role: 'primary' });
+      const prop = allProperties.find(p => p.id === propId);
+      const hasPrimary = prop?.cleaner_name || prop?.cleaner_email;
+      if (hasPrimary) {
+        await settingsApi.saveBackupCleaner({ property_id: propId, name: cleaner.name || '', email: cleaner.email || '', notification_method: 'email' });
+      } else {
+        await settingsApi.updateCleaner({ property_id: propId, name: cleaner.name || '', email: cleaner.email || '', notification_method: 'email', role: 'primary' });
+      }
       toast('Assigned'); setShowAddProp(false); refreshAll();
     } catch (e) { toast(e.response?.data?.error || 'Failed', 'error'); }
     setLoading(null);
@@ -218,7 +224,13 @@ function AddCleanerInline({ properties, onRefresh, onDone }) {
     setLoading(true);
     try {
       for (const id of propIds) {
-        await settingsApi.updateCleaner({ property_id: id, name: formName, email: formEmail, notification_method: 'email', role: 'primary' });
+        const prop = properties.find(p => p.id === id);
+        const role = prop?.cleaner_name || prop?.cleaner_email ? 'backup' : 'primary';
+        if (role === 'backup') {
+          await settingsApi.saveBackupCleaner({ property_id: id, name: formName, email: formEmail, notification_method: 'email' });
+        } else {
+          await settingsApi.updateCleaner({ property_id: id, name: formName, email: formEmail, notification_method: 'email', role: 'primary' });
+        }
       }
       toast(`Invite sent to ${formEmail}`);
       queryClient.invalidateQueries({ queryKey: ['properties'] });
