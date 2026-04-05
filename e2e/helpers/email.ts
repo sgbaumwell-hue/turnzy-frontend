@@ -6,8 +6,10 @@ export async function waitForEmail(to: string, subjectContains: string, timeoutM
     try {
       const res = await fetch(`${MAILPIT_URL}/api/v1/messages`);
       const data = await res.json();
-      const match = data.messages?.find(
-        (m: any) => m.To?.[0]?.Address === to && m.Subject?.includes(subjectContains)
+      // Mailpit may return plain array or { messages: [...] }
+      const messages = Array.isArray(data) ? data : (data.messages || []);
+      const match = messages.find(
+        (m: any) => (m.To?.[0]?.Address === to || m.to?.[0]?.Address === to) && (m.Subject?.includes(subjectContains) || m.subject?.includes(subjectContains))
       );
       if (match) {
         const full = await fetch(`${MAILPIT_URL}/api/v1/messages/${match.ID}`).then((r) => r.json());
