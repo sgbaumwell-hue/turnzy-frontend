@@ -4,13 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import { Trash2, Plus, Users, X as XIcon, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/shadcn/button';
 import { Input } from '@/components/shadcn/input';
-import { Separator } from '@/components/shadcn/separator';
 import { propertiesApi } from '../../../api/properties';
 import { settingsApi } from '../../../api/settings';
 import { useToast } from '../components/Toast';
 import { useMediaQuery } from '../../../hooks/useMediaQuery';
 
-// Build cleaner-first data from properties
 function buildCleanerList(properties) {
   const map = {};
   for (const p of properties) {
@@ -28,13 +26,17 @@ function buildCleanerList(properties) {
   return Object.values(map);
 }
 
+function SectionHead({ children, danger }) {
+  return <h4 className={`text-xs font-semibold tracking-wide mb-3 ${danger ? 'text-red-400' : 'text-gray-400'}`}>{children}</h4>;
+}
+
 // ─── Cleaner Detail Panel ──────────────────────────────────────
 function CleanerPanel({ cleaner, allProperties, onRefresh, onClose, isMobile }) {
   const toast = useToast();
   const queryClient = useQueryClient();
   const [loading, setLoading] = useState(null);
   const [showAddProp, setShowAddProp] = useState(false);
-  const [confirmRemove, setConfirmRemove] = useState(null); // property id being removed
+  const [confirmRemove, setConfirmRemove] = useState(null);
 
   const isActive = cleaner.userId && cleaner.confirmed;
   const coveredIds = new Set(cleaner.properties.map(p => p.id));
@@ -83,9 +85,9 @@ function CleanerPanel({ cleaner, allProperties, onRefresh, onClose, isMobile }) 
   }
 
   return (
-    <div className="h-full overflow-y-auto">
+    <div className="h-full flex flex-col">
       {/* Header */}
-      <div className="sticky top-0 bg-white z-10 px-5 py-4 border-b border-gray-100">
+      <div className="shrink-0 bg-white px-5 py-4 border-b border-gray-100">
         <div className="flex items-center gap-3">
           {isMobile && <button onClick={onClose} className="p-1 -ml-1 text-gray-500"><ArrowLeft size={20} /></button>}
           <div className="flex-1 min-w-0">
@@ -104,99 +106,89 @@ function CleanerPanel({ cleaner, allProperties, onRefresh, onClose, isMobile }) 
         </div>
       </div>
 
-      <div className="p-5 space-y-6">
-        {/* Contact */}
-        <section>
-          <h4 className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-3">Contact</h4>
-          <div className="space-y-2">
-            <div>
-              <label className="text-[10px] text-gray-400 uppercase tracking-wider">Name</label>
-              <div className="text-[14px] font-medium text-gray-800">{cleaner.name || '—'}</div>
-            </div>
-            <div>
-              <label className="text-[10px] text-gray-400 uppercase tracking-wider">Email</label>
-              <div className="text-[14px] text-gray-800">{cleaner.email || '—'}</div>
-              <div className="text-[10px] text-gray-400">Cannot change email after invite</div>
-            </div>
-          </div>
-        </section>
-
-        <Separator />
-
-        {/* Properties covered */}
-        <section>
-          <h4 className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-3">Properties covered</h4>
-          {cleaner.properties.length === 0 && (
-            <div className="text-[13px] text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-3">
-              Not assigned to any property — assign one below.
-            </div>
-          )}
-          <div className="space-y-1.5">
-            {cleaner.properties.map(p => (
-              <div key={p.id} className="flex items-center justify-between py-1.5">
-                {confirmRemove === p.id ? (
-                  <div className="flex-1">
-                    <div className="text-[12px] text-gray-600 mb-1.5">Remove {cleaner.name || 'cleaner'} from {p.name}?</div>
-                    <div className="flex gap-2">
-                      <Button size="sm" variant="destructive" onClick={() => handleRemoveFromProperty(p.id)} loading={loading === `remove-${p.id}`}>Confirm</Button>
-                      <Button size="sm" variant="outline" onClick={() => setConfirmRemove(null)}>Cancel</Button>
-                    </div>
-                  </div>
-                ) : (
-                  <>
-                    <div className="text-[13px] text-gray-800">{p.name}
-                      <span className="text-[10px] text-gray-400 ml-1.5">{p.role}</span>
-                    </div>
-                    <button onClick={() => setConfirmRemove(p.id)} className="text-gray-400 hover:text-red-500 p-1"><XIcon size={12} /></button>
-                  </>
-                )}
+      {/* Scrollable content */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="divide-y divide-gray-100">
+          {/* Contact */}
+          <section className="py-5 px-5">
+            <SectionHead>Contact</SectionHead>
+            <div className="space-y-2">
+              <div>
+                <label className="text-[10px] text-gray-400 uppercase tracking-wider">Name</label>
+                <div className="text-[14px] font-medium text-gray-800">{cleaner.name || '—'}</div>
               </div>
-            ))}
-          </div>
-
-          {showAddProp ? (
-            <div className="mt-2 p-2 bg-gray-50 rounded-lg border border-gray-100">
-              {uncovered.length === 0 ? (
-                <div className="text-[12px] text-gray-400 p-2">All properties are assigned</div>
-              ) : uncovered.map(p => (
-                <button key={p.id} onClick={() => handleAssignToProperty(p.id)} disabled={loading === `assign-${p.id}`}
-                  className="w-full text-left text-[13px] text-gray-700 px-2 py-1.5 rounded hover:bg-white transition-colors">
-                  {p.name}
-                </button>
-              ))}
-              <button onClick={() => setShowAddProp(false)} className="w-full text-left text-[11px] text-gray-400 px-2 py-1 mt-1">Cancel</button>
+              <div>
+                <label className="text-[10px] text-gray-400 uppercase tracking-wider">Email</label>
+                <div className="text-[14px] text-gray-800">{cleaner.email || '—'}</div>
+                <div className="text-[10px] text-gray-400">Cannot change email after invite</div>
+              </div>
             </div>
-          ) : (
-            <button onClick={() => setShowAddProp(true)} className="mt-2 text-[12px] text-coral-400 font-medium hover:underline">
-              + Add property
-            </button>
-          )}
-        </section>
+          </section>
 
-        <Separator />
+          {/* Properties covered */}
+          <section className="py-5 px-5">
+            <SectionHead>Properties covered</SectionHead>
+            {cleaner.properties.length === 0 && (
+              <div className="text-[13px] text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-3">
+                Not assigned to any property — assign one below.
+              </div>
+            )}
+            <div className="space-y-1.5">
+              {cleaner.properties.map(p => (
+                <div key={p.id} className="flex items-center justify-between py-1.5">
+                  {confirmRemove === p.id ? (
+                    <div className="flex-1">
+                      <div className="text-[12px] text-gray-600 mb-1.5">Remove from {p.name}?</div>
+                      <div className="flex gap-2">
+                        <Button size="sm" variant="destructive" onClick={() => handleRemoveFromProperty(p.id)} loading={loading === `remove-${p.id}`}>Confirm</Button>
+                        <Button size="sm" variant="outline" onClick={() => setConfirmRemove(null)}>Cancel</Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="text-[13px] text-gray-800">{p.name}<span className="text-[10px] text-gray-400 ml-1.5">{p.role}</span></div>
+                      <button onClick={() => setConfirmRemove(p.id)} className="text-gray-400 hover:text-red-500 p-1"><XIcon size={12} /></button>
+                    </>
+                  )}
+                </div>
+              ))}
+            </div>
+            {showAddProp ? (
+              <div className="mt-2 p-2 bg-gray-50 rounded-lg border border-gray-100">
+                {uncovered.length === 0 ? (
+                  <div className="text-[12px] text-gray-400 p-2">All properties are assigned</div>
+                ) : uncovered.map(p => (
+                  <button key={p.id} onClick={() => handleAssignToProperty(p.id)} disabled={loading === `assign-${p.id}`}
+                    className="w-full text-left text-[13px] text-gray-700 px-2 py-1.5 rounded hover:bg-white transition-colors">{p.name}</button>
+                ))}
+                <button onClick={() => setShowAddProp(false)} className="w-full text-left text-[11px] text-gray-400 px-2 py-1 mt-1">Cancel</button>
+              </div>
+            ) : (
+              <button onClick={() => setShowAddProp(true)} className="mt-2 text-[12px] text-coral-400 font-medium hover:underline">+ Add property</button>
+            )}
+          </section>
 
-        {/* Notification */}
-        <section>
-          <h4 className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-3">Notifications</h4>
-          <div className="text-[13px] text-gray-500">Notified by email</div>
-        </section>
+          {/* Notifications */}
+          <section className="py-5 px-5">
+            <SectionHead>Notifications</SectionHead>
+            <div className="text-[13px] text-gray-500">Notified by email</div>
+          </section>
 
-        <Separator />
-
-        {/* Danger zone */}
-        <section>
-          <h4 className="text-[11px] font-bold text-red-400 uppercase tracking-wider mb-3">Danger zone</h4>
-          <Button variant="outline" size="sm" onClick={handleRemoveAll} disabled={loading === 'remove-all'}
-            className="text-red-600 border-red-200 hover:bg-red-50">
-            <Trash2 size={13} /> Remove cleaner
-          </Button>
-        </section>
+          {/* Danger zone */}
+          <section className="py-5 px-5">
+            <SectionHead danger>Danger zone</SectionHead>
+            <Button variant="outline" size="sm" onClick={handleRemoveAll} disabled={loading === 'remove-all'}
+              className="text-red-600 border-red-200 hover:bg-red-50">
+              <Trash2 size={13} /> Remove cleaner
+            </Button>
+          </section>
+        </div>
       </div>
     </div>
   );
 }
 
-// ─── Add Cleaner Flow (inline in list) ─────────────────────────
+// ─── Add Cleaner Flow ──────────────────────────────────────────
 function AddCleanerInline({ properties, onRefresh, onDone }) {
   const toast = useToast();
   const navigate = useNavigate();
@@ -238,7 +230,7 @@ function AddCleanerInline({ properties, onRefresh, onDone }) {
   if (step === 1) {
     return (
       <div className="p-5 space-y-3">
-        <div className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1">Add cleaner</div>
+        <div className="text-xs font-semibold text-gray-400 tracking-wide mb-1">Add cleaner</div>
         <Input value={formName} onChange={(e) => setFormName(e.target.value)} placeholder="Name" autoFocus />
         <Input value={formEmail} onChange={(e) => setFormEmail(e.target.value)} placeholder="Email" type="email" />
         <div className="text-[12px] text-gray-400">Notifications sent by email</div>
@@ -255,7 +247,7 @@ function AddCleanerInline({ properties, onRefresh, onDone }) {
 
   return (
     <div className="p-5 space-y-3">
-      <div className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1">Which properties?</div>
+      <div className="text-xs font-semibold text-gray-400 tracking-wide mb-1">Which properties?</div>
       <p className="text-[13px] text-gray-600">Which properties should {formName} cover?</p>
       <div className="space-y-1">
         {properties.map(p => (
@@ -295,7 +287,6 @@ export function Cleaners() {
     if (isDesktop && selectedIdx === null && cleaners.length > 0) setSelectedIdx(0);
   }, [isDesktop, cleaners.length]);
 
-  // Reset selection if cleaner list changed
   useEffect(() => {
     if (selectedIdx !== null && selectedIdx >= cleaners.length) setSelectedIdx(cleaners.length > 0 ? 0 : null);
   }, [cleaners.length]);
@@ -312,16 +303,37 @@ export function Cleaners() {
         <h3 className="text-lg font-semibold text-gray-900 mb-2">No cleaners yet</h3>
         <p className="text-sm text-gray-500 mb-6 max-w-xs">Add your first cleaner to start coordinating turnovers.</p>
         <Button onClick={() => setShowAdd(true)}><Plus size={16} /> Add cleaner</Button>
-        {showAdd && <AddCleanerInline properties={properties} onRefresh={refresh} onDone={() => setShowAdd(false)} />}
+      </div>
+    );
+  }
+
+  // Mobile: full-screen panel or add form
+  if (!isDesktop && (selected || showAdd)) {
+    return (
+      <div className="fixed inset-0 z-30 bg-white flex flex-col">
+        {showAdd ? (
+          <>
+            <div className="shrink-0 bg-white px-4 py-3 border-b border-gray-100 flex items-center gap-3">
+              <button onClick={() => setShowAdd(false)} className="p-1 -ml-1 text-gray-500"><ArrowLeft size={20} /></button>
+              <span className="text-[15px] font-semibold text-gray-900">Add cleaner</span>
+            </div>
+            <div className="flex-1 overflow-y-auto">
+              <AddCleanerInline properties={properties} onRefresh={refresh} onDone={() => setShowAdd(false)} />
+            </div>
+          </>
+        ) : selected ? (
+          <CleanerPanel key={selected.email} cleaner={selected} allProperties={properties}
+            onRefresh={refresh} onClose={() => setSelectedIdx(null)} isMobile={true} />
+        ) : null}
       </div>
     );
   }
 
   return (
-    <div className="flex h-full -m-6 lg:-m-8">
+    <div className={isDesktop ? 'flex h-[calc(100vh-80px)] -mx-8 -my-8' : ''}>
       {/* List */}
-      <div className={`${isDesktop ? 'w-[280px] shrink-0 border-r border-gray-200' : 'flex-1'} ${selected && !isDesktop ? 'hidden' : ''} ${showAdd && !isDesktop ? 'hidden' : ''} flex flex-col bg-white`}>
-        <div className="px-4 pt-4 pb-2">
+      <div className={`${isDesktop ? 'w-[280px] shrink-0 border-r border-gray-200 flex flex-col' : 'flex flex-col'} bg-white`}>
+        <div className="px-4 pt-4 pb-2 shrink-0">
           <h2 className="text-[16px] font-semibold text-gray-900">Cleaners</h2>
         </div>
         <div className="flex-1 overflow-y-auto">
@@ -331,19 +343,19 @@ export function Cleaners() {
             const propCount = c.properties.length;
             return (
               <button key={c.email || i} onClick={() => { setSelectedIdx(i); setShowAdd(false); }}
-                className={`w-full text-left px-4 py-3 flex items-center gap-3 transition-colors ${isSelected ? 'bg-coral-50 border-l-2 border-l-coral-500' : 'hover:bg-gray-50 border-l-2 border-l-transparent'}`}>
+                className={`w-full text-left px-4 py-3 flex items-center gap-2 transition-colors ${isSelected ? 'bg-coral-50 border-l-2 border-l-coral-500' : 'hover:bg-gray-50 border-l-2 border-l-transparent'}`}>
                 <div className="flex-1 min-w-0">
                   <div className="text-[13px] font-medium text-gray-900 truncate">{c.name || c.email}</div>
                   <div className="text-[11px] text-gray-400">{propCount} {propCount === 1 ? 'property' : 'properties'}</div>
                 </div>
-                <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${isActive ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
+                <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded shrink-0 ${isActive ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
                   {isActive ? 'Active' : 'Invited'}
                 </span>
               </button>
             );
           })}
         </div>
-        <div className="px-4 py-3 border-t border-gray-100">
+        <div className="px-4 py-3 border-t border-gray-100 shrink-0">
           <button onClick={() => { setShowAdd(true); setSelectedIdx(null); }}
             className="flex items-center gap-1.5 text-[13px] text-coral-400 font-medium hover:text-coral-500">
             <Plus size={14} /> Add cleaner
@@ -351,33 +363,23 @@ export function Cleaners() {
         </div>
       </div>
 
-      {/* Panel */}
-      <div className={`flex-1 min-w-0 bg-gray-50 ${(selected || showAdd) && !isDesktop ? 'fixed inset-0 z-30 bg-white' : ''}`}>
-        {showAdd ? (
-          <div className="h-full overflow-y-auto">
-            {!isDesktop && (
-              <div className="sticky top-0 bg-white z-10 px-4 py-3 border-b border-gray-100 flex items-center gap-3">
-                <button onClick={() => setShowAdd(false)} className="p-1 -ml-1 text-gray-500"><ArrowLeft size={20} /></button>
-                <span className="text-[15px] font-semibold text-gray-900">Add cleaner</span>
-              </div>
-            )}
-            <AddCleanerInline properties={properties} onRefresh={refresh} onDone={() => setShowAdd(false)} />
-          </div>
-        ) : selected ? (
-          <CleanerPanel
-            key={selected.email}
-            cleaner={selected}
-            allProperties={properties}
-            onRefresh={refresh}
-            onClose={() => setSelectedIdx(null)}
-            isMobile={!isDesktop}
-          />
-        ) : isDesktop ? (
-          <div className="flex items-center justify-center h-full text-gray-400 text-sm">
-            Select a cleaner to view details
-          </div>
-        ) : null}
-      </div>
+      {/* Panel — desktop only */}
+      {isDesktop && (
+        <div className="flex-1 min-w-0 bg-gray-50">
+          {showAdd ? (
+            <div className="h-full overflow-y-auto">
+              <AddCleanerInline properties={properties} onRefresh={refresh} onDone={() => setShowAdd(false)} />
+            </div>
+          ) : selected ? (
+            <CleanerPanel key={selected.email} cleaner={selected} allProperties={properties}
+              onRefresh={refresh} onClose={() => setSelectedIdx(null)} isMobile={false} />
+          ) : (
+            <div className="flex items-center justify-center h-full text-gray-400 text-sm">
+              Select a cleaner to view details
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
