@@ -83,7 +83,16 @@ export function AcceptInvite() {
         {status === 'error' && (
           <div className="text-center">
             <h2 className="text-[18px] font-bold text-gray-900 mb-2">Invalid invite</h2>
-            <p className="text-[14px] text-gray-500 mb-4">This invite link is invalid. Check with your team leader.</p>
+            <p className="text-[14px] text-gray-500 mb-4">This invite link isn't valid. Check with your team leader for a new one.</p>
+            <a href="/login" className="text-coral-400 font-medium hover:text-coral-500">Go to login →</a>
+          </div>
+        )}
+
+        {/* Catch-all for any unexpected status — never render blank */}
+        {!['loading', 'valid', 'expired', 'already_used', 'error'].includes(status) && (
+          <div className="text-center">
+            <h2 className="text-[18px] font-bold text-gray-900 mb-2">Something went wrong</h2>
+            <p className="text-[14px] text-gray-500 mb-4">We couldn't process this invite. Please try again or contact your team leader.</p>
             <a href="/login" className="text-coral-400 font-medium hover:text-coral-500">Go to login →</a>
           </div>
         )}
