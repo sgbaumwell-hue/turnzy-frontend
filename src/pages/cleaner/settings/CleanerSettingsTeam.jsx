@@ -96,7 +96,7 @@ export function CleanerSettingsTeam() {
             <div>
               <div className="text-[15px] font-semibold text-gray-900">I work with a team</div>
               <div className="text-[12px] text-gray-400 mt-0.5">
-                {hasTeam ? 'Team members you invite can be assigned to specific turnovers.' : 'Turn this on to invite helpers and assign them to jobs.'}
+                {hasTeam ? 'Team features are active. You can invite team members below.' : 'Turn this on to invite helpers and assign them to jobs.'}
               </div>
             </div>
           </div>

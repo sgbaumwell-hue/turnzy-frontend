@@ -11,8 +11,13 @@ const US_TIMEZONES = [
   'America/Los_Angeles', 'America/Phoenix', 'America/Anchorage', 'Pacific/Honolulu',
 ];
 
-function CalendarBadge({ icalUrl }) {
-  if (!icalUrl) return <span className="inline-flex items-center gap-1 text-[11px] font-medium text-warm-400 bg-warm-100 px-2 py-0.5 rounded">No calendar</span>;
+function CalendarBadge({ icalUrl, onConnect }) {
+  if (!icalUrl) return (
+    <span className="inline-flex flex-col items-end gap-0.5">
+      <span className="inline-flex items-center gap-1 text-[11px] font-medium text-amber-700 bg-amber-100 px-2 py-0.5 rounded">⚠ No calendar connected</span>
+      {onConnect && <button onClick={onConnect} className="text-[10px] text-coral-400 hover:underline">Connect calendar →</button>}
+    </span>
+  );
   if (icalUrl.includes('fake-ical') || icalUrl.includes('test')) {
     return <span className="inline-flex items-center gap-1 text-[11px] font-medium text-amber-700 bg-amber-100 px-2 py-0.5 rounded">Test calendar</span>;
   }
@@ -105,7 +110,7 @@ function PropertyCard({ property, onRefresh }) {
         )}
         <div className="flex items-center gap-2 flex-shrink-0">
           <PlatformBadge platform={property.platform} />
-          <CalendarBadge icalUrl={property.ical_url} />
+          <CalendarBadge icalUrl={property.ical_url} onConnect={() => { setExpanded(true); setEditingIcal(true); }} />
         </div>
       </div>
 

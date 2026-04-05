@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { useAuthStore } from '../../store/authStore';
 import { authApi } from '../../api/auth';
@@ -11,6 +12,7 @@ export function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { setUser } = useAuthStore();
   const navigate = useNavigate();
 
@@ -48,7 +50,12 @@ export function Login() {
             <div><label htmlFor="email" className="block text-xs font-bold text-warm-500 uppercase tracking-wider mb-1.5">Email</label><input id="email" type="email" required value={email} onChange={e => setEmail(e.target.value)} className="w-full border border-warm-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-coral-400 focus:ring-1 focus:ring-coral-400/30 transition-colors" placeholder="you@example.com" /></div>
             <div>
               <label htmlFor="password" className="block text-xs font-bold text-warm-500 uppercase tracking-wider mb-1.5">Password</label>
-              <input id="password" type="password" required value={password} onChange={e => setPassword(e.target.value)} className="w-full border border-warm-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-coral-400 focus:ring-1 focus:ring-coral-400/30 transition-colors" placeholder="••••••••" />
+              <div className="relative">
+                <input id="password" type={showPassword ? 'text' : 'password'} required value={password} onChange={e => setPassword(e.target.value)} className="w-full border border-warm-200 rounded-lg px-3 py-2.5 pr-10 text-sm focus:outline-none focus:border-coral-400 focus:ring-1 focus:ring-coral-400/30 transition-colors" placeholder="••••••••" />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-warm-400 hover:text-warm-600">
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
               <div className="text-right mt-1"><a href="/forgot-password" className="text-xs text-warm-400 hover:text-warm-600">Forgot password?</a></div>
             </div>
             {error && <p className="text-xs text-danger-600 bg-danger-50 px-3 py-2 rounded-lg">{error}</p>}

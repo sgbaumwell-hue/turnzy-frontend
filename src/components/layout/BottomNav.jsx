@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import { useAuthStore } from '../../store/authStore';
 
 const CLEANER_TABS = [
-  { to: '/cleaner', icon: Home, label: 'Home', end: true },
+  { to: '/cleaner', icon: Home, label: 'Jobs', end: true },
   { to: '/cleaner/calendar', icon: CalendarDays, label: 'Calendar' },
   { to: '/cleaner/activity', icon: Activity, label: 'Activity' },
   { to: '/cleaner/settings', icon: Settings, label: 'Settings' },

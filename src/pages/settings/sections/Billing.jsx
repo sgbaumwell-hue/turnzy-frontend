@@ -14,10 +14,10 @@ export function Billing() {
           Free during beta
         </span>
         <p className="text-[14px] text-warm-500 mt-2">
-          You're on the free beta plan. Billing features are coming soon.
+          Turnzy is free while we're in beta — no credit card required.
         </p>
         <p className="text-[12px] text-warm-400 mt-2">
-          All features are available at no cost during the beta period.
+          When paid plans launch, you'll get at least 30 days notice and the chance to lock in early pricing.
         </p>
       </div>
     </div>

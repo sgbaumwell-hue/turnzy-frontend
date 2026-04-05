@@ -87,7 +87,7 @@ export function Account() {
   return (
     <div>
       <h2 className="text-[20px] font-bold text-warm-900 mb-1">Account</h2>
-      <p className="text-[13px] text-warm-400 mb-6">Manage your profile, security, and account settings.</p>
+      <p className="text-[13px] text-warm-400 mb-6">Manage your profile and security.</p>
 
       {/* Profile */}
       <div className="bg-white border border-warm-200 rounded-lg shadow-sm overflow-hidden mb-6">
@@ -127,7 +127,7 @@ export function Account() {
                 <div className="text-[14px] font-medium text-warm-900 mt-0.5">••••••••</div>
               </div>
               <button onClick={() => setShowPwForm(!showPwForm)} className="text-[12px] text-coral-400 font-medium hover:text-coral-500">
-                Change
+                Edit
               </button>
             </div>
             {showPwForm && (

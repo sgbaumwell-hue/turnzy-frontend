@@ -129,7 +129,7 @@ export function Sidebar({ properties, activeProperty, onPropertyChange }) {
   const isAdmin = user?.role === 'admin' || user?.is_admin;
   const isCleaner = user?.role === 'cleaner';
   const isTeamMember = user?.role === 'team_member';
-  const roleLabel = isTeamMember ? 'Team Member' : isCleaner ? 'Cleaner' : 'Pro Host';
+  const roleLabel = isTeamMember ? 'Team Member' : isCleaner ? 'Cleaner' : 'Host';
 
   return (
     <aside className="w-[220px] flex-shrink-0 bg-white border-r border-warm-200 flex flex-col h-full">

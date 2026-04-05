@@ -113,7 +113,7 @@ export function BookingList({ bookings, properties, isLoading }) {
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
           </div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">No turnovers yet</h3>
-          <p className="text-sm text-gray-500 mb-6 max-w-xs">Connect your Airbnb calendar to start tracking upcoming turnovers and coordinating with your cleaner.</p>
+          <p className="text-sm text-gray-500 mb-6 max-w-xs">Add your first property to start tracking upcoming turnovers and coordinating with your cleaner.</p>
           <a href="/settings/properties" className="bg-orange-500 hover:bg-orange-600 text-white rounded-lg px-5 py-2.5 text-sm font-medium transition-colors">Add a property</a>
         </div>
       )}
