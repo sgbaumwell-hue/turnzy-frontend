@@ -1,18 +1,15 @@
 import client from './client';
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || '';
-
-function postLegacySettingsRoute(path, data) {
-  const url = BACKEND_URL ? `${BACKEND_URL}${path}` : path;
-  return client.post(url, data);
-}
-
 export const settingsApi = {
   // Create property
   createProperty: (data) =>
     client.post('/properties/create', data),
 
   // Properties
+  updatePropertyName: (property_id, name) =>
+    client.post('/settings/property/name', { property_id, name }),
+  updatePropertyPlatform: (property_id, platform) =>
+    client.post('/settings/property/platform', { property_id, platform }),
   updatePropertyTimes: (property_id, default_checkout_time, default_checkin_time) =>
     client.post('/settings/property/times', { property_id, default_checkout_time, default_checkin_time }),
   updatePropertyTimezone: (property_id, timezone) =>
@@ -32,33 +29,19 @@ export const settingsApi = {
   saveBackupCleaner: (data) =>
     client.post('/settings/backup-cleaner/save', data),
   resendInvite: (property_id) =>
-    postLegacySettingsRoute('/settings/cleaner/resend-invite', { property_id }),
+    client.post('/settings/cleaner/resend-invite', { property_id }),
   swapCleaners: (property_id) =>
     client.post('/settings/cleaner/swap-primary-backup', { property_id }),
   promoteBackup: (property_id) =>
     client.post('/settings/cleaner/promote-backup', { property_id }),
 
-  // TODO: implement GET /api/notification-prefs — host notification preferences
-  getNotificationPrefs: () => {
-    return Promise.resolve({ data: null });
-  },
-  // TODO: implement POST /api/settings/notifications — host notification save
-  saveNotificationPrefs: (prefs) => {
-    return Promise.resolve({ data: { ok: true } });
-  },
+  // Host notification preferences
+  getNotificationPrefs: () =>
+    client.get('/settings/notifications').catch(() => ({ data: null })),
+  saveNotificationPrefs: (prefs) =>
+    client.post('/settings/notifications', prefs),
 
-  // TODO: implement POST /api/account/update-language — language preference
-  updateLanguage: (language) => {
-    return Promise.resolve({ data: { ok: true } });
-  },
-
-  // TODO: implement POST /api/settings/property/name — property rename
-  updatePropertyName: (property_id, name) => {
-    return Promise.resolve({ data: { ok: true } });
-  },
-
-  // TODO: implement POST /api/settings/property/platform — platform change
-  updatePropertyPlatform: (property_id, platform) => {
-    return Promise.resolve({ data: { ok: true } });
-  },
+  // Language
+  updateLanguage: (language) =>
+    client.post('/account/update-language', { language }),
 };

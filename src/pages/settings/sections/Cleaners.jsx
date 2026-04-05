@@ -13,13 +13,18 @@ function buildCleanerList(properties) {
   const map = {};
   for (const p of properties) {
     if (p.cleaner_name || p.cleaner_email) {
-      const key = p.cleaner_email || p.cleaner_name;
+      const key = (p.cleaner_email || p.cleaner_name || '').toLowerCase();
       if (!map[key]) map[key] = { name: p.cleaner_name, email: p.cleaner_email, userId: p.cleaner_user_id, confirmed: p.cleaner_confirmed, properties: [] };
+      // Update name/confirmed if better data available
+      if (p.cleaner_name && !map[key].name) map[key].name = p.cleaner_name;
+      if (p.cleaner_user_id) { map[key].userId = p.cleaner_user_id; map[key].confirmed = p.cleaner_confirmed; }
       map[key].properties.push({ id: p.id, name: p.name, role: 'primary' });
     }
     if (p.backup_cleaner_name || p.backup_cleaner_email) {
-      const key = p.backup_cleaner_email || p.backup_cleaner_name;
-      if (!map[key]) map[key] = { name: p.backup_cleaner_name, email: p.backup_cleaner_email, userId: p.backup_cleaner_user_id, confirmed: false, properties: [] };
+      const key = (p.backup_cleaner_email || p.backup_cleaner_name || '').toLowerCase();
+      if (!map[key]) map[key] = { name: p.backup_cleaner_name, email: p.backup_cleaner_email, userId: p.backup_cleaner_user_id, confirmed: !!p.backup_cleaner_user_id, properties: [] };
+      if (p.backup_cleaner_name && !map[key].name) map[key].name = p.backup_cleaner_name;
+      if (p.backup_cleaner_user_id && !map[key].userId) { map[key].userId = p.backup_cleaner_user_id; map[key].confirmed = true; }
       map[key].properties.push({ id: p.id, name: p.name, role: 'backup' });
     }
   }

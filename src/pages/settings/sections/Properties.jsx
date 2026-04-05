@@ -117,7 +117,8 @@ function PropertyPanel({ property, onRefresh, onClose, isMobile }) {
             {editingName ? (
               <div className="flex items-center gap-2">
                 <Input value={name} onChange={(e) => setName(e.target.value)} className="h-8 text-[15px] font-semibold flex-1" autoFocus
-                  onKeyDown={(e) => e.key === 'Enter' && saveName()} onBlur={saveName} />
+                  onKeyDown={(e) => { if (e.key === 'Enter') saveName(); if (e.key === 'Escape') { setEditingName(false); setName(property.name); } }} />
+                <Button size="sm" onClick={saveName} loading={saving === 'name'}>Save</Button>
                 <button onClick={() => { setEditingName(false); setName(property.name); }} className="p-1 text-gray-400"><X size={14} /></button>
               </div>
             ) : (
