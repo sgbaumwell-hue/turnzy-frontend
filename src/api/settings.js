@@ -1,5 +1,12 @@
 import client from './client';
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || '';
+
+function postLegacySettingsRoute(path, data) {
+  const url = BACKEND_URL ? `${BACKEND_URL}${path}` : path;
+  return client.post(url, data);
+}
+
 export const settingsApi = {
   // Create property
   createProperty: (data) =>
@@ -19,13 +26,13 @@ export const settingsApi = {
 
   // Cleaners
   updateCleaner: (data) =>
-    client.post('/settings/cleaner/update', data),
+    postLegacySettingsRoute('/settings/cleaner/update', data),
   deleteCleaner: (property_id, role) =>
     client.post('/settings/cleaner/delete', { property_id, role }),
   saveBackupCleaner: (data) =>
     client.post('/settings/backup-cleaner/save', data),
   resendInvite: (property_id) =>
-    client.post('/settings/cleaner/resend-invite', { property_id }),
+    postLegacySettingsRoute('/settings/cleaner/resend-invite', { property_id }),
   swapCleaners: (property_id) =>
     client.post('/settings/cleaner/swap-primary-backup', { property_id }),
   promoteBackup: (property_id) =>
