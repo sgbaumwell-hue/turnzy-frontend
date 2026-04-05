@@ -1,9 +1,14 @@
 import { chromium, devices, Page } from '@playwright/test'
-import Anthropic from '@anthropic-ai/sdk'
 import * as fs from 'fs'
 import * as path from 'path'
 
-const client = new Anthropic()
+const SKIP_ANALYSIS = process.env.SKIP_ANALYSIS === 'true'
+
+let client: any = null
+if (!SKIP_ANALYSIS) {
+  const { default: Anthropic } = await import('@anthropic-ai/sdk')
+  client = new Anthropic()
+}
 
 const BASE_URL = process.env.BASE_URL || 'https://turnzy-frontend-dev.up.railway.app'
 const BACKEND_URL = process.env.VITE_BACKEND_URL || 'https://cleaningmanagement-dev.up.railway.app'
@@ -236,13 +241,16 @@ async function runAudit() {
         fs.writeFileSync(screenshotPath, buf)
         captured++
 
-        // Claude analysis
-        const analysis = await analyzeScreenshot(buf, pageDef.label, viewport.name, pageDef.notes)
-        findings.critical += (analysis.match(/🔴/g) || []).length
-        findings.moderate += (analysis.match(/🟡/g) || []).length
-        findings.minor += (analysis.match(/🟢/g) || []).length
-
-        report.push(`### ${pageDef.label}`, '', analysis, '', '---', '')
+        // Claude analysis (skip if SKIP_ANALYSIS mode)
+        if (!SKIP_ANALYSIS) {
+          const analysis = await analyzeScreenshot(buf, pageDef.label, viewport.name, pageDef.notes)
+          findings.critical += (analysis.match(/🔴/g) || []).length
+          findings.moderate += (analysis.match(/🟡/g) || []).length
+          findings.minor += (analysis.match(/🟢/g) || []).length
+          report.push(`### ${pageDef.label}`, '', analysis, '', '---', '')
+        } else {
+          report.push(`### ${pageDef.label}`, '', `📸 Screenshot captured — run \`npm run ux-audit\` for AI analysis`, '', '---', '')
+        }
 
         // Role switch: need new page if switching between host and cleaner
         const nextPage = PAGES[PAGES.indexOf(pageDef) + 1]
@@ -283,7 +291,12 @@ async function runAudit() {
   console.log('\n✅ UX Audit complete!')
   console.log(`📄 Report: ./ux-audit-report.md`)
   console.log(`🖼  Screenshots: ${outputDir}/ (${captured} captured, ${failed} failed)`)
-  console.log(`Findings: 🔴 ${findings.critical}  🟡 ${findings.moderate}  🟢 ${findings.minor}`)
+  if (SKIP_ANALYSIS) {
+    console.log('📸 Screenshots-only mode — no AI analysis')
+    console.log('Run `npm run ux-audit` to get AI analysis')
+  } else {
+    console.log(`Findings: 🔴 ${findings.critical}  🟡 ${findings.moderate}  🟢 ${findings.minor}`)
+  }
 }
 
 runAudit().catch(console.error)
