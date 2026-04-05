@@ -82,7 +82,7 @@ test.describe('Group A: Auth & Onboarding', () => {
     const email = freshEmail('host')
     await page.goto('/login')
     // Look for signup link
-    const signupLink = page.locator('a[href*="signup"], a[href*="register"], text=Sign up').first()
+    const signupLink = page.locator('a[href*="signup"]').or(page.locator('a[href*="register"]')).or(page.locator('text=Sign up')).first()
     if (await signupLink.count() === 0) {
       test.skip(true, 'No signup link found on login page')
       return

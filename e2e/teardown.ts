@@ -1,2 +1,5 @@
 import { generateScreenshotIndex } from './helpers/screenshotReport'
-generateScreenshotIndex()
+
+export default function globalTeardown() {
+  generateScreenshotIndex()
+}
