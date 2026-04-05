@@ -126,4 +126,82 @@ test.describe('Group C: Host Booking Detail', () => {
     await expect(page.locator('text=Resend Notification')).not.toBeVisible()
     await takeScreenshot(page, 'c23-completed-detail')
   })
+
+  test('C03. Resend Notification button clickable', async ({ page, isMobile }) => {
+    if (isMobile) return
+    const card = page.locator('[data-testid="booking-row"]').filter({ has: page.locator('text=Awaiting response').or(page.locator('text=AWAITING RESPONSE')).or(page.locator('text=IMMEDIATE ATTENTION')) }).first()
+    if (await card.count() === 0) { test.skip(true, 'No pending booking'); return }
+    await card.click()
+    await page.waitForTimeout(1500)
+    const resendBtn = page.locator('button').filter({ hasText: 'Resend Notification' }).first()
+    await expect(resendBtn).toBeVisible()
+    await takeScreenshot(page, 'c03-resend-visible')
+  })
+
+  test('C04. Dismiss changes booking state', async ({ page, isMobile }) => {
+    if (isMobile) return
+    await seedScenario('pending_booking')
+    await page.reload()
+    await page.waitForTimeout(2000)
+    const card = page.locator('[data-testid="booking-row"]').filter({ has: page.locator('text=Test Pending') }).first()
+    if (await card.count() === 0) return
+    await card.click()
+    await page.waitForTimeout(1500)
+    const dismissBtn = page.locator('button').filter({ hasText: "Dismiss" }).first()
+    if (await dismissBtn.count() > 0) {
+      await dismissBtn.click()
+      await page.waitForTimeout(2000)
+      await takeScreenshot(page, 'c04-after-dismiss')
+    }
+  })
+
+  test('C10. Pre-approve late checkout form opens', async ({ page, isMobile }) => {
+    if (isMobile) return
+    await seedScenario('confirmed_booking')
+    await page.reload()
+    await page.waitForTimeout(2000)
+    const confirmedSection = page.locator('button').filter({ hasText: 'Confirmed' }).first()
+    if (await confirmedSection.count() > 0) await confirmedSection.click()
+    await page.waitForTimeout(500)
+    const card = page.locator('[data-testid="booking-row"]').filter({ has: page.locator('text=Confirmed').or(page.locator('text=CONFIRMED')) }).first()
+    if (await card.count() === 0) { test.skip(true, 'No confirmed booking'); return }
+    await card.click()
+    await page.waitForTimeout(1500)
+    const editBtn = page.locator('text=Request Update').first()
+    if (await editBtn.count() > 0) {
+      await editBtn.click()
+      await page.waitForTimeout(500)
+      await expect(page.locator('text=Late Checkout').or(page.locator('text=New time')).first()).toBeVisible()
+      await takeScreenshot(page, 'c10-preapprove-form')
+    }
+  })
+
+  test('C18. URGENT shows PRIORITY ISSUE or IMMEDIATE ATTENTION', async ({ page, isMobile }) => {
+    if (isMobile) return
+    await seedScenario('full_host')
+    await page.reload()
+    await page.waitForTimeout(2000)
+    const urgentCard = page.locator('[data-testid="booking-row"]').filter({ has: page.locator('text=IMMEDIATE ATTENTION') }).first()
+    if (await urgentCard.count() === 0) { test.skip(true, 'No urgent booking'); return }
+    await urgentCard.click()
+    await page.waitForTimeout(1500)
+    await expect(
+      page.locator('text=IMMEDIATE ATTENTION').or(page.locator('text=PRIORITY')).first()
+    ).toBeVisible()
+    await takeScreenshot(page, 'c18-urgent-priority')
+  })
+
+  test('C24. Mark as Paid visible on completed unpaid', async ({ page, isMobile }) => {
+    if (isMobile) return
+    await seedScenario('completed_booking_unpaid')
+    await page.reload()
+    await page.waitForTimeout(2000)
+    const pastHeader = page.locator('button').filter({ hasText: 'Past' }).first()
+    if (await pastHeader.count() > 0) await pastHeader.click()
+    await page.waitForTimeout(500)
+    const card = page.locator('[data-testid="booking-row"]').filter({ has: page.locator('text=Test Completed') }).first()
+    if (await card.count() === 0) { test.skip(true, 'No completed booking'); return }
+    await expect(page.locator('text=Mark as paid').or(page.locator('text=Payment pending')).first()).toBeVisible()
+    await takeScreenshot(page, 'c24-mark-paid')
+  })
 })

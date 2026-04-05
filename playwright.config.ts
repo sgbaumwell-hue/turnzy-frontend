@@ -4,6 +4,7 @@ export default defineConfig({
   testDir: './e2e',
   timeout: 30000,
   retries: 1,
+  globalTeardown: './e2e/teardown.ts',
   reporter: [['list'], ['html', { open: 'never' }]],
   use: {
     baseURL: process.env.BASE_URL || 'https://turnzy-frontend-dev.up.railway.app',

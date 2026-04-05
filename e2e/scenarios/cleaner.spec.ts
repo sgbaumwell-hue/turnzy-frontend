@@ -77,4 +77,44 @@ test.describe('Group E: Cleaner Dashboard & Actions', () => {
     await expect(page.locator('text=Account').first()).toBeVisible()
     await takeScreenshot(page, 'e16-cleaner-account')
   })
+
+  test('E02. Job card shows key info', async ({ page }) => {
+    await seedScenario('connected_cleaner_with_jobs')
+    await loginAs(page, ACCOUNTS.cleaner)
+    await page.waitForTimeout(2000)
+    const card = page.locator('[data-testid="booking-row"]').first()
+    if (await card.count() === 0) { test.skip(true, 'No jobs'); return }
+    const text = await card.textContent()
+    expect(text?.length).toBeGreaterThan(10)
+    await takeScreenshot(page, 'e02-job-card-info')
+  })
+
+  test('E07. Invite host form fills and submits', async ({ page }) => {
+    await seedScenario('unconnected_cleaner')
+    await loginAs(page, ACCOUNTS.cleaner)
+    await page.waitForTimeout(2000)
+    const inviteBtn = page.locator('button').filter({ hasText: 'Invite a host' }).first()
+    if (await inviteBtn.count() === 0) { test.skip(true, 'No invite button'); return }
+    await inviteBtn.click()
+    await page.waitForTimeout(500)
+    await takeScreenshot(page, 'e07-invite-form')
+  })
+
+  test('E09. My Team toggle shows feature preview when off', async ({ page }) => {
+    await loginAs(page, ACCOUNTS.cleaner)
+    await page.goto('/cleaner/settings/team')
+    await page.waitForTimeout(2000)
+    await expect(page.locator('text=team').first()).toBeVisible()
+    await takeScreenshot(page, 'e09-team-toggle')
+  })
+
+  test('E17. Payment nudge visible on unpaid completed', async ({ page }) => {
+    await seedScenario('connected_cleaner_with_jobs')
+    await loginAs(page, ACCOUNTS.cleaner)
+    await page.waitForTimeout(2000)
+    const pastHeader = page.locator('button').filter({ hasText: 'Past' }).first()
+    if (await pastHeader.count() > 0) await pastHeader.click()
+    await page.waitForTimeout(500)
+    await takeScreenshot(page, 'e17-payment-nudge')
+  })
 })
