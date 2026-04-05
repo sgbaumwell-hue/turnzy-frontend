@@ -56,7 +56,7 @@ test.describe('Group G: Email Flow Tests (Mailpit)', () => {
   test('G10 — host invite email arrives in Mailpit', async ({ page }, testInfo) => {
     if (!MAILPIT) { test.skip(true, 'MAILPIT_URL not set'); return }
     await clearEmails()
-    await seedScenario('empty_host')
+    await seedScenario('full_host')
     await loginAs(page, ACCOUNTS.host)
     await page.goto('/settings/cleaners')
     await page.waitForTimeout(2000)
@@ -136,7 +136,7 @@ test.describe('Group G: Email Flow Tests (Mailpit)', () => {
   test('G11 — cleaner accept link from invite email works', async ({ page, context }, testInfo) => {
     if (!MAILPIT) { test.skip(true, 'MAILPIT_URL not set'); return }
     await clearEmails()
-    await seedScenario('empty_host')
+    await seedScenario('full_host')
     await loginAs(page, ACCOUNTS.host)
     await page.goto('/settings/cleaners')
     await page.waitForTimeout(2000)
