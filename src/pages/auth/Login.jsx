@@ -46,7 +46,11 @@ export function Login() {
           <div className="flex items-center gap-3 mb-4"><div className="flex-1 h-px bg-warm-200" /><span className="text-xs text-warm-400">or</span><div className="flex-1 h-px bg-warm-200" /></div>
           <form onSubmit={handleSubmit} className="space-y-3">
             <div><label htmlFor="email" className="block text-xs font-bold text-warm-500 uppercase tracking-wider mb-1.5">Email</label><input id="email" type="email" required value={email} onChange={e => setEmail(e.target.value)} className="w-full border border-warm-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-coral-400 focus:ring-1 focus:ring-coral-400/30 transition-colors" placeholder="you@example.com" /></div>
-            <div><label htmlFor="password" className="block text-xs font-bold text-warm-500 uppercase tracking-wider mb-1.5">Password</label><input id="password" type="password" required value={password} onChange={e => setPassword(e.target.value)} className="w-full border border-warm-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-coral-400 focus:ring-1 focus:ring-coral-400/30 transition-colors" placeholder="••••••••" /></div>
+            <div>
+              <label htmlFor="password" className="block text-xs font-bold text-warm-500 uppercase tracking-wider mb-1.5">Password</label>
+              <input id="password" type="password" required value={password} onChange={e => setPassword(e.target.value)} className="w-full border border-warm-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-coral-400 focus:ring-1 focus:ring-coral-400/30 transition-colors" placeholder="••••••••" />
+              <div className="text-right mt-1"><a href="/forgot-password" className="text-xs text-warm-400 hover:text-warm-600">Forgot password?</a></div>
+            </div>
             {error && <p className="text-xs text-danger-600 bg-danger-50 px-3 py-2 rounded-lg">{error}</p>}
             <Button type="submit" fullWidth loading={loading} className="mt-1">Sign in</Button>
           </form>

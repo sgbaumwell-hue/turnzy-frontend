@@ -24,6 +24,8 @@ import { Billing } from './pages/settings/sections/Billing';
 import { Account } from './pages/settings/sections/Account';
 import { DeleteConfirm } from './pages/account/DeleteConfirm';
 import { Login } from './pages/auth/Login';
+import { ForgotPassword } from './pages/auth/ForgotPassword';
+import { ResetPassword } from './pages/auth/ResetPassword';
 import { useAuthStore } from './store/authStore';
 
 const queryClient = new QueryClient({
@@ -85,6 +87,8 @@ function AppWithAuth() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/team/accept" element={<AcceptInvite />} />
       <Route path="/account/delete-confirm" element={<RequireAuth><DeleteConfirm /></RequireAuth>} />
 
