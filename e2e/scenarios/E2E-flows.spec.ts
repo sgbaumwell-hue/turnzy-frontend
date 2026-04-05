@@ -357,15 +357,21 @@ test.describe('Flow: Section counts match DB state', () => {
     await expect(page.locator('text=Urgent').first()).toBeVisible()
     await expect(page.locator('text=Needs Action').first()).toBeVisible()
 
-    // Expand all collapsed sections by clicking section header buttons
-    const sectionButtons = page.locator('button').filter({ has: page.locator('svg') })
-    const buttonCount = await sectionButtons.count()
-    console.log('[FLOW5] Section buttons found:', buttonCount)
-    for (let i = 0; i < buttonCount; i++) {
-      try { await sectionButtons.nth(i).click(); } catch (e) { /* ignore */ }
-      await page.waitForTimeout(200)
+    // Expand collapsed sections — only target section header buttons, not sidebar nav
+    const sectionLabels = ['Confirmed', 'Self-Managed', 'Queued', 'Past', 'Cancelled']
+    for (const label of sectionLabels) {
+      try {
+        const header = page.locator(`button:has-text("${label}"), [role="button"]:has-text("${label}")`).first()
+        if (await header.count() > 0) {
+          await header.click({ timeout: 2000 })
+          await page.waitForTimeout(300)
+        }
+      } catch (e) { /* ignore */ }
     }
     await page.waitForTimeout(1000)
+    // Verify we're still on the dashboard
+    const currentUrl = page.url()
+    expect(currentUrl.endsWith('/') || currentUrl.includes('/dashboard')).toBe(true)
 
     // Count total visible booking cards
     const totalCards = await page.locator('[data-testid="booking-row"]').count()
