@@ -26,7 +26,7 @@ export function AcceptInvite() {
         setPrefill({ name: d.name || '', email: d.email || '' });
         setName(d.name || '');
       } else {
-        setStatus(d.reason || 'error');
+        setStatus(d.reason === 'invalid' ? 'error' : d.reason || 'error');
       }
     }).catch(() => setStatus('error'));
   }, [token]);
