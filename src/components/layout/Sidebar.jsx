@@ -1,252 +1,185 @@
 import { NavLink } from 'react-router-dom';
-import { Home, Activity, ExternalLink, Building2, Users, CreditCard, Bell, User, Settings, CalendarDays, LogOut, AlertTriangle, Clock, CheckCircle, Archive, ChevronDown } from 'lucide-react';
+import { Home, Activity, ExternalLink, Building2, Users, CreditCard, Bell, User, Settings, CalendarDays, LogOut, AlertTriangle, Clock, CheckCircle, Archive } from 'lucide-react';
 import clsx from 'clsx';
 import { useAuthStore } from '../../store/authStore';
 
-/* ── Logo mark ── */
-function LogoMark({ size = 30 }) {
-  return (
-    <div className="relative flex-shrink-0 flex items-center justify-center"
-      style={{ width: size, height: size, borderRadius: size * 0.28, background: 'linear-gradient(140deg,#F07447 0%,#E85F34 45%,#C8481F 100%)', boxShadow: 'inset 0 1.5px 0 rgba(255,255,255,.3),inset 0 -1.5px 0 rgba(0,0,0,.1),0 4px 10px rgba(168,66,30,.22),0 1px 2px rgba(168,66,30,.15)' }}>
-      <div className="absolute pointer-events-none" style={{ inset: 2, borderRadius: size * 0.28 - 2, background: 'linear-gradient(180deg,rgba(255,255,255,.22),transparent 50%)' }} />
-      <svg width={size * 0.58} height={size * 0.58} viewBox="0 0 32 32" fill="none" className="relative z-10">
-        <path d="M16 3.5L26.5 9.5V21.5L16 28L5.5 21.5V9.5L16 3.5Z" stroke="white" strokeOpacity="0.38" strokeWidth="1.6" strokeLinejoin="round" fill="none"/>
-        <path d="M16 9.5C19.4 9.8 22 12.5 22 16C22 19.5 19.4 22.2 16 22.5" stroke="white" strokeWidth="2.8" strokeLinecap="round" fill="none"/>
-        <path d="M22 16L23.8 14.2M22 16L20.2 14.2" stroke="white" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"/>
-        <circle cx="12" cy="16" r="2.2" fill="white"/>
-      </svg>
-    </div>
-  );
-}
+const HOST_SETTINGS_ITEMS = [
+  { to: '/settings/properties', icon: Building2, label: 'Properties' },
+  { to: '/settings/cleaners', icon: Users, label: 'Cleaners' },
+  { to: '/settings/notifications', icon: Bell, label: 'Notifications' },
+  { to: '/settings/billing', icon: CreditCard, label: 'Billing' },
+  { to: '/settings/account', icon: User, label: 'Account' },
+];
 
-/* ── Nav item classes ── */
 const navLinkClass = ({ isActive }) => clsx(
-  'flex items-center gap-2.5 px-3 py-2 rounded-[8px] text-[13.5px] font-medium transition-all duration-150 w-full',
-  isActive
-    ? 'bg-[#1F1D1A] text-white'
-    : 'text-[#5F5B52] hover:bg-[#EDE7D7] hover:text-[#1F1D1A]'
+  'flex items-center gap-3 px-3 py-2 rounded-lg text-[14px] font-medium transition-colors duration-100',
+  isActive ? 'bg-coral-50 text-coral-400 border-l-2 border-l-coral-400' : 'text-warm-500 hover:bg-warm-100 hover:text-warm-700'
 );
 
 const subNavClass = ({ isActive }) => clsx(
-  'flex items-center gap-2.5 px-3 py-1.5 rounded-[8px] text-[13.5px] font-medium transition-all duration-150 w-full',
-  isActive
-    ? 'bg-[#1F1D1A] text-white'
-    : 'text-[#5F5B52] hover:bg-[#EDE7D7] hover:text-[#1F1D1A]'
+  'flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors duration-100',
+  isActive ? 'text-coral-400 bg-coral-50' : 'text-warm-400 hover:text-warm-600 hover:bg-warm-50'
 );
 
-/* icon color helper */
-const iconCls = (isActive) => isActive ? 'text-[#E85F34]' : 'text-[#9C9481]';
-
-/* ── Eyebrow label ── */
-function SectionLabel({ children }) {
-  return <div className="text-[10.5px] font-bold text-[#9C9481] uppercase tracking-[0.14em] px-3 pt-5 pb-1.5">{children}</div>;
-}
-
-/* ── Count badge ── */
-function CountBadge({ count, tone }) {
-  if (count == null) return null;
-  const style = tone === 'urgent'
-    ? 'bg-[#B33A32] text-white'
-    : tone === 'pending'
-      ? 'bg-transparent text-[#B07510] ring-[1.5px] ring-inset ring-[#B07510]'
-      : 'bg-transparent text-[#9C9481] ring-1 ring-inset ring-[#E4DFD3]';
-  return (
-    <span className={clsx('text-[11px] font-bold px-1.5 h-5 min-w-[20px] inline-flex items-center justify-center rounded-full', style)}>
-      {count}
-    </span>
-  );
-}
-
-/* ── Host nav ── */
-function HostNav({ isAdmin, urgentCount, needsActionCount, confirmedCount, queuedCount }) {
+function HostNav({ isAdmin }) {
   return (
     <>
-      <SectionLabel>Views</SectionLabel>
+      <div className="text-[10px] font-black text-warm-300 uppercase tracking-widest px-3 pt-4 pb-1">Views</div>
+
       <NavLink to="/" end className={navLinkClass}>
-        {({ isActive }) => <><Home size={15} className={iconCls(isActive)} />Dashboard</>}
+        {({ isActive }) => (<><Home size={16} className={isActive ? 'text-coral-400' : 'text-warm-400'} />Dashboard</>)}
       </NavLink>
+
       <NavLink to="/activity" className={navLinkClass}>
-        {({ isActive }) => <><Activity size={15} className={iconCls(isActive)} />Activity</>}
+        {({ isActive }) => (<><Activity size={16} className={isActive ? 'text-coral-400' : 'text-warm-400'} />Activity</>)}
       </NavLink>
+
       {isAdmin && (
         <a href="/admin" target="_blank" rel="noopener noreferrer"
-          className="flex items-center gap-2.5 px-3 py-2 rounded-[8px] text-[13.5px] font-medium text-[#5F5B52] hover:bg-[#EDE7D7] hover:text-[#1F1D1A] transition-all duration-150 w-full">
-          <ExternalLink size={15} className="text-[#9C9481]" />Admin
+          className="flex items-center gap-3 px-3 py-2 rounded-lg text-[14px] font-medium transition-colors duration-100 text-warm-500 hover:bg-warm-100 hover:text-warm-700">
+          <ExternalLink size={16} className="text-warm-400" />
+          Admin
         </a>
       )}
 
-      <SectionLabel>Bookings</SectionLabel>
-      <NavLink to="/bookings/urgent" className={subNavClass}>
-        {({ isActive }) => <>
-          <AlertTriangle size={14} className={iconCls(isActive)} />
-          <span className="flex-1">Urgent</span>
-          {urgentCount > 0 && <CountBadge count={urgentCount} tone="urgent" />}
-        </>}
-      </NavLink>
-      <NavLink to="/bookings/needs-action" className={subNavClass}>
-        {({ isActive }) => <>
-          <Clock size={14} className={iconCls(isActive)} />
-          <span className="flex-1">Needs action</span>
-          {needsActionCount > 0 && <CountBadge count={needsActionCount} tone="pending" />}
-        </>}
-      </NavLink>
-      <NavLink to="/bookings/confirmed" className={subNavClass}>
-        {({ isActive }) => <>
-          <CheckCircle size={14} className={iconCls(isActive)} />
-          <span className="flex-1">Confirmed</span>
-          {confirmedCount > 0 && <CountBadge count={confirmedCount} />}
-        </>}
-      </NavLink>
-      <NavLink to="/bookings/queued" className={subNavClass}>
-        {({ isActive }) => <>
-          <CalendarDays size={14} className={iconCls(isActive)} />
-          <span className="flex-1">Queued</span>
-          {queuedCount > 0 && <CountBadge count={queuedCount} />}
-        </>}
-      </NavLink>
-      <NavLink to="/bookings/past" className={subNavClass}>
-        {({ isActive }) => <><Archive size={14} className={iconCls(isActive)} />Past</>}
-      </NavLink>
-
-      <SectionLabel>Workspace</SectionLabel>
-      {[
-        { to: '/settings/properties', icon: Building2, label: 'Properties' },
-        { to: '/settings/cleaners', icon: Users, label: 'Cleaners' },
-        { to: '/settings/notifications', icon: Bell, label: 'Notifications' },
-        { to: '/settings/billing', icon: CreditCard, label: 'Billing' },
-        { to: '/settings/account', icon: User, label: 'Account' },
-      ].map(({ to, icon: Icon, label }) => (
-        <NavLink key={to} to={to} className={subNavClass}>
-          {({ isActive }) => <><Icon size={14} className={iconCls(isActive)} />{label}</>}
+      <div className="text-[10px] font-black text-warm-300 uppercase tracking-widest px-3 pt-5 pb-1">Bookings</div>
+      <div className="ml-2">
+        <NavLink to="/bookings/urgent" className={subNavClass}>
+          {({ isActive }) => (<><AlertTriangle size={14} className={isActive ? 'text-coral-400' : 'text-warm-300'} />Urgent</>)}
         </NavLink>
-      ))}
+        <NavLink to="/bookings/needs-action" className={subNavClass}>
+          {({ isActive }) => (<><Clock size={14} className={isActive ? 'text-coral-400' : 'text-warm-300'} />Needs Action</>)}
+        </NavLink>
+        <NavLink to="/bookings/confirmed" className={subNavClass}>
+          {({ isActive }) => (<><CheckCircle size={14} className={isActive ? 'text-coral-400' : 'text-warm-300'} />Confirmed</>)}
+        </NavLink>
+        <NavLink to="/bookings/queued" className={subNavClass}>
+          {({ isActive }) => (<><CalendarDays size={14} className={isActive ? 'text-coral-400' : 'text-warm-300'} />Queued</>)}
+        </NavLink>
+        <NavLink to="/bookings/past" className={subNavClass}>
+          {({ isActive }) => (<><Archive size={14} className={isActive ? 'text-coral-400' : 'text-warm-300'} />Past</>)}
+        </NavLink>
+      </div>
+
+      <div className="text-[10px] font-black text-warm-300 uppercase tracking-widest px-3 pt-5 pb-1">Workspace</div>
+      <div className="ml-2">
+        <NavLink to="/properties" className={subNavClass}>
+          {({ isActive }) => (<><Building2 size={14} className={isActive ? 'text-coral-400' : 'text-warm-300'} />Properties</>)}
+        </NavLink>
+      </div>
+
+      <div className="text-[10px] font-black text-warm-300 uppercase tracking-widest px-3 pt-5 pb-1">Settings</div>
+      <div className="ml-2">
+        {HOST_SETTINGS_ITEMS.map(({ to, icon: Icon, label }) => (
+          <NavLink key={to} to={to} className={subNavClass}>
+            {({ isActive }) => (<><Icon size={14} className={isActive ? 'text-coral-400' : 'text-warm-300'} />{label}</>)}
+          </NavLink>
+        ))}
+      </div>
     </>
   );
 }
 
-/* ── Cleaner nav ── */
+const CLEANER_SETTINGS_ITEMS = [
+  { to: '/cleaner/settings/team', icon: Users, label: 'My Team' },
+  { to: '/cleaner/settings/notifications', icon: Bell, label: 'Notifications' },
+  { to: '/cleaner/settings/account', icon: User, label: 'Account' },
+];
+
 function CleanerNav() {
   return (
     <>
-      <SectionLabel>Views</SectionLabel>
+      <div className="text-[10px] font-black text-warm-300 uppercase tracking-widest px-3 pt-4 pb-1">Views</div>
+
       <NavLink to="/cleaner" end className={navLinkClass}>
-        {({ isActive }) => <><Home size={15} className={iconCls(isActive)} />Dashboard</>}
+        {({ isActive }) => (<><Home size={16} className={isActive ? 'text-coral-400' : 'text-warm-400'} />Dashboard</>)}
       </NavLink>
+
       <NavLink to="/cleaner/calendar" className={navLinkClass}>
-        {({ isActive }) => <><CalendarDays size={15} className={iconCls(isActive)} />Calendar</>}
+        {({ isActive }) => (<><CalendarDays size={16} className={isActive ? 'text-coral-400' : 'text-warm-400'} />Calendar</>)}
       </NavLink>
+
       <NavLink to="/cleaner/activity" className={navLinkClass}>
-        {({ isActive }) => <><Activity size={15} className={iconCls(isActive)} />Activity</>}
+        {({ isActive }) => (<><Activity size={16} className={isActive ? 'text-coral-400' : 'text-warm-400'} />Activity</>)}
       </NavLink>
-      <SectionLabel>Workspace</SectionLabel>
-      {[
-        { to: '/cleaner/settings/team', icon: Users, label: 'My Team' },
-        { to: '/cleaner/settings/notifications', icon: Bell, label: 'Notifications' },
-        { to: '/cleaner/settings/account', icon: User, label: 'Account' },
-      ].map(({ to, icon: Icon, label }) => (
-        <NavLink key={to} to={to} className={subNavClass}>
-          {({ isActive }) => <><Icon size={14} className={iconCls(isActive)} />{label}</>}
-        </NavLink>
-      ))}
+
+      <div className="text-[10px] font-black text-warm-300 uppercase tracking-widest px-3 pt-5 pb-1">Settings</div>
+      <div className="ml-2">
+        {CLEANER_SETTINGS_ITEMS.map(({ to, icon: Icon, label }) => (
+          <NavLink key={to} to={to} className={subNavClass}>
+            {({ isActive }) => (<><Icon size={14} className={isActive ? 'text-coral-400' : 'text-warm-300'} />{label}</>)}
+          </NavLink>
+        ))}
+      </div>
     </>
   );
 }
 
-/* ── Team member nav ── */
 function TeamMemberNav() {
   return (
     <>
-      <SectionLabel>Views</SectionLabel>
+      <div className="text-[10px] font-black text-warm-300 uppercase tracking-widest px-3 pt-4 pb-1">Views</div>
+
       <NavLink to="/team" end className={navLinkClass}>
-        {({ isActive }) => <><Home size={15} className={iconCls(isActive)} />My Jobs</>}
+        {({ isActive }) => (<><Home size={16} className={isActive ? 'text-coral-400' : 'text-warm-400'} />My Jobs</>)}
       </NavLink>
+
       <NavLink to="/team/settings" className={navLinkClass}>
-        {({ isActive }) => <><Settings size={15} className={iconCls(isActive)} />Settings</>}
+        {({ isActive }) => (<><Settings size={16} className={isActive ? 'text-coral-400' : 'text-warm-400'} />Settings</>)}
       </NavLink>
     </>
   );
 }
 
-/* ── Sidebar ── */
-export function Sidebar({ properties, activeProperty, onPropertyChange, counts = {} }) {
+export function Sidebar({ properties, activeProperty, onPropertyChange }) {
   const { user, clearUser } = useAuthStore();
   const isAdmin = user?.role === 'admin' || user?.is_admin;
   const isCleaner = user?.role === 'cleaner';
   const isTeamMember = user?.role === 'team_member';
-  const roleLabel = isTeamMember ? 'Team member' : isCleaner ? 'Cleaner' : 'Host · Pro plan';
-
-  const orgName = user?.org_name || user?.workspace_name || 'My Workspace';
-  const orgInitials = orgName.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase();
+  const roleLabel = isTeamMember ? 'Team Member' : isCleaner ? 'Cleaner' : 'Host';
 
   return (
-    <aside className="w-[232px] flex-shrink-0 flex flex-col h-full" style={{ background: '#F5F0E2', borderRight: '1px solid #E4DFD3' }}>
-
+    <aside className="w-[220px] flex-shrink-0 bg-white border-r border-warm-200 flex flex-col h-full">
       {/* Logo */}
-      <div className="px-5 pt-5 pb-4 flex items-center gap-2.5">
-        <LogoMark size={30} />
-        <span className="font-black leading-none tracking-[-0.035em] text-[22px] text-[#1A1815]">
-          Turn<span style={{ background: 'linear-gradient(140deg,#F07447,#C8481F)', WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>zy</span>
-        </span>
+      <div className="px-4 pt-6 pb-3 border-b border-warm-100">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 bg-coral-400 rounded-lg flex items-center justify-center flex-shrink-0">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1L13 4.5V9.5L7 13L1 9.5V4.5L7 1Z" fill="white"/></svg>
+          </div>
+          <span className="font-black text-[22px] text-warm-800 tracking-tight leading-none">Turnzy</span>
+        </div>
       </div>
 
-      {/* Workspace / property switcher */}
-      {!isCleaner && !isTeamMember && (
-        <div className="px-3 pb-3">
-          {properties?.length > 1 ? (
-            <div className="relative">
-              <select
-                value={activeProperty || ''}
-                onChange={(e) => onPropertyChange(e.target.value || null)}
-                className="w-full appearance-none bg-white border border-[#E4DFD3] rounded-[10px] pl-3 pr-8 py-2.5 text-[12px] font-semibold text-[#1F1D1A] focus:outline-none focus:ring-2 focus:ring-[#E85F34] transition-colors cursor-pointer hover:border-[#CFC8B6]"
-              >
-                <option value="">All properties</option>
-                {properties.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-              </select>
-              <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#9C9481] pointer-events-none" />
-            </div>
-          ) : (
-            <div className="flex items-center gap-2.5 p-2 pl-3 bg-white border border-[#E4DFD3] rounded-[10px]">
-              <div className="w-7 h-7 rounded-md bg-[#1F1D1A] text-white flex items-center justify-center text-[11px] font-bold flex-shrink-0">{orgInitials}</div>
-              <div className="flex-1 min-w-0">
-                <div className="text-[12px] font-semibold text-[#1F1D1A] leading-tight truncate">{orgName}</div>
-                <div className="text-[10.5px] text-[#9C9481] leading-tight">All properties</div>
-              </div>
-            </div>
-          )}
+      {/* Property filter — host only */}
+      {!isCleaner && !isTeamMember && properties?.length > 0 && (
+        <div className="px-3 pt-3 pb-2">
+          <select
+            value={activeProperty || ''}
+            onChange={(e) => onPropertyChange(e.target.value || null)}
+            className="w-full text-[13px] font-medium bg-warm-100 border-0 rounded-xl px-3 py-2.5 text-warm-700 focus:outline-none focus:ring-2 focus:ring-coral-400"
+          >
+            <option value="">All properties</option>
+            {properties.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+          </select>
         </div>
       )}
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 overflow-y-auto space-y-0.5">
-        {isTeamMember ? <TeamMemberNav /> : isCleaner ? <CleanerNav /> : (
-          <HostNav
-            isAdmin={isAdmin}
-            urgentCount={counts.urgent}
-            needsActionCount={counts.needsAction}
-            confirmedCount={counts.confirmed}
-            queuedCount={counts.queued}
-          />
-        )}
+      <nav className="flex-1 px-4 py-6 overflow-y-auto">
+        {isTeamMember ? <TeamMemberNav /> : isCleaner ? <CleanerNav /> : <HostNav isAdmin={isAdmin} />}
       </nav>
 
-      {/* User profile */}
-      <div className="p-3" style={{ borderTop: '1px solid #E4DFD3' }}>
-        <div className="group flex items-center gap-2.5 p-1.5 rounded-[10px] hover:bg-[#EDE7D7] transition-colors cursor-pointer">
-          <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 text-white font-bold text-[13px] ring-2 ring-white"
-            style={{ background: 'linear-gradient(135deg,#E85F34,#C8481F)' }}>
-            {user?.name?.charAt(0)?.toUpperCase() || '?'}
+      {/* Profile */}
+      <div className="border-t border-warm-100 p-3">
+        <div className="flex items-center gap-2.5">
+          <div className="w-[34px] h-[34px] bg-coral-400 rounded-full flex items-center justify-center flex-shrink-0">
+            <span className="text-white font-bold text-[14px]">{user?.name?.charAt(0)?.toUpperCase() || '?'}</span>
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-[13px] font-semibold text-[#1F1D1A] truncate leading-tight">{user?.name}</div>
-            <div className="text-[11px] text-[#9C9481] leading-tight">{roleLabel}</div>
+            <div className="text-[14px] font-semibold text-warm-800 truncate">{user?.name}</div>
+            <div className="text-[12px] text-warm-400">{roleLabel}</div>
           </div>
-          <button
-            onClick={clearUser}
-            aria-label="Sign out"
-            className="text-[#9C9481] hover:text-[#1F1D1A] p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity"
-          >
-            <LogOut size={14} />
-          </button>
+          <button onClick={clearUser} aria-label="Sign out" className="text-warm-400 hover:text-warm-600 p-1 rounded"><LogOut size={14} /></button>
         </div>
       </div>
     </aside>

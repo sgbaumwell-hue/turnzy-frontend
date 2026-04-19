@@ -6,6 +6,9 @@ import { Dashboard } from './pages/host/Dashboard';
 import { BookingDetailPage } from './pages/host/BookingDetailPage';
 import { HostActivity } from './pages/host/HostActivity';
 import { BookingSection } from './pages/host/BookingSection';
+import { PropertiesPortfolio } from './pages/host/PropertiesPortfolio';
+import { PropertyDetailStub } from './pages/host/PropertyDetailStub';
+import { AddPropertyStub } from './pages/host/AddPropertyStub';
 import { CleanerDashboard } from './pages/cleaner/CleanerDashboard';
 import { CleanerCalendar } from './pages/cleaner/CleanerCalendar';
 import { CleanerCalendarJobDetail } from './pages/cleaner/CleanerCalendarJobDetail';
@@ -104,6 +107,17 @@ function AppWithAuth() {
       } />
       <Route path="/bookings/:section" element={
         <RequireAuth allowedRoles={['host', 'admin']}><AppShell><BookingSection /></AppShell></RequireAuth>
+      } />
+
+      {/* Properties portfolio (Workspace) */}
+      <Route path="/properties" element={
+        <RequireAuth allowedRoles={['host', 'admin']}><AppShell><PropertiesPortfolio /></AppShell></RequireAuth>
+      } />
+      <Route path="/properties/new" element={
+        <RequireAuth allowedRoles={['host', 'admin']}><AppShell><AddPropertyStub /></AppShell></RequireAuth>
+      } />
+      <Route path="/properties/:id" element={
+        <RequireAuth allowedRoles={['host', 'admin']}><AppShell><PropertyDetailStub /></AppShell></RequireAuth>
       } />
 
       {/* Cleaner pages */}
