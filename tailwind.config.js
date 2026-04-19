@@ -11,7 +11,10 @@ export default {
         danger: { 50: '#FCEBEB', 200: '#F7C1C1', 400: '#E24B4A', 600: '#A32D2D', 800: '#791F1F' },
         warm: { 50: '#F9F8F6', 100: '#F1EFE8', 200: '#D3D1C7', 300: '#B8B7B0', 400: '#888780', 600: '#5F5E5A', 800: '#2C2C2A' },
       },
-      fontFamily: { sans: ['Manrope', 'sans-serif'] },
+      fontFamily: {
+        sans: ['Manrope', 'system-ui', 'sans-serif'],
+        serif: ['Fraunces', 'Georgia', 'serif'],
+      },
       borderRadius: {
         pill: '20px',
         lg: '8px',
