@@ -12,7 +12,7 @@ export default {
         warm: { 50: '#F9F8F6', 100: '#F1EFE8', 200: '#D3D1C7', 300: '#B8B7B0', 400: '#888780', 600: '#5F5E5A', 800: '#2C2C2A' },
       },
       fontFamily: {
-        sans: ['Manrope', 'sans-serif'],
+        sans: ['Manrope', 'system-ui', 'sans-serif'],
         serif: ['Fraunces', 'Georgia', 'serif'],
       },
       borderRadius: {
