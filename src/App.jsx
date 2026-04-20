@@ -19,6 +19,8 @@ import { AcceptInvite } from './pages/team/AcceptInvite';
 import { SettingsLayout } from './pages/settings/SettingsLayout';
 import { Properties } from './pages/settings/sections/Properties';
 import { Cleaners } from './pages/settings/sections/Cleaners';
+import { Properties as WorkspaceProperties } from './pages/host/Properties';
+import { Cleaners as WorkspaceCleaners } from './pages/host/Cleaners';
 import { Notifications } from './pages/settings/sections/Notifications';
 import { Billing } from './pages/settings/sections/Billing';
 import { Account } from './pages/settings/sections/Account';
@@ -104,6 +106,14 @@ function AppWithAuth() {
       } />
       <Route path="/bookings/:section" element={
         <RequireAuth allowedRoles={['host', 'admin']}><AppShell><BookingSection /></AppShell></RequireAuth>
+      } />
+
+      {/* Workspace — redesigned Properties & Cleaners */}
+      <Route path="/properties" element={
+        <RequireAuth allowedRoles={['host', 'admin']}><AppShell><WorkspaceProperties /></AppShell></RequireAuth>
+      } />
+      <Route path="/cleaners" element={
+        <RequireAuth allowedRoles={['host', 'admin']}><AppShell><WorkspaceCleaners /></AppShell></RequireAuth>
       } />
 
       {/* Cleaner pages */}

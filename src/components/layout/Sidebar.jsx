@@ -110,8 +110,8 @@ function HostNav({ isAdmin, urgentCount, needsActionCount, confirmedCount, queue
 
       <SectionLabel>Workspace</SectionLabel>
       {[
-        { to: '/settings/properties', icon: Building2, label: 'Properties' },
-        { to: '/settings/cleaners', icon: Users, label: 'Cleaners' },
+        { to: '/properties', icon: Building2, label: 'Properties' },
+        { to: '/cleaners', icon: Users, label: 'Cleaners' },
         { to: '/settings/notifications', icon: Bell, label: 'Notifications' },
         { to: '/settings/billing', icon: CreditCard, label: 'Billing' },
         { to: '/settings/account', icon: User, label: 'Account' },
