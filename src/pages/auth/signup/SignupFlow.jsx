@@ -114,8 +114,14 @@ export function SignupFlow({ presetRole, entry = 'direct', invite = null }) {
     setStepKey(key);
   }
 
-  function next() {
+  // next(patch?) — advance to the next step, optionally merging field state
+  // atomically so submitters don't race React's batched setState. The patch
+  // parameter is CRITICAL: without it, a step calling setState(x); next()
+  // would hand the old state to submitSignup because the state update
+  // hasn't applied yet when next() reads the closure variable.
+  function next(patch) {
     setError(null);
+    if (patch) setStateRaw(prev => ({ ...prev, ...patch }));
     const nextIdx = stepIdx + 1;
     if (nextIdx >= stepList.length) return;
     goToStep(stepList[nextIdx]);
@@ -128,12 +134,14 @@ export function SignupFlow({ presetRole, entry = 'direct', invite = null }) {
   }
 
   // Verify team code before advancing from StepTeamCode.
-  async function onTeamCodeNext() {
+  async function onTeamCodeNext(patch) {
+    const merged = patch ? { ...state, ...patch } : state;
+    if (patch) setStateRaw(prev => ({ ...prev, ...patch }));
     setSubmitting(true);
     setError(null);
     try {
-      const { data } = await teamApi.verifyCode(state.teamCode);
-      setState({ teamCodeVerified: true, teamCodeWorkspace: data.workspace });
+      const { data } = await teamApi.verifyCode(merged.teamCode);
+      setStateRaw(prev => ({ ...prev, teamCodeVerified: true, teamCodeWorkspace: data.workspace }));
       const nextIdx = stepIdx + 1;
       goToStep(stepList[nextIdx]);
     } catch (err) {
@@ -141,22 +149,6 @@ export function SignupFlow({ presetRole, entry = 'direct', invite = null }) {
     } finally {
       setSubmitting(false);
     }
-  }
-
-  // Submit the account on StepAccount — this is the final server call for
-  // every flow. Backend returns {user, token} on success.
-  async function onAccountNext(patchedState) {
-    const finalState = patchedState || state;
-
-    // For multi-step direct flows (host / cleaner), don't submit yet — advance
-    // to the role-specific step first and submit there.
-    const hasMoreSteps = stepIdx + 1 < stepList.length - 1; // -1 because 'success' is last
-    if (hasMoreSteps) {
-      next();
-      return;
-    }
-
-    await submitSignup(finalState);
   }
 
   async function submitSignup(finalState) {
@@ -213,13 +205,17 @@ export function SignupFlow({ presetRole, entry = 'direct', invite = null }) {
     }
   }
 
-  // Wrap next() on the final data step so it triggers submit.
-  function nextOrSubmit() {
+  // Wrap next() on the final data step so it triggers submit. Takes the
+  // same (patch) contract as next() — the patch is what actually gets sent
+  // to the backend, because relying on React's batched state is a race.
+  function nextOrSubmit(patch) {
+    const merged = patch ? { ...state, ...patch } : state;
     const nextIdx = stepIdx + 1;
     if (nextIdx < stepList.length && stepList[nextIdx] === 'success') {
-      submitSignup(state);
+      if (patch) setStateRaw(prev => ({ ...prev, ...patch }));
+      submitSignup(merged);
     } else {
-      next();
+      next(patch);
     }
   }
 

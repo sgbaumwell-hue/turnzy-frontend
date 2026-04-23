@@ -59,8 +59,10 @@ export function StepAccount({ state, setState, next, back, invite, error, stepIn
   function handleSubmit(e) {
     e?.preventDefault?.();
     if (!valid) return;
-    setState({ ...state, name: name.trim(), email: email.trim(), password: pw, agreed });
-    next();
+    // Pass field values as a patch so the orchestrator merges them into
+    // state atomically before submitting — setState then next() races
+    // React's batched updates and ships the old email to the backend.
+    next({ name: name.trim(), email: email.trim(), password: pw, agreed });
   }
 
   const googleHref = invite?.token

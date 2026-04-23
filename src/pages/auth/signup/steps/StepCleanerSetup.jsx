@@ -19,8 +19,7 @@ export function StepCleanerSetup({ state, setState, next, back, stepIndex, total
   function handleSubmit(e) {
     e?.preventDefault?.();
     if (!valid) return;
-    setState({ ...state, mode, business: business.trim(), area: area.trim() });
-    next();
+    next({ mode, business: business.trim(), area: area.trim() });
   }
 
   return (

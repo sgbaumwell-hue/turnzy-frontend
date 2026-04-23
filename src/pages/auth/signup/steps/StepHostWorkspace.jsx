@@ -30,8 +30,7 @@ export function StepHostWorkspace({ state, setState, next, back, stepIndex, tota
   function handleSubmit(e) {
     e?.preventDefault?.();
     if (!valid) return;
-    setState({ ...state, workspace: workspace.trim(), tz, size });
-    next();
+    next({ workspace: workspace.trim(), tz, size });
   }
 
   return (

@@ -18,8 +18,7 @@ export function StepTeamCode({ state, setState, next, back, error, stepIndex, to
   function handleSubmit(e) {
     e?.preventDefault?.();
     if (!valid) return;
-    setState({ ...state, teamCode: stripped, teamCodeDisplay: code });
-    next();
+    next({ teamCode: stripped, teamCodeDisplay: code });
   }
 
   return (
