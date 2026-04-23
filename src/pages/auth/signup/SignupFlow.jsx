@@ -194,15 +194,19 @@ export function SignupFlow({ presetRole, entry = 'direct', invite = null }) {
       // Advance to the success step in this flow.
       goToStep('success');
     } catch (err) {
-      const msg = err.response?.data?.message || 'Something went wrong. Please try again.';
+      const data = err.response?.data || {};
+      const msg = data.message || 'Something went wrong. Please try again.';
       if (err.response?.status === 409) {
-        const serverMsg = err.response.data?.message || 'An account with that email already exists.';
+        const serverMsg = data.message || 'An account with that email already exists.';
         // If we were past the account step, walk back to it so user can fix.
         // goToStep no longer clears errors, so the message survives the jump.
         if (stepKeyResolved !== 'account') goToStep('account');
         setError(serverMsg);
       } else {
-        setError(msg);
+        // Surface the diagnostic code if the backend included one — helps
+        // pinpoint schema/config issues without needing Railway log access.
+        const suffix = data.code && data.code !== 'UNKNOWN' ? ` (${data.code})` : '';
+        setError(msg + suffix);
       }
     } finally {
       setSubmitting(false);
