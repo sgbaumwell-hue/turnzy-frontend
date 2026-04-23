@@ -1,0 +1,212 @@
+/* ==========================================================================
+   Turnzy Design System — Colors & Type
+   Reference: tailwind.config.js + src/index.css in turnzy-frontend repo
+   Font: Manrope (UI) — some legacy pages load DM Sans via index.css but the
+   canonical family per tailwind.config is Manrope. We use Manrope here.
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+  /* ---------- Coral — primary brand ---------- */
+  --coral-50:  #FAECE7;
+  --coral-100: #F5C4B3;
+  --coral-200: #F0997B;
+  --coral-400: #D85A30;   /* primary — logo tile, primary buttons, focus rings */
+  --coral-500: #C24E28;   /* primary hover */
+  --coral-600: #993C1D;
+  --coral-800: #712B13;
+
+  /* ---------- Warm neutrals — page + chrome ---------- */
+  --warm-50:  #F9F8F6;    /* app background */
+  --warm-100: #F1EFE8;    /* subtle surface */
+  --warm-200: #D3D1C7;    /* borders, dividers */
+  --warm-300: #B8B7B0;
+  --warm-400: #888780;    /* secondary text */
+  --warm-600: #5F5E5A;    /* body text */
+  --warm-800: #2C2C2A;    /* headings, primary text */
+
+  /* ---------- Amber — "needs action" + same-day warnings ---------- */
+  --amber-50:  #FAEEDA;
+  --amber-200: #FAC775;
+  --amber-400: #EF9F27;
+  --amber-600: #BA7517;
+  --amber-800: #854F0B;
+
+  /* ---------- Sage — confirmed / success ---------- */
+  --sage-50:  #EAF3DE;
+  --sage-200: #C0DD97;
+  --sage-400: #639922;
+  --sage-600: #3B6D11;
+  --sage-800: #27500A;
+
+  /* ---------- Sky — informational / forwarded ---------- */
+  --sky-50:  #E6F1FB;
+  --sky-200: #B5D4F4;
+  --sky-400: #378ADD;
+  --sky-600: #185FA5;
+  --sky-800: #0C447C;
+
+  /* ---------- Danger — urgent / declined ---------- */
+  --danger-50:  #FCEBEB;
+  --danger-200: #F7C1C1;
+  --danger-400: #E24B4A;
+  --danger-600: #A32D2D;
+  --danger-800: #791F1F;
+
+  /* ---------- Semantic tokens ---------- */
+  --bg-app:     var(--warm-50);
+  --bg-surface: #FFFFFF;
+  --bg-subtle:  var(--warm-100);
+
+  --fg-strong:  var(--warm-800);   /* headings */
+  --fg-default: #1A1A1A;           /* body (from index.css) */
+  --fg-muted:   var(--warm-600);
+  --fg-subtle:  var(--warm-400);
+  --fg-faint:   var(--warm-300);
+
+  --border-default: var(--warm-200);
+  --border-subtle:  var(--warm-100);
+
+  --accent:        var(--coral-400);
+  --accent-hover:  var(--coral-500);
+  --accent-soft:   var(--coral-50);
+
+  /* ---------- Radii (tailwind.config) ---------- */
+  --radius-sm:   4px;
+  --radius-md:   6px;
+  --radius-lg:   8px;   /* buttons, inputs, rows */
+  --radius-xl:   12px;  /* logo tile, small cards */
+  --radius-2xl:  16px;  /* login card */
+  --radius-pill: 20px;  /* Pill component */
+  --radius-full: 9999px;
+
+  /* ---------- Shadows — intentionally gentle ---------- */
+  --shadow-xs: 0 1px 2px rgba(44, 44, 42, 0.04);
+  --shadow-sm: 0 1px 2px rgba(44, 44, 42, 0.06), 0 1px 3px rgba(44, 44, 42, 0.04);
+  --shadow-md: 0 4px 8px -2px rgba(44, 44, 42, 0.08), 0 2px 4px -2px rgba(44, 44, 42, 0.06);
+  --shadow-lg: 0 10px 24px -6px rgba(44, 44, 42, 0.10), 0 4px 8px -4px rgba(44, 44, 42, 0.06);
+
+  /* ---------- Spacing (8pt scale used across codebase) ---------- */
+  --space-0:   0;
+  --space-1:   4px;
+  --space-2:   8px;
+  --space-3:   12px;
+  --space-4:   16px;
+  --space-5:   20px;
+  --space-6:   24px;
+  --space-8:   32px;
+  --space-10:  40px;
+  --space-12:  48px;
+  --space-16:  64px;
+
+  /* ---------- Min hit target ---------- */
+  --touch-min: 44px;
+
+  /* ---------- Type ---------- */
+  --font-sans: 'Manrope', system-ui, -apple-system, sans-serif;
+
+  /* Fluid base size — app uses 15px per index.css */
+  --fs-2xs:  10px;
+  --fs-xs:   11px;
+  --fs-sm:   13px;   /* meta, captions */
+  --fs-base: 15px;   /* body default */
+  --fs-md:   16px;
+  --fs-lg:   18px;   /* section titles */
+  --fs-xl:   22px;   /* sidebar logo */
+  --fs-2xl:  28px;   /* detail page H1 */
+  --fs-3xl:  32px;
+
+  --fw-regular:  400;
+  --fw-medium:   500;
+  --fw-semibold: 600;
+  --fw-bold:     700;
+  --fw-extra:    800;
+  --fw-black:    900;
+
+  --lh-tight:  1.1;
+  --lh-snug:   1.25;
+  --lh-normal: 1.5;
+
+  --track-tight:   -0.01em;
+  --track-label:    0.02em;  /* ALL-CAPS field labels */
+  --track-eyebrow:  0.08em;  /* sidebar section eyebrows */
+
+  /* ---------- Motion ---------- */
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --dur-fast:      100ms;    /* color/opacity transitions */
+  --dur-base:      150ms;
+  --dur-slow:      200ms;    /* accordion open/close */
+
+  /* Active press: everything scales 0.98 */
+  --press-scale: 0.98;
+}
+
+/* ==========================================================================
+   Base styles
+   ========================================================================== */
+html, body {
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);
+  line-height: var(--lh-normal);
+  color: var(--fg-default);
+  background: var(--bg-app);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+* { box-sizing: border-box; }
+
+/* ==========================================================================
+   Semantic typography
+   ========================================================================== */
+.ds-h1 {
+  font-size: var(--fs-2xl);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-tight);
+  color: var(--fg-strong);
+  letter-spacing: var(--track-tight);
+}
+.ds-h2 {
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-snug);
+  color: var(--fg-strong);
+}
+.ds-h3 {
+  font-size: var(--fs-md);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-snug);
+  color: var(--fg-strong);
+}
+.ds-body     { font-size: var(--fs-base); color: var(--fg-default); }
+.ds-body-sm  { font-size: var(--fs-sm);   color: var(--fg-muted); }
+.ds-meta     { font-size: var(--fs-sm);   color: var(--fg-subtle); }
+
+/* The app's signature ALL-CAPS "eyebrow" labels (sidebar sections, field labels) */
+.ds-eyebrow {
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-black);
+  letter-spacing: var(--track-eyebrow);
+  text-transform: uppercase;
+  color: var(--fg-faint);
+}
+/* Form field labels */
+.ds-label {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--track-label);
+  color: var(--fg-subtle);
+}
+.ds-kbd {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: var(--fs-xs);
+}
+
+/* Brand logo lockup — Manrope Black, tight tracking */
+.ds-logotype {
+  font-family: var(--font-sans);
+  font-weight: var(--fw-black);
+  letter-spacing: var(--track-tight);
+  color: var(--fg-strong);
+}
