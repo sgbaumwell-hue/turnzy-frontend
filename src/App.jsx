@@ -26,6 +26,8 @@ import { Billing } from './pages/settings/sections/Billing';
 import { Account } from './pages/settings/sections/Account';
 import { DeleteConfirm } from './pages/account/DeleteConfirm';
 import { Login } from './pages/auth/Login';
+import { Signup } from './pages/auth/Signup';
+import { CleanerSignup } from './pages/auth/CleanerSignup';
 import { ForgotPassword } from './pages/auth/ForgotPassword';
 import { ResetPassword } from './pages/auth/ResetPassword';
 import { useAuthStore } from './store/authStore';
@@ -89,6 +91,8 @@ function AppWithAuth() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
+      <Route path="/cleaner/signup" element={<CleanerSignup />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/team/accept" element={<AcceptInvite />} />
