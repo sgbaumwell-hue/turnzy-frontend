@@ -13,20 +13,22 @@ import { useAuthStore } from '../../../store/authStore';
 const STORAGE_KEY = 'turnzy_signup_state';
 
 // Given role + entry mode, return the ordered list of step keys.
+// Host workspace setup is deferred to post-signup settings — users don't
+// want a required "create workspace" step mid-onboarding.
 function stepsFor(role, entry, teamCodeVerified) {
   if (entry === 'invite') return ['account', 'success'];
   if (entry === 'join' || (role === 'teammate' && !role)) {
     return teamCodeVerified ? ['teamCode', 'account', 'success'] : ['teamCode', 'account', 'success'];
   }
   if (!role) return ['role'];
-  if (role === 'host')     return ['role', 'account', 'workspace', 'success'];
+  if (role === 'host')     return ['role', 'account', 'success'];
   if (role === 'cleaner')  return ['role', 'account', 'cleanerSetup', 'success'];
   if (role === 'teammate') return ['role', 'teamCode', 'account', 'success'];
   return ['role'];
 }
 
 function stepsForDirect(presetRole) {
-  if (presetRole === 'host')     return ['account', 'workspace', 'success'];
+  if (presetRole === 'host')     return ['account', 'success'];
   if (presetRole === 'cleaner')  return ['account', 'cleanerSetup', 'success'];
   if (presetRole === 'teammate') return ['teamCode', 'account', 'success'];
   return ['role', 'account', 'success']; // fallback
@@ -82,7 +84,9 @@ export function SignupFlow({ presetRole, entry = 'direct', invite = null }) {
     : (presetRole ? stepsForDirect(presetRole) : stepsFor(state.role, entry));
 
   // Compute the initial step key after state.role is known.
-  const stepKeyResolved = stepKey || stepList[0];
+  // Fall back to first step if stepKey is stale (e.g. user was mid-flow
+  // on a step that's since been removed from the list, like 'workspace').
+  const stepKeyResolved = (stepKey && stepList.includes(stepKey)) ? stepKey : stepList[0];
   const stepIdx = stepList.indexOf(stepKeyResolved);
   const pipList = pipSteps(stepList);
   const pipIdx  = pipList.indexOf(stepKeyResolved);
