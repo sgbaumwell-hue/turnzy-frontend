@@ -8,3 +8,8 @@ dist
 ux-audit-screenshots/
 ux-audit-report.md
 test-results/
+
+# Playwright report artifacts (traces/videos regen on every run)
+playwright-report/
+vite.config.js.timestamp-*
+.env.txt
