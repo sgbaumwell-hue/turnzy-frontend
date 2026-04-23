@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { AlertCircle } from 'lucide-react';
+import client from '../../../../api/client';
 import { Eyebrow, FieldLabel, Input, GoogleButton, PasswordField, PrimaryButton, StepPips, Divider, passwordStrength } from '../atoms';
 import { getRole } from '../roles';
 
@@ -12,6 +13,8 @@ export function StepAccount({ state, setState, next, back, invite, error, stepIn
   const [pw, setPw] = useState(state.password || '');
   const [agreed, setAgreed] = useState(!!state.agreed);
   const [emailMismatch, setEmailMismatch] = useState(null);
+  const [emailTakenError, setEmailTakenError] = useState(null);
+  const lastCheckedEmail = useRef(null);
 
   const originalInviteEmail = invite?.invitee?.email;
   useEffect(() => {
@@ -25,7 +28,33 @@ export function StepAccount({ state, setState, next, back, invite, error, stepIn
   }, [email, originalInviteEmail]);
 
   const strengthOk = passwordStrength(pw) >= 2;
-  const valid = name.trim().length >= 2 && /\S+@\S+\.\S+/.test(email) && pw.length >= 8 && strengthOk && agreed && !emailMismatch;
+  const valid = name.trim().length >= 2 && /\S+@\S+\.\S+/.test(email) && pw.length >= 8 && strengthOk && agreed && !emailMismatch && !emailTakenError;
+
+  // On-blur email-exists check — per README §7. Prevents the frustrating case
+  // where the user fills workspace, then gets kicked back because the email
+  // was already taken. Skip for invite flows (server already checked).
+  async function handleEmailBlur() {
+    const trimmed = email.trim().toLowerCase();
+    if (!trimmed || !/\S+@\S+\.\S+/.test(trimmed)) return;
+    if (invite) return;
+    if (lastCheckedEmail.current === trimmed) return;
+    lastCheckedEmail.current = trimmed;
+    try {
+      const { data } = await client.get(`/auth/check-email?email=${encodeURIComponent(trimmed)}`);
+      if (data?.exists) {
+        setEmailTakenError('An account with this email already exists.');
+      } else {
+        setEmailTakenError(null);
+      }
+    } catch {
+      // Silent on network failure — server will catch at submit.
+    }
+  }
+
+  function handleEmailChange(e) {
+    setEmail(e.target.value);
+    if (emailTakenError) setEmailTakenError(null);
+  }
 
   function handleSubmit(e) {
     e?.preventDefault?.();
@@ -93,17 +122,20 @@ export function StepAccount({ state, setState, next, back, invite, error, stepIn
           <Input
             type="email"
             value={email}
-            onChange={e => setEmail(e.target.value)}
+            onChange={handleEmailChange}
+            onBlur={handleEmailBlur}
             placeholder="you@example.com"
-            invalid={!!error || !!emailMismatch}
+            invalid={!!error || !!emailMismatch || !!emailTakenError}
             autoComplete="email"
           />
-          {(error || emailMismatch) && (
+          {(error || emailMismatch || emailTakenError) && (
             <div className="mt-1.5 text-[12px] text-[#9A2F2A] font-medium flex items-start gap-1.5">
               <AlertCircle size={13} className="mt-0.5 flex-shrink-0" />
               <span>
-                {error || emailMismatch}
-                {error?.includes('exists') && <> <a href={`/login?email=${encodeURIComponent(email)}`} className="underline font-semibold">Sign in instead?</a></>}
+                {error || emailMismatch || emailTakenError}
+                {((error || emailTakenError || '').toLowerCase().includes('exists')) && (
+                  <> <a href={`/login?email=${encodeURIComponent(email)}`} className="underline font-semibold">Sign in instead?</a></>
+                )}
               </span>
             </div>
           )}

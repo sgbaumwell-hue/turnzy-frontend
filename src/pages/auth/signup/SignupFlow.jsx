@@ -103,19 +103,22 @@ export function SignupFlow({ presetRole, entry = 'direct', invite = null }) {
     setStateRaw(prev => typeof updater === 'function' ? updater(prev) : { ...prev, ...updater });
   }
 
+  // goToStep is a low-level setter — caller decides whether to clear the error.
+  // next()/back() DO clear errors (forward progress = fresh slate). The 409
+  // branch in submitSignup uses setStepKey directly so the error survives.
   function goToStep(key) {
-    setError(null);
     setStepKey(key);
   }
 
   function next() {
+    setError(null);
     const nextIdx = stepIdx + 1;
     if (nextIdx >= stepList.length) return;
     goToStep(stepList[nextIdx]);
-    // If we just reached 'success', trigger the final submit if not already done.
   }
 
   function back() {
+    setError(null);
     const prevIdx = Math.max(0, stepIdx - 1);
     goToStep(stepList[prevIdx]);
   }
@@ -189,9 +192,11 @@ export function SignupFlow({ presetRole, entry = 'direct', invite = null }) {
     } catch (err) {
       const msg = err.response?.data?.message || 'Something went wrong. Please try again.';
       if (err.response?.status === 409) {
-        setError('An account with that email already exists.');
+        const serverMsg = err.response.data?.message || 'An account with that email already exists.';
         // If we were past the account step, walk back to it so user can fix.
+        // goToStep no longer clears errors, so the message survives the jump.
         if (stepKeyResolved !== 'account') goToStep('account');
+        setError(serverMsg);
       } else {
         setError(msg);
       }
