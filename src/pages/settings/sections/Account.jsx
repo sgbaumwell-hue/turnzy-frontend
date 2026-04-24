@@ -439,11 +439,11 @@ export function Account() {
           <div className="flex-1 min-w-0">
             <Eyebrow>— Your account</Eyebrow>
             <h1
-              className="font-serif mt-1.5"
+              className="font-inter mt-1.5"
               style={{
-                fontSize: isDesktop ? 32 : 24,
-                fontWeight: 900,
-                letterSpacing: isDesktop ? -0.8 : -0.6,
+                fontSize: isDesktop ? 30 : 24,
+                fontWeight: 800,
+                letterSpacing: '-0.02em',
                 color: '#1F1D1A',
                 lineHeight: 1.1,
               }}

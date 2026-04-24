@@ -96,9 +96,9 @@ export function StepAccount({ state, setState, next, back, invite, error, stepIn
         <StepPips current={stepIndex} total={totalSteps} accent={r.accent} accentDark={r.accent2} />
       </div>
 
-      <h2 className="font-serif text-[30px] lg:text-[34px] leading-[1.05] tracking-[-0.025em] font-black text-[#1F1D1A]">
+      <h2 className="font-inter text-[26px] lg:text-[30px] leading-[1.15] tracking-[-0.015em] font-extrabold text-[#1F1D1A]">
         {invite
-          ? <>Welcome, <span className="italic font-light" style={{ color: r.accent }}>{invitedName || 'friend'}</span>.</>
+          ? <>Welcome, <span style={{ color: r.accent, fontWeight: 800 }}>{invitedName || 'friend'}</span>.</>
           : <>The basics.</>
         }
       </h2>

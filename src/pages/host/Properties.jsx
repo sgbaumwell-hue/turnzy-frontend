@@ -99,8 +99,8 @@ function PropertyDetailHeader({ property, index, onRename, saving }) {
         </div>
       ) : (
         <h1
-          className="font-serif font-bold text-[#1C1C1A] leading-[1.1] tracking-[-0.6px]"
-          style={{ fontSize: 'clamp(26px, 3.6vw, 38px)' }}
+          className="font-inter text-[#1C1C1A] leading-[1.1]"
+          style={{ fontSize: 'clamp(26px, 3.6vw, 34px)', fontWeight: 800, letterSpacing: '-0.02em' }}
         >
           {property.name}
         </h1>

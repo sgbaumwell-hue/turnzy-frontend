@@ -1,11 +1,13 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import {
   Home, Activity, ExternalLink, Building2, Users, CreditCard, Bell, User,
   Settings, CalendarDays, AlertTriangle, Clock, ShieldCheck, Archive,
-  ChevronDown, MoreVertical,
+  ChevronDown, MoreVertical, LogOut,
 } from 'lucide-react';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import clsx from 'clsx';
 import { useAuthStore } from '../../store/authStore';
+import { authApi } from '../../api/auth';
 
 /* ── Brand mark ── */
 function LogoMark({ size = 30 }) {
@@ -212,11 +214,25 @@ function UserAvatar({ name, size = 30 }) {
 
 /* ── Sidebar ── */
 export function Sidebar({ properties, activeProperty, onPropertyChange, counts = {} }) {
-  const { user } = useAuthStore();
+  const { user, clearUser } = useAuthStore();
+  const navigate = useNavigate();
   const isAdmin = user?.role === 'admin' || user?.is_admin;
   const isCleaner = user?.role === 'cleaner';
   const isTeamMember = user?.role === 'team_member';
   const roleLabel = isTeamMember ? 'Team member' : isCleaner ? 'Cleaner' : 'Host · Pro plan';
+
+  const accountHref = isCleaner
+    ? '/cleaner/settings/account'
+    : isTeamMember
+      ? '/team/settings'
+      : '/settings/account';
+
+  async function handleSignOut() {
+    try { await authApi.logout(); } catch { /* ignore — local state is the source of truth */ }
+    clearUser();
+    localStorage.removeItem('turnzy_token');
+    navigate('/login');
+  }
 
   const orgName = user?.org_name || user?.workspace_name || 'My Workspace';
   const orgInitials = orgName.split(/\s+/).slice(0, 2).map(w => w[0] || '').join('').toUpperCase() || 'MW';
@@ -270,12 +286,41 @@ export function Sidebar({ properties, activeProperty, onPropertyChange, counts =
           <div className="text-[12.5px] font-bold text-ink truncate leading-tight">{user?.name}</div>
           <div className="text-[11px] text-text-subtle leading-tight">{roleLabel}</div>
         </div>
-        <button
-          aria-label="Account menu"
-          className="p-1 rounded text-text-subtle hover:text-ink hover:bg-bg-subtle transition-colors"
-        >
-          <MoreVertical size={14} strokeWidth={2.6} />
-        </button>
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger asChild>
+            <button
+              aria-label="Account menu"
+              className="p-1 rounded text-text-subtle hover:text-ink hover:bg-bg-subtle transition-colors data-[state=open]:text-ink data-[state=open]:bg-bg-subtle"
+            >
+              <MoreVertical size={14} strokeWidth={2.6} />
+            </button>
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Portal>
+            <DropdownMenu.Content
+              side="top"
+              align="end"
+              sideOffset={6}
+              className="min-w-[180px] bg-bg-surface border border-border-base rounded-lg shadow-lg py-1 font-inter z-50"
+              style={{ boxShadow: '0 10px 28px rgba(0,0,0,.10)' }}
+            >
+              <DropdownMenu.Item
+                onSelect={() => navigate(accountHref)}
+                className="flex items-center gap-2 px-3 py-2 text-[13px] text-text-base cursor-pointer outline-none data-[highlighted]:bg-bg-subtle"
+              >
+                <User size={14} strokeWidth={2} className="text-text-muted" />
+                Account
+              </DropdownMenu.Item>
+              <DropdownMenu.Separator className="my-1 h-px bg-border-soft" />
+              <DropdownMenu.Item
+                onSelect={handleSignOut}
+                className="flex items-center gap-2 px-3 py-2 text-[13px] text-text-base cursor-pointer outline-none data-[highlighted]:bg-bg-subtle"
+              >
+                <LogOut size={14} strokeWidth={2} className="text-text-muted" />
+                Sign out
+              </DropdownMenu.Item>
+            </DropdownMenu.Content>
+          </DropdownMenu.Portal>
+        </DropdownMenu.Root>
       </div>
     </aside>
   );

@@ -55,8 +55,8 @@ function CleanerDetailHeader({ cleaner, onResend, resending }) {
         <Eyebrow>Cleaner</Eyebrow>
       </div>
       <h1
-        className="font-serif font-bold text-[#1C1C1A] leading-[1.1] tracking-[-0.4px]"
-        style={{ fontSize: 'clamp(24px, 3.4vw, 34px)' }}
+        className="font-inter text-[#1C1C1A] leading-[1.1]"
+        style={{ fontSize: 'clamp(24px, 3.4vw, 32px)', fontWeight: 800, letterSpacing: '-0.02em' }}
       >
         {cleaner.name || cleaner.email}
       </h1>

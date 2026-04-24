@@ -102,8 +102,8 @@ export function SignupShell({ role = 'host', invite = null, children }) {
               <div className="text-[9.5px] font-bold uppercase tracking-[0.16em] mb-2" style={{ color: r.accent }}>
                 — You were invited
               </div>
-              <div className="font-serif text-[26px] leading-[1.05] tracking-[-0.02em] font-black">
-                <span className="italic font-light" style={{ color: r.accent }}>{invite.inviter?.name?.split(' ')[0] || 'Someone'}</span> wants you on {invite.workspace?.name || 'the team'}.
+              <div className="font-inter text-[22px] leading-[1.2] tracking-[-0.01em] font-extrabold text-white">
+                <span style={{ color: r.accent, fontWeight: 800 }}>{invite.inviter?.name?.split(' ')[0] || 'Someone'}</span> wants you on {invite.workspace?.name || 'the team'}.
               </div>
               <div className="mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11.5px] font-semibold text-white"
                 style={{ background: `${r.accent}22`, boxShadow: `inset 0 0 0 1px ${r.accent}55` }}>

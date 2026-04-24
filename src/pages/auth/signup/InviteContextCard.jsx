@@ -12,8 +12,8 @@ export function InviteContextCard({ role, invite }) {
       <div className="text-[10.5px] font-bold uppercase tracking-[0.16em] mb-4" style={{ color: r.accent }}>
         — You were invited
       </div>
-      <h1 className="font-serif text-[36px] xl:text-[44px] leading-[1.05] tracking-[-0.025em] font-black text-white">
-        <span className="italic font-light" style={{ color: r.accent }}>{firstName}</span><br />
+      <h1 className="font-inter text-[32px] xl:text-[38px] leading-[1.15] tracking-[-0.015em] font-extrabold text-white">
+        <span style={{ color: r.accent, fontWeight: 800 }}>{firstName}</span><br />
         wants you on<br />
         {invite.workspace?.name || invite.workspaceName || 'the team'}.
       </h1>
