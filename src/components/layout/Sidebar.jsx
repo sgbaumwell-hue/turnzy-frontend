@@ -105,12 +105,8 @@ function Item({ to, end, icon: Icon, label, pill, pillTone, external, onClick })
 function HostNav({ isAdmin, counts }) {
   return (
     <>
-      <Eyebrow>Views</Eyebrow>
-      <Item to="/" end icon={Home} label="Dashboard" />
-      <Item to="/activity" icon={Activity} label="Activity" />
-      {isAdmin && <Item to="/admin" external icon={ExternalLink} label="Admin" />}
-
       <Eyebrow>Bookings</Eyebrow>
+      <Item to="/" end                  icon={Home}          label="Dashboard" />
       <Item to="/bookings/urgent"       icon={AlertTriangle} label="Urgent"       pill={counts?.urgent}      pillTone="danger" />
       <Item to="/bookings/needs-action" icon={Clock}         label="Needs action" pill={counts?.needsAction} pillTone="warn" />
       <Item to="/bookings/confirmed"    icon={ShieldCheck}   label="Confirmed"    pill={counts?.confirmed}   pillTone="neutral" />
@@ -118,6 +114,7 @@ function HostNav({ isAdmin, counts }) {
       <Item to="/bookings/past"         icon={Archive}       label="Past" />
 
       <Eyebrow>Workspace</Eyebrow>
+      {isAdmin && <Item to="/admin"      external icon={ExternalLink} label="Admin" />}
       <Item to="/properties"             icon={Building2}   label="Properties" />
       <Item to="/cleaners"               icon={Users}       label="Cleaners" />
       <Item to="/settings/notifications" icon={Bell}        label="Notifications" />
