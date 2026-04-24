@@ -11,8 +11,15 @@ const MOBILE_ITEMS = [
   { to: '/settings/account', icon: User, label: 'Account', desc: 'Profile, password, security' },
 ];
 
-// Pages that use their own full-height list+panel layout
-const FULL_HEIGHT_PAGES = ['/settings/properties', '/settings/cleaners'];
+// Pages that manage their own full-height layout (content column + warm
+// dot-grid rail on the right, à la the Bookings detail pane). Billing
+// still runs the legacy padded/centered layout.
+const FULL_HEIGHT_PAGES = [
+  '/settings/properties',
+  '/settings/cleaners',
+  '/settings/notifications',
+  '/settings/account',
+];
 
 function MobileMenu({ isAdmin }) {
   const navigate = useNavigate();

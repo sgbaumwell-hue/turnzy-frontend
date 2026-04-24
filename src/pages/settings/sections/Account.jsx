@@ -10,6 +10,7 @@ import { authApi } from '../../../api/auth';
 import { settingsApi } from '../../../api/settings';
 import { useMediaQuery } from '../../../hooks/useMediaQuery';
 import { useToast } from '../components/Toast';
+import { PropertyRail } from '../../../components/PropertyRail';
 
 const LANGUAGES = [
   'English', 'Español', '中文', 'Tagalog', 'Tiếng Việt', 'العربية',
@@ -419,10 +420,11 @@ export function Account() {
     ? 'linear-gradient(135deg, #FBF8F1 0%, #F5EFE4 100%)'
     : 'linear-gradient(180deg, #FBF8F1 0%, #F5EFE4 100%)';
 
-  return (
-    <div
-      className={`mx-auto font-inter ${isDesktop ? 'max-w-[860px]' : ''}`}
-    >
+  // Desktop wraps the content column with a warm dot-grid rail on the right,
+  // à la the Bookings detail pane. Mobile renders the content full-width with
+  // no rail.
+  const Inner = (
+    <div className="font-inter">
       {/* ── Hero band ── */}
       <div
         className={isDesktop ? '' : 'md:hidden'}
@@ -628,6 +630,16 @@ export function Account() {
           />
         </Card>
       </div>
+    </div>
+  );
+
+  if (!isDesktop) return Inner;
+  return (
+    <div className="flex flex-1 min-h-0 overflow-hidden" style={{ background: '#F9F8F6' }}>
+      <div className="flex-1 overflow-y-auto min-w-0" style={{ maxWidth: 860 }}>
+        <div className="px-8 pt-8 pb-20">{Inner}</div>
+      </div>
+      <PropertyRail />
     </div>
   );
 }

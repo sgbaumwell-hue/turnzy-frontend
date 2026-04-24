@@ -23,6 +23,7 @@ import { CleaningTeamSection } from '@/components/workspace/CleaningTeamSection'
 import { DangerZoneCard } from '@/components/workspace/DangerZoneCard';
 import { CleanerPicker } from '@/components/workspace/CleanerPicker';
 import { AddPropertyModal } from '@/components/workspace/AddPropertyModal';
+import { PropertyRail } from '@/components/PropertyRail';
 
 function EmptyState({ onAdd }) {
   return (
@@ -417,21 +418,26 @@ export function PropertiesPage() {
 
       {/* Detail pane */}
       <main
-        className={`flex-1 min-w-0 overflow-hidden bg-[#F9F8F6] ${
+        className={`flex-1 min-w-0 overflow-hidden flex bg-[#F9F8F6] ${
           !selected && !isDesktop ? 'hidden' : ''
         }`}
       >
         {selected ? (
-          <PropertyDetail
-            key={selected.id}
-            property={selected}
-            index={selectedIndex}
-            allProperties={rawProperties}
-            isMobile={!isDesktop}
-            onBack={() => setSelectedId(null)}
-          />
+          <>
+            <div className="flex-1 min-w-0 overflow-hidden" style={{ maxWidth: isDesktop ? 760 : '100%' }}>
+              <PropertyDetail
+                key={selected.id}
+                property={selected}
+                index={selectedIndex}
+                allProperties={rawProperties}
+                isMobile={!isDesktop}
+                onBack={() => setSelectedId(null)}
+              />
+            </div>
+            {isDesktop && <PropertyRail />}
+          </>
         ) : (
-          <Placeholder label="Select a property to view settings" />
+          isDesktop && <PropertyRail />
         )}
       </main>
 

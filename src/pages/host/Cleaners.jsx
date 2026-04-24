@@ -17,6 +17,7 @@ import { ContactCard } from '@/components/workspace/ContactCard';
 import { NotificationsCard } from '@/components/workspace/NotificationsCard';
 import { DangerZoneCard } from '@/components/workspace/DangerZoneCard';
 import { AddCleanerFlow } from '@/components/workspace/AddCleanerFlow';
+import { PropertyRail } from '@/components/PropertyRail';
 
 function EmptyState({ onAdd }) {
   return (
@@ -309,7 +310,7 @@ export function CleanersPage() {
     return <EmptyState onAdd={handleOpenAdd} />;
   }
 
-  const rightPane = adding ? (
+  const innerPane = adding ? (
     <AddCleanerFlow
       properties={properties}
       onCancel={() => setAdding(false)}
@@ -325,8 +326,17 @@ export function CleanersPage() {
       onBack={() => setSelectedKey(null)}
       onAfterRemoveAll={() => setSelectedKey(null)}
     />
+  ) : null;
+
+  const rightPane = innerPane ? (
+    <>
+      <div className="flex-1 min-w-0 overflow-hidden" style={{ maxWidth: isDesktop ? 760 : '100%' }}>
+        {innerPane}
+      </div>
+      {isDesktop && <PropertyRail />}
+    </>
   ) : (
-    <Placeholder label="Select a cleaner to view details" />
+    isDesktop && <PropertyRail />
   );
 
   const rightPaneOpen = adding || selected;
@@ -381,7 +391,7 @@ export function CleanersPage() {
       </aside>
 
       <main
-        className={`flex-1 min-w-0 overflow-hidden bg-[#F9F8F6] ${
+        className={`flex-1 min-w-0 overflow-hidden flex bg-[#F9F8F6] ${
           !rightPaneOpen && !isDesktop ? 'hidden' : ''
         }`}
       >

@@ -13,6 +13,7 @@ import {
 import { bookingsApi } from '../../api/bookings';
 import { fmtDateLong, fmtTime, getMonthDay } from '../../utils/dates';
 import { Skeleton } from '../ui/Skeleton';
+import { PropertyRail } from '../PropertyRail';
 
 /* ============================================================================
    TOKENS — copied from the design prototype's T object.
@@ -706,33 +707,6 @@ function PrimaryActions({ booking, cleanerState, hasBackup, primaryFirst, backup
     );
   }
   return null;
-}
-
-/* ============================================================================
-   PROPERTY RAIL — cream page backdrop with sparse dot grid + inset shadow
-   ============================================================================ */
-function PropertyRail() {
-  return (
-    <aside style={{
-      flex: '0 0 320px', minWidth: 280, alignSelf: 'stretch',
-      minHeight: 360,
-      background: `radial-gradient(circle at 1px 1px, rgba(130,90,60,0.22) 1px, transparent 1.5px), ${T.warm50}`,
-      backgroundSize: '22px 22px',
-      boxShadow: 'inset 14px 0 28px -14px rgba(68,44,28,0.14)',
-      position: 'relative', overflow: 'hidden',
-    }}>
-      <div style={{
-        position: 'absolute', top: 0, left: 0, right: 0, height: 120,
-        background: `linear-gradient(to bottom, ${T.warm50} 0%, rgba(251,245,238,0) 100%)`,
-        pointerEvents: 'none',
-      }} />
-      <div style={{
-        position: 'absolute', bottom: 0, left: 0, right: 0, height: 120,
-        background: `linear-gradient(to top, ${T.warm50} 0%, rgba(251,245,238,0) 100%)`,
-        pointerEvents: 'none',
-      }} />
-    </aside>
-  );
 }
 
 /* ============================================================================
