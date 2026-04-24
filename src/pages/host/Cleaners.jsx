@@ -330,7 +330,10 @@ export function CleanersPage() {
 
   const rightPane = innerPane ? (
     <>
-      <div className="flex-1 min-w-0 overflow-hidden" style={{ maxWidth: isDesktop ? 760 : '100%' }}>
+      <div
+        className="overflow-hidden"
+        style={isDesktop ? { flex: '0 1 960px', minWidth: 0 } : { flex: 1, minWidth: 0 }}
+      >
         {innerPane}
       </div>
       {isDesktop && <PropertyRail />}

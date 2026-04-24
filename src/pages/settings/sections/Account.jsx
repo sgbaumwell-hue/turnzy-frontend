@@ -636,7 +636,7 @@ export function Account() {
   if (!isDesktop) return Inner;
   return (
     <div className="flex flex-1 min-h-0 overflow-hidden" style={{ background: '#F9F8F6' }}>
-      <div className="flex-1 overflow-y-auto min-w-0" style={{ maxWidth: 860 }}>
+      <div className="overflow-y-auto" style={{ flex: '0 1 860px', minWidth: 0 }}>
         <div className="px-8 pt-8 pb-20">{Inner}</div>
       </div>
       <PropertyRail />
