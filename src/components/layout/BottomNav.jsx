@@ -1,6 +1,6 @@
 import { createPortal } from 'react-dom';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Home, Activity, Settings, CalendarDays } from 'lucide-react';
+import { Home, Activity, Settings, CalendarDays, Building2, Users } from 'lucide-react';
 import clsx from 'clsx';
 import { useAuthStore } from '../../store/authStore';
 
@@ -16,15 +16,15 @@ const TEAM_TABS = [
   { to: '/team/settings', icon: Settings, label: 'Settings', match: p => p.startsWith('/team/settings') },
 ];
 
+// Host bottom nav — four primary tabs per Settings redesign spec.
+// The Settings tab stays active for Admin / Notifications / Billing / Account
+// sub-pages (all of /settings/*), but NOT for Properties / Cleaners which now
+// have their own tabs.
 const HOST_TABS = [
-  { to: '/',         icon: Home,     label: 'Home',     end: true, match: p => p === '/' },
-  { to: '/activity', icon: Activity, label: 'Activity', match: p => p.startsWith('/activity') },
-  // Settings tab lights up for any settings sub-page AND for mobile-only host views
-  // of Properties / Cleaners (which live under /settings on mobile).
-  {
-    to: '/settings', icon: Settings, label: 'Settings',
-    match: p => p.startsWith('/settings') || p.startsWith('/properties') || p.startsWith('/cleaners'),
-  },
+  { to: '/',           icon: Home,      label: 'Bookings',   end: true, match: p => p === '/' || p.startsWith('/bookings') },
+  { to: '/properties', icon: Building2, label: 'Properties', match: p => p.startsWith('/properties') },
+  { to: '/cleaners',   icon: Users,     label: 'Cleaners',   match: p => p.startsWith('/cleaners') },
+  { to: '/settings',   icon: Settings,  label: 'Settings',   match: p => p.startsWith('/settings') },
 ];
 
 export function BottomNav() {
@@ -38,7 +38,7 @@ export function BottomNav() {
 
   return createPortal(
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 flex md:hidden font-inter"
+      className="fixed bottom-0 left-0 right-0 z-30 flex md:hidden font-inter"
       style={{
         background: '#1F1D1A',
         borderTop: '1px solid rgba(255,255,255,0.06)',

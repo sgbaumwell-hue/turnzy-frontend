@@ -13,23 +13,27 @@ import clsx from 'clsx';
  * in the mobile top bar, or null to show the Turnzy wordmark.
  */
 function deriveBack(pathname, role) {
-  // Host: settings sub-pages + settings-scoped Properties/Cleaners
   if (!role || role === 'host' || role === 'admin') {
-    if (pathname === '/settings' || pathname.startsWith('/settings/')) {
-      if (pathname === '/settings') return null;
+    // Properties + Cleaners are now their own primary tabs — treat the roots
+    // as ROOT screens (wordmark). Deeper routes would remain sub-screens.
+    if (pathname === '/settings' || pathname === '/properties' || pathname === '/cleaners') {
+      return null;
+    }
+    if (pathname.startsWith('/settings/')) {
       return { label: 'Settings', to: '/settings' };
     }
-    if (pathname.startsWith('/properties') || pathname.startsWith('/cleaners')) {
-      return { label: 'Settings', to: '/settings' };
+    if (pathname.startsWith('/properties/')) {
+      return { label: 'Properties', to: '/properties' };
+    }
+    if (pathname.startsWith('/cleaners/')) {
+      return { label: 'Cleaners', to: '/cleaners' };
     }
   }
-  // Cleaner
   if (role === 'cleaner') {
     if (pathname.startsWith('/cleaner/settings/')) {
       return { label: 'Settings', to: '/cleaner/settings' };
     }
   }
-  // Team member
   if (role === 'team_member') {
     if (pathname !== '/team/settings' && pathname.startsWith('/team/settings/')) {
       return { label: 'Settings', to: '/team/settings' };
@@ -40,23 +44,9 @@ function deriveBack(pathname, role) {
 
 function MobileBrand() {
   return (
-    <div className="flex items-center gap-2.5 px-4">
-      <div
-        className="relative flex-shrink-0 flex items-center justify-center"
-        style={{
-          width: 28, height: 28, borderRadius: 8,
-          background: 'linear-gradient(140deg,#F07447 0%,#E85F34 45%,#C8481F 100%)',
-          boxShadow: 'inset 0 1px 0 rgba(255,255,255,.3), 0 2px 6px rgba(168,66,30,.2)',
-        }}
-      >
-        <svg width="16" height="16" viewBox="0 0 32 32" fill="none">
-          <path d="M16 9.5C19.4 9.8 22 12.5 22 16C22 19.5 19.4 22.2 16 22.5" stroke="white" strokeWidth="2.8" strokeLinecap="round" fill="none" />
-          <path d="M22 16L23.8 14.2M22 16L20.2 14.2" stroke="white" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
-          <circle cx="12" cy="16" r="2.2" fill="white" />
-        </svg>
-      </div>
+    <div className="flex items-center pl-4">
       <span
-        className="font-black leading-none text-ink"
+        className="leading-none text-ink"
         style={{ fontFamily: 'Fraunces, Georgia, serif', fontSize: 20, letterSpacing: -0.4, fontWeight: 900 }}
       >
         Turnzy
@@ -95,23 +85,6 @@ function MobileHeader() {
       )}
 
       <div className="flex-1" />
-
-      {!back && user?.role !== 'team_member' && (
-        <button
-          className="relative inline-flex items-center justify-center mr-2"
-          style={{ width: 40, height: 40, borderRadius: 8 }}
-          aria-label="Notifications"
-        >
-          <Bell size={18} strokeWidth={2} style={{ color: '#2C2C2A' }} />
-          <span
-            className="absolute"
-            style={{
-              top: 10, right: 10, width: 7, height: 7, borderRadius: 999,
-              background: '#D85A30', boxShadow: '0 0 0 2px #F9F8F6',
-            }}
-          />
-        </button>
-      )}
     </header>
   );
 }

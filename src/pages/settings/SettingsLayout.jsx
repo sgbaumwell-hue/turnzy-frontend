@@ -2,11 +2,9 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { ToastProvider } from './components/Toast';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
-import { Home, Users, Bell, CreditCard, User } from 'lucide-react';
+import { Bell, CreditCard, User } from 'lucide-react';
 
 const MOBILE_ITEMS = [
-  { to: '/settings/properties', icon: Home, label: 'Properties', desc: 'Calendars, times, timezone' },
-  { to: '/settings/cleaners', icon: Users, label: 'Cleaners', desc: 'Primary, backup, connection' },
   { to: '/settings/notifications', icon: Bell, label: 'Notifications', desc: 'Alerts, timing, channels' },
   { to: '/settings/billing', icon: CreditCard, label: 'Billing', desc: 'Plan, payment method' },
   { to: '/settings/account', icon: User, label: 'Account', desc: 'Profile, password, security' },
