@@ -1,7 +1,6 @@
 import { Sidebar } from './Sidebar';
 import { BottomNav } from './BottomNav';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
-import { useUiStore } from '../../store/uiStore';
 import { useAuthStore } from '../../store/authStore';
 import { ChevronLeft } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -111,20 +110,12 @@ export function TopBar() {
 
 export function AppShell({ children, counts }) {
   const isDesktop = useMediaQuery('(min-width: 768px)');
-  const { activeProperty, setActiveProperty } = useUiStore();
   const { user } = useAuthStore();
   const showMobileHeader = !isDesktop && user?.role !== 'team_member';
 
   return (
     <div className="flex h-screen overflow-hidden" style={{ background: '#F9F8F6' }}>
-      {isDesktop && (
-        <Sidebar
-          properties={[]}
-          activeProperty={activeProperty}
-          onPropertyChange={setActiveProperty}
-          counts={counts || {}}
-        />
-      )}
+      {isDesktop && <Sidebar counts={counts || {}} />}
       <main className={clsx('flex-1 flex flex-col min-w-0 overflow-hidden', !isDesktop && 'pb-[78px]')}>
         {showMobileHeader && <MobileHeader />}
         {isDesktop && <TopBar />}

@@ -343,8 +343,21 @@ export function PaymentCard({ role, booking, onAfterAction }) {
   // Don't render at all if the cleaner hasn't completed the job yet.
   if (!status || status === 'n_a' || status === null) return null;
 
-  const cleanerFirst = (booking.cleaner_name || booking.cleaner_email || 'your cleaner').split(/\s+/)[0];
-  const hostFirst = (booking.host_name || 'your host').split(/\s+/)[0];
+  // For the host view, there's nothing meaningful to show if no cleaner
+  // is assigned (button would read "I've paid your"). Hide the card and
+  // let the surrounding "No cleaner assigned" empty state cover this.
+  const hasCleaner = !!(booking.cleaner_name || booking.cleaner_email);
+  if (role === 'host' && !hasCleaner) return null;
+
+  // firstNameOrRole: real first name when we have one, else a readable
+  // role phrase like "your cleaner" / "your host". We never split the
+  // fallback — `"your cleaner".split()[0]` was leaking "your" into CTAs.
+  const firstNameOrRole = (name, email, fallback) => {
+    const src = (name || email || '').trim();
+    return src ? src.split(/\s+/)[0] : fallback;
+  };
+  const cleanerFirst = firstNameOrRole(booking.cleaner_name, booking.cleaner_email, 'your cleaner');
+  const hostFirst = firstNameOrRole(booking.host_name, booking.host_email, 'your host');
   const nudgeCount = booking.payment_nudge_count || 0;
 
   const completedAt = fmtStamp(booking.completed_at);

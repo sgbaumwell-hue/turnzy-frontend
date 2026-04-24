@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import {
   Home, Activity, ExternalLink, Building2, Users, CreditCard, Bell, User,
   Settings, CalendarDays, AlertTriangle, Clock, ShieldCheck, Archive,
-  ChevronDown, MoreVertical, LogOut,
+  MoreVertical, LogOut,
 } from 'lucide-react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import clsx from 'clsx';
@@ -115,7 +115,7 @@ function HostNav({ isAdmin, counts }) {
       <Item to="/bookings/queued"       icon={CalendarDays}  label="Queued"       pill={counts?.queued}      pillTone="neutral" />
       <Item to="/bookings/past"         icon={Archive}       label="Past" />
 
-      <Eyebrow>Workspace</Eyebrow>
+      <div style={{ height: 10 }} />
       {isAdmin && <Item to="/admin"      external icon={ExternalLink} label="Admin" />}
       <Item to="/properties"             icon={Building2}   label="Properties" />
       <Item to="/cleaners"               icon={Users}       label="Cleaners" />
@@ -134,7 +134,7 @@ function CleanerNav() {
       <Item to="/cleaner/calendar" icon={CalendarDays} label="Calendar" />
       <Item to="/cleaner/activity" icon={Activity} label="Activity" />
 
-      <Eyebrow>Workspace</Eyebrow>
+      <div style={{ height: 10 }} />
       <Item to="/cleaner/settings/team" icon={Users} label="My team" />
       <Item to="/cleaner/settings/notifications" icon={Bell} label="Notifications" />
       <Item to="/cleaner/settings/account" icon={User} label="Account" />
@@ -149,48 +149,6 @@ function TeamNav() {
       <Item to="/team" end icon={Home} label="My jobs" />
       <Item to="/team/settings" icon={Settings} label="Settings" />
     </>
-  );
-}
-
-/* ── Workspace chip (host) ── */
-function WorkspaceChip({ properties, activeProperty, onPropertyChange, orgName, orgInitials }) {
-  const hasSwitch = properties?.length > 1;
-  return (
-    <div className="px-1 pb-3">
-      {hasSwitch ? (
-        <div className="relative">
-          <select
-            value={activeProperty || ''}
-            onChange={(e) => onPropertyChange(e.target.value || null)}
-            className="w-full appearance-none bg-bg-page border border-border-soft rounded-tile pl-[46px] pr-9 py-2.5 text-[13px] font-bold font-inter text-ink focus:outline-none focus:ring-2 focus:ring-coral-brand cursor-pointer"
-          >
-            <option value="">All properties</option>
-            {properties.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-          </select>
-          <div
-            className="absolute left-3 top-1/2 -translate-y-1/2 w-7 h-7 rounded-md bg-ink text-white inline-flex items-center justify-center text-[11px] font-extrabold pointer-events-none"
-            style={{ letterSpacing: -0.3 }}
-          >
-            {orgInitials}
-          </div>
-          <ChevronDown size={13} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-subtle pointer-events-none" />
-        </div>
-      ) : (
-        <div className="flex items-center gap-2.5 p-2.5 bg-bg-page border border-border-soft rounded-tile">
-          <div
-            className="w-7 h-7 rounded-md bg-ink text-white inline-flex items-center justify-center text-[11px] font-extrabold flex-shrink-0"
-            style={{ letterSpacing: -0.3 }}
-          >
-            {orgInitials}
-          </div>
-          <div className="flex-1 min-w-0 font-inter">
-            <div className="text-[13px] font-bold text-ink leading-tight truncate">{orgName}</div>
-            <div className="text-[11px] text-text-subtle leading-tight">All properties</div>
-          </div>
-          <ChevronDown size={13} className="text-text-subtle flex-shrink-0" />
-        </div>
-      )}
-    </div>
   );
 }
 
@@ -213,7 +171,7 @@ function UserAvatar({ name, size = 30 }) {
 }
 
 /* ── Sidebar ── */
-export function Sidebar({ properties, activeProperty, onPropertyChange, counts = {} }) {
+export function Sidebar({ counts = {} }) {
   const { user, clearUser } = useAuthStore();
   const navigate = useNavigate();
   const isAdmin = user?.role === 'admin' || user?.is_admin;
@@ -234,16 +192,13 @@ export function Sidebar({ properties, activeProperty, onPropertyChange, counts =
     navigate('/login');
   }
 
-  const orgName = user?.org_name || user?.workspace_name || 'My Workspace';
-  const orgInitials = orgName.split(/\s+/).slice(0, 2).map(w => w[0] || '').join('').toUpperCase() || 'MW';
-
   return (
     <aside
       className="w-[240px] flex-shrink-0 flex flex-col h-full bg-bg-surface font-inter"
       style={{ borderRight: '1px solid #EDEAE0', padding: '18px 12px 12px' }}
     >
       {/* Brand */}
-      <div className="flex items-center gap-2.5 px-1 pb-3.5">
+      <div className="flex items-center gap-2.5 px-1 pb-4">
         <LogoMark size={30} />
         <span
           className="font-black text-[18px] leading-none tracking-[-0.03em] text-ink"
@@ -260,17 +215,6 @@ export function Sidebar({ properties, activeProperty, onPropertyChange, counts =
           </span>
         </span>
       </div>
-
-      {/* Workspace chip (host only) */}
-      {!isCleaner && !isTeamMember && (
-        <WorkspaceChip
-          properties={properties}
-          activeProperty={activeProperty}
-          onPropertyChange={onPropertyChange}
-          orgName={orgName}
-          orgInitials={orgInitials}
-        />
-      )}
 
       {/* Nav */}
       <nav className="flex-1 overflow-y-auto space-y-0.5">

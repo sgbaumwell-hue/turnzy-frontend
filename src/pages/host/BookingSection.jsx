@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { BookingRow } from '../../components/booking/BookingRow';
@@ -61,6 +61,18 @@ export function BookingSection() {
 
   const filtered = useMemo(() => bookings.filter(config.filter), [bookings, config]);
 
+  // Clear any stale selection when the user switches sections — otherwise
+  // the detail pane keeps rendering a booking that no longer belongs to
+  // the current list (e.g. viewing "Urgent", clicking a booking, then
+  // navigating to "Past" shouldn't keep the Urgent booking in the pane).
+  useEffect(() => { setSelectedBooking(null); }, [section, setSelectedBooking]);
+
+  // Guard: never render the detail pane for a booking that isn't in the
+  // current filter. Protects against late-arriving clicks that race with
+  // the section-change effect above.
+  const selectionInView = selectedBookingId != null
+    && filtered.some(b => b.id === selectedBookingId);
+
   return (
     <div className="flex w-full h-screen overflow-hidden">
       {/* List */}
@@ -90,7 +102,7 @@ export function BookingSection() {
       {/* Detail panel (desktop) */}
       {isDesktop && (
         <div className="flex-1 min-w-0 bg-gray-50 overflow-y-auto">
-          {selectedBookingId
+          {selectionInView
             ? <BookingDetail bookingId={selectedBookingId} onClose={() => setSelectedBooking(null)} />
             : <div className="flex items-center justify-center h-full text-gray-400 text-sm">Select a booking to view details</div>
           }
