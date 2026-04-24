@@ -155,7 +155,6 @@ function AppWithAuth() {
       <Route path="/settings" element={
         <RequireAuth allowedRoles={['host', 'admin']}><AppShell><SettingsLayout /></AppShell></RequireAuth>
       }>
-        <Route index element={<Navigate to="/settings/notifications" replace />} />
         <Route path="properties" element={<Properties />} />
         <Route path="cleaners" element={<Cleaners />} />
         <Route path="notifications" element={<Notifications />} />

@@ -1,8 +1,9 @@
+import { useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
 import { ToastProvider } from './components/Toast';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
-import { Bell, CreditCard, User } from 'lucide-react';
+import { Bell, CreditCard, User, ShieldCheck, ChevronRight } from 'lucide-react';
+import { useAuthStore } from '../../store/authStore';
 
 const MOBILE_ITEMS = [
   { to: '/settings/notifications', icon: Bell, label: 'Notifications', desc: 'Alerts, timing, channels' },
@@ -10,34 +11,41 @@ const MOBILE_ITEMS = [
   { to: '/settings/account', icon: User, label: 'Account', desc: 'Profile, password, security' },
 ];
 
-const SECTION_LABELS = {
-  '/settings/properties': 'Properties',
-  '/settings/cleaners': 'Cleaners',
-  '/settings/notifications': 'Notifications',
-  '/settings/billing': 'Billing',
-  '/settings/account': 'Account',
-};
-
 // Pages that use their own full-height list+panel layout
 const FULL_HEIGHT_PAGES = ['/settings/properties', '/settings/cleaners'];
 
-function MobileMenu() {
+function MobileMenu({ isAdmin }) {
   const navigate = useNavigate();
+  const items = isAdmin
+    ? [{ to: '/admin', icon: ShieldCheck, label: 'Admin', desc: 'Internal admin console', external: true }, ...MOBILE_ITEMS]
+    : MOBILE_ITEMS;
+
   return (
-    <div className="flex-1 overflow-y-auto">
-      <div className="px-4 pt-4 pb-2">
-        <h1 className="text-[20px] font-bold text-warm-900">Settings</h1>
+    <div className="flex-1 overflow-y-auto font-inter bg-bg-page">
+      <div className="px-5 pt-5 pb-3">
+        <h1 className="font-serif text-[26px] text-ink" style={{ fontWeight: 900, letterSpacing: -0.6 }}>
+          Settings
+        </h1>
       </div>
-      {MOBILE_ITEMS.map(({ to, icon: Icon, label, desc }) => (
-        <button key={to} onClick={() => navigate(to)} className="flex items-center gap-3 w-full px-4 py-3 text-left hover:bg-warm-50 border-b border-warm-100">
-          <Icon size={16} className="text-warm-400 flex-shrink-0" />
-          <div className="flex-1 min-w-0">
-            <div className="text-[15px] font-medium text-warm-800">{label}</div>
-            <div className="text-[12px] text-warm-400">{desc}</div>
-          </div>
-          <span className="text-warm-300 text-lg">›</span>
-        </button>
-      ))}
+      <div className="border-t border-b border-border-soft bg-bg-surface">
+        {items.map(({ to, icon: Icon, label, desc, external }) => (
+          <button
+            key={to}
+            onClick={() => external ? window.open(to, '_blank', 'noopener') : navigate(to)}
+            className="flex items-center gap-3 w-full px-5 text-left hover:bg-bg-subtle border-b border-border-soft last:border-b-0 active:bg-bg-subtle transition-colors"
+            style={{ minHeight: 60 }}
+          >
+            <div className="w-9 h-9 rounded-[10px] flex items-center justify-center flex-shrink-0" style={{ background: '#F1EFE8' }}>
+              <Icon size={17} strokeWidth={2} style={{ color: '#5F5B52' }} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-[15px] font-semibold text-ink leading-tight">{label}</div>
+              <div className="text-[12.5px] text-text-muted mt-0.5">{desc}</div>
+            </div>
+            <ChevronRight size={18} className="text-text-faint flex-shrink-0" strokeWidth={2} />
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
@@ -46,49 +54,40 @@ export function SettingsLayout() {
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const location = useLocation();
   const navigate = useNavigate();
+  const { user } = useAuthStore();
+  const isAdmin = user?.role === 'admin' || user?.is_admin;
   const isRoot = location.pathname === '/settings' || location.pathname === '/settings/';
-  const sectionLabel = SECTION_LABELS[location.pathname] || 'Settings';
   const isFullHeight = FULL_HEIGHT_PAGES.includes(location.pathname);
+
+  useEffect(() => {
+    if (isDesktop && isRoot) navigate('/settings/notifications', { replace: true });
+  }, [isDesktop, isRoot, navigate]);
 
   return (
     <ToastProvider>
       <div className="flex flex-1 overflow-hidden h-full">
         {isDesktop ? (
           isFullHeight ? (
-            // Full-height pages get no padding/scroll wrapper — they manage their own layout
             <div className="flex-1 flex flex-col overflow-hidden">
               <Outlet />
             </div>
           ) : (
-            <div className="flex-1 overflow-y-auto px-8 py-8">
-              <div className="max-w-4xl">
-                <Outlet />
-              </div>
+            <div className="flex-1 overflow-y-auto px-8 py-8 bg-bg-page">
+              <Outlet />
             </div>
           )
+        ) : isRoot ? (
+          <MobileMenu isAdmin={isAdmin} />
+        ) : isFullHeight ? (
+          <div className="flex-1 flex flex-col overflow-hidden">
+            <Outlet />
+          </div>
         ) : (
-          isRoot ? (
-            <MobileMenu />
-          ) : (
-            isFullHeight ? (
-              // Full-height pages on mobile — no back button header, component handles its own
-              <div className="flex-1 flex flex-col overflow-hidden">
-                <Outlet />
-              </div>
-            ) : (
-              <div className="flex-1 flex flex-col overflow-hidden">
-                <div className="flex items-center gap-2 px-4 py-3 border-b border-warm-100 bg-white">
-                  <button onClick={() => navigate('/settings')} className="p-1 text-warm-500 hover:text-warm-700">
-                    <ArrowLeft size={18} />
-                  </button>
-                  <span className="text-[15px] font-semibold text-warm-900">{sectionLabel}</span>
-                </div>
-                <div className="flex-1 overflow-y-auto p-4">
-                  <Outlet />
-                </div>
-              </div>
-            )
-          )
+          // Mobile sub-page: AppShell's MobileHeader already provides the
+          // "‹ Settings" back button, so we just render the content.
+          <div className="flex-1 overflow-y-auto bg-bg-page">
+            <Outlet />
+          </div>
         )}
       </div>
     </ToastProvider>
