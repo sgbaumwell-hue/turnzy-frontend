@@ -137,8 +137,8 @@ function AcceptAsExistingUser({ invite, roleKey }) {
             : ` as their ${roleLabel}.`}
         </p>
         <p className="mt-2" style={{ fontSize: 13, color: '#888780' }}>
-          You&rsquo;re already signed in with this email, so we can attach this invite to
-          your account directly &mdash; no new account needed.
+          You&rsquo;re signed in as this email, so we&rsquo;ll attach the invite to your
+          account. No new account needed.
         </p>
 
         {error && (
@@ -209,7 +209,7 @@ function EmailMismatch({ invite, currentEmail }) {
         </h1>
         <p className="mt-3" style={{ fontSize: 14, color: '#5F5B52', lineHeight: 1.55 }}>
           The invite was sent to <b>{invite?.invitee?.email}</b>, but you&rsquo;re signed in
-          as <b>{currentEmail}</b>. Sign out and sign back in with the right account to accept.
+          as <b>{currentEmail}</b>. Sign out and back in with the right account to accept.
         </p>
         <div className="mt-6 flex items-center gap-3">
           <button

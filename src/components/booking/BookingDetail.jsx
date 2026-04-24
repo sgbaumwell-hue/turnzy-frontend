@@ -330,7 +330,7 @@ function TimeCell({ label, time, date, field, editing, onRequestUpdate, onSubmit
   );
 }
 
-function ScheduleCard({ booking, activeFirst, editingField, onRequestUpdate, onSubmitTimeChange, onCancelEdit }) {
+function ScheduleCard({ booking, editingField, onRequestUpdate, onSubmitTimeChange, onCancelEdit }) {
   const coTime = fmtTime(booking.checkout_time || booking.default_checkout_time || '11:00');
   const ciTime = fmtTime(booking.checkin_time || booking.default_checkin_time || '15:00');
   const checkinDate = booking.next_checkin_date || booking.checkin_date;
@@ -372,13 +372,9 @@ function ScheduleCard({ booking, activeFirst, editingField, onRequestUpdate, onS
             <Info size={14} />
           </span>
           <span>
-            Guest schedule changes from Airbnb flow through automatically —{' '}
-            <strong style={{ color: T.warm800, fontWeight: 700 }}>
-              {activeFirst} is notified the moment they change.
-            </strong>{' '}
-            To negotiate a different time (early check-in, late checkout), use{' '}
-            <strong style={{ fontWeight: 700, color: T.coral400 }}>Request update</strong> —{' '}
-            {activeFirst} will accept or decline.
+            Schedule changes from Airbnb sync automatically. Tap{' '}
+            <strong style={{ fontWeight: 700, color: T.coral400 }}>Request update</strong>{' '}
+            to propose a different time — your cleaner can accept or decline.
           </span>
         </div>
       </div>
@@ -405,7 +401,7 @@ function backupStatusFor(state, primaryFirst) {
   switch (state) {
     case 'primary_awaiting':
     case 'primary_accepted': return { pill: { tone: 'ghost',  label: 'Standing by' }, sub: `Will be notified if ${primaryFirst} declines`, dimmed: true };
-    case 'primary_declined': return { pill: { tone: 'coral',  label: 'Next up'     }, sub: 'Ready — send the request',                    dimmed: false };
+    case 'primary_declined': return { pill: { tone: 'coral',  label: 'Next up'     }, sub: 'Ready to notify',                              dimmed: false };
     case 'backup_awaiting':  return { pill: { tone: 'amber',  label: 'Awaiting'    }, sub: 'Notified — awaiting response',                dimmed: false };
     case 'backup_accepted':  return { pill: { tone: 'sage',   label: 'Covering'    }, sub: 'Accepted — covering this turnover',            dimmed: false };
     case 'backup_declined':  return { pill: { tone: 'urgent', label: 'Declined'    }, sub: 'Also unavailable',                            dimmed: true };
@@ -477,8 +473,8 @@ function CleanerCard({ booking, cleanerState, hasBackup, primaryFirst }) {
             No cleaner assigned
           </div>
           <div style={{ fontSize: 13, color: T.warm600, lineHeight: 1.45 }}>
-            This property hasn't been set up with a primary cleaner yet. Assign one from
-            the property's settings — Turnzy will notify them automatically for every turnover.
+            Add a primary cleaner in property settings. We'll notify them automatically
+            for every turnover.
           </div>
         </div>
       </div>
@@ -518,11 +514,11 @@ function CleanerCard({ booking, cleanerState, hasBackup, primaryFirst }) {
                 <Info size={13} />
               </span>
               <span>
-                No backup set. Add one from{' '}
+                No backup set. Add one in{' '}
                 <TextLink tone="ink" style={{ fontSize: 12.5, fontWeight: 700 }}>
                   property settings
                 </TextLink>{' '}
-                so Turnzy has someone to fall back on.
+                so we have someone to fall back on.
               </span>
             </div>
           </>
@@ -560,7 +556,7 @@ function CTARow({ primary, helper, onDismiss }) {
       }}>
         <TextLink onClick={onDismiss}>Dismiss — I'll handle this manually</TextLink>
         <span style={{ color: T.warm300 }}>·</span>
-        <span>mutes all further notifications</span>
+        <span>mutes further notifications</span>
       </div>
     </div>
   );
@@ -640,7 +636,7 @@ function PrimaryActions({ booking, cleanerState, hasBackup, primaryFirst, backup
           onClick: () => run('remind', () => bookingsApi.resend(booking.id)),
           loading: busy === 'remind',
         }}
-        helper={`We nudge ${primaryFirst} automatically every 24h. Use this if you need a faster answer.`}
+        helper={`We re-send every 24 hours automatically. Use this if you want a faster answer.`}
         onDismiss={dismiss}
       />
     );
@@ -670,7 +666,7 @@ function PrimaryActions({ booking, cleanerState, hasBackup, primaryFirst, backup
     return (
       <DeadEnd
         title={`${primaryFirst} declined and there's no backup to escalate to`}
-        body={`Turnzy has no one else to notify for this turnover. Dismiss it to handle manually this time, and consider setting up a backup cleaner for ${booking.property_name || 'this property'} so Turnzy can escalate automatically next time.`}
+        body={`No one else to notify for this turnover. Dismiss to handle it manually this time, and add a backup cleaner to ${booking.property_name || 'this property'} so we can escalate automatically next time.`}
         secondaryLabel={`Set up a backup for ${booking.property_name || 'this property'}`}
         secondaryIcon={<ArrowUpRight size={13} />}
         onDismiss={dismiss}
@@ -686,7 +682,7 @@ function PrimaryActions({ booking, cleanerState, hasBackup, primaryFirst, backup
           onClick: () => run('remind', () => bookingsApi.resend(booking.id)),
           loading: busy === 'remind',
         }}
-        helper={`We escalated to your backup after ${primaryFirst} declined. We nudge ${backupFirst} automatically every 24h; use this for a faster answer.`}
+        helper={`Escalated to your backup after ${primaryFirst} declined. We re-send every 24 hours — use this for a faster answer.`}
         onDismiss={dismiss}
       />
     );
@@ -703,7 +699,7 @@ function PrimaryActions({ booking, cleanerState, hasBackup, primaryFirst, backup
     return (
       <DeadEnd
         title="Both cleaners declined this turnover"
-        body={`${primaryFirst} and ${backupFirst} both said no. Turnzy has no one else to notify — dismiss to handle manually this time.`}
+        body={`${primaryFirst} and ${backupFirst} both said no. No one else to notify — dismiss to handle it manually.`}
         onDismiss={dismiss}
         dismissing={busy === 'dismiss'}
       />
@@ -819,12 +815,18 @@ export function BookingDetail({ bookingId, onClose }) {
     [b],
   );
   const cleanerState = useMemo(() => deriveCleanerState(b, sentToBackup), [b, sentToBackup]);
-  const primaryFirst = (b?.cleaner_name || b?.cleaner_email || 'the cleaner').split(/\s+/)[0];
-  const backupFirst = (b?.backup_cleaner_name || b?.backup_cleaner_email || 'backup').split(/\s+/)[0];
-  const activeCleaner = cleanerState.startsWith('backup_')
-    ? { name: b?.backup_cleaner_name, email: b?.backup_cleaner_email }
-    : { name: b?.cleaner_name, email: b?.cleaner_email };
-  const activeFirst = (activeCleaner.name || activeCleaner.email || 'the cleaner').split(/\s+/)[0];
+
+  // firstNameOrRole: real first name when we have one, else a readable role
+  // phrase. We never split the fallback — `"your cleaner".split()[0]` was
+  // surfacing the word "the" in sentences like "the is notified".
+  const firstNameOrRole = (name, email, roleFallback) => {
+    const src = (name || email || '').trim();
+    if (!src) return roleFallback;
+    return src.split(/\s+/)[0];
+  };
+  const primaryFirst = firstNameOrRole(b?.cleaner_name, b?.cleaner_email, 'your cleaner');
+  const backupFirst = firstNameOrRole(b?.backup_cleaner_name, b?.backup_cleaner_email, 'your backup');
+  const activeFirst = cleanerState.startsWith('backup_') ? backupFirst : primaryFirst;
 
   const dismissed = localDismissed || b?.cleaner_status === 'dismissed';
 
@@ -910,7 +912,7 @@ export function BookingDetail({ bookingId, onClose }) {
             />
             <div style={{ marginTop: 28, display: 'flex', flexDirection: 'column', gap: 20 }}>
               <ScheduleCard
-                booking={b} activeFirst={activeFirst}
+                booking={b}
                 editingField={editingField}
                 onRequestUpdate={(f) => setEditingField(f)}
                 onSubmitTimeChange={() => { setEditingField(null); refresh(); }}

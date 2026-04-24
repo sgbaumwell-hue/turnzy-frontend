@@ -561,7 +561,7 @@ export function Account() {
             <Row
               icon={<KeyRound size={16} strokeWidth={2} />}
               label="Password"
-              sub={hasPassword ? 'Set — change anytime' : 'You signed in with Google'}
+              sub={hasPassword ? 'Change your password anytime' : 'You signed in with Google'}
               action={
                 <OutlineBtn icon={hasPassword ? Pencil : KeyRound} onClick={() => setEditing('password')}>
                   {hasPassword ? 'Change' : 'Set password'}
@@ -572,7 +572,7 @@ export function Account() {
           <Row
             icon={<ShieldCheck size={16} strokeWidth={2} />}
             label="Two-factor authentication"
-            sub={twoFactor ? 'Enabled' : 'Add a verification step when signing in'}
+            sub={twoFactor ? 'Enabled' : 'Require a code when you sign in'}
             action={
               <Switch
                 checked={twoFactor}
@@ -592,7 +592,7 @@ export function Account() {
           <Row
             icon={<LogOut size={16} strokeWidth={2} />}
             label="Sign out of this device"
-            sub="You'll need to log back in to continue"
+            sub="You'll need to sign in again"
             isLast
             action={<OutlineBtn onClick={handleSignOut}>Sign out</OutlineBtn>}
           />
@@ -602,18 +602,18 @@ export function Account() {
         <Card tone="danger">
           <CardHeader
             title="Danger zone"
-            sub="These actions affect account access and can't be undone."
+            sub="These actions can't be undone."
             tone="danger"
           />
           <Row
             label="Deactivate account"
-            sub="Hide your account and disable sign-in. You can reactivate anytime."
+            sub="Hides your account and disables sign-in. Reactivate anytime by signing back in."
             tone="danger"
             action={<OutlineBtn onClick={handleDeactivate}>Deactivate</OutlineBtn>}
           />
           <Row
             label="Permanently delete"
-            sub="Erase your account and all associated data. This can't be undone."
+            sub="Erases your account and all associated data. Can't be undone."
             tone="danger"
             isLast
             action={

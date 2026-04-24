@@ -16,9 +16,9 @@ const ALERT_GROUPS = [
     title: 'Turnover confirmations',
     sub: "The daily loop of 'did my cleaner see this booking?'",
     alerts: [
-      { id: 'unconfirmed',   label: 'Unconfirmed booking alert', sub: 'Fire when a cleaner hasn’t confirmed.',        defaults: { email: true, push: true, sms: false } },
-      { id: 'reminder',      label: 'Reminder follow-up',        sub: 'Nudge if the confirmation stays unopened.',     defaults: { email: true, push: true, sms: false } },
-      { id: 'cleaner_reply', label: 'Cleaner replied',           sub: 'Ping when a cleaner responds.',                 defaults: { email: false, push: true, sms: false } },
+      { id: 'unconfirmed',   label: 'Unconfirmed booking alert', sub: 'Fires when your cleaner hasn’t confirmed.',     defaults: { email: true, push: true, sms: false } },
+      { id: 'reminder',      label: 'Reminder follow-up',        sub: 'Nudges them if the reminder stays unopened.',   defaults: { email: true, push: true, sms: false } },
+      { id: 'cleaner_reply', label: 'Cleaner replied',           sub: 'Pings you when your cleaner responds.',         defaults: { email: false, push: true, sms: false } },
     ],
   },
   {
@@ -26,9 +26,9 @@ const ALERT_GROUPS = [
     title: 'Late start alerts',
     sub: "Alert me if cleaning hasn't started by this long after checkout. Pick one or stack multiple.",
     alerts: [
-      { id: 'late_30',  label: '30 minutes after checkout', sub: 'Early heads-up.',      defaults: { email: false, push: false, sms: false } },
-      { id: 'late_60',  label: '1 hour after checkout',     sub: 'The usual threshold.', defaults: { email: true, push: true, sms: false }, accent: true },
-      { id: 'late_120', label: '2 hours after checkout',    sub: 'Escalate to texts.',   defaults: { email: true, push: false, sms: true } },
+      { id: 'late_30',  label: '30 minutes after checkout', sub: 'Early heads-up.',           defaults: { email: false, push: false, sms: false } },
+      { id: 'late_60',  label: '1 hour after checkout',     sub: 'The usual threshold.',      defaults: { email: true, push: true, sms: false }, accent: true },
+      { id: 'late_120', label: '2 hours after checkout',    sub: 'Escalates by SMS too.',     defaults: { email: true, push: false, sms: true } },
     ],
   },
   {
@@ -36,7 +36,7 @@ const ALERT_GROUPS = [
     title: 'Job completion',
     sub: 'When the cleaner wraps — or flags something.',
     alerts: [
-      { id: 'completed',      label: 'Cleaning completed', sub: 'Push when the job is marked done.', defaults: { email: false, push: true, sms: false } },
+      { id: 'completed',      label: 'Cleaning completed', sub: 'When the job is marked done.',       defaults: { email: false, push: true, sms: false } },
       { id: 'issue_reported', label: 'Issue reported',     sub: 'Cleaner flagged something on-site.', defaults: { email: true,  push: true, sms: true } },
     ],
   },
@@ -45,8 +45,8 @@ const ALERT_GROUPS = [
     title: 'Digests & billing',
     sub: 'Low-urgency summaries and receipts.',
     alerts: [
-      { id: 'weekly',  label: 'Weekly summary',  sub: 'Recap of the week’s turnovers.', defaults: { email: true,  push: false, sms: false } },
-      { id: 'payout',  label: 'Payout confirmed', sub: 'Receipt each time a payout lands.', defaults: { email: true, push: false, sms: false } },
+      { id: 'weekly',  label: 'Weekly summary',   sub: 'A recap of the week’s turnovers.',       defaults: { email: true,  push: false, sms: false } },
+      { id: 'payout',  label: 'Payout confirmed', sub: 'Receipt each time a payout clears.',     defaults: { email: true,  push: false, sms: false } },
     ],
   },
 ];
@@ -279,8 +279,8 @@ export function Notifications() {
             When &amp; how you hear from us.
           </h1>
           <p className="mt-3" style={{ fontSize: 13.5, color: '#5F5B52', maxWidth: 640, lineHeight: 1.55 }}>
-            Pick the channels that reach you fastest. <b>Email</b> for receipts and digests,
-            <b> Push</b> for quick taps on the app, <b>SMS</b> for the stuff that can&rsquo;t wait.
+            Pick the channels that reach you fastest. <b>Email</b> for receipts,
+            <b> Push</b> for quick taps, <b>SMS</b> for anything that can&rsquo;t wait.
           </p>
         </div>
 
@@ -363,7 +363,7 @@ export function Notifications() {
         </h1>
         <p className="mt-2.5" style={{ fontSize: 13, color: '#5F5B52', lineHeight: 1.5 }}>
           Pick the channels that reach you. <b>Email</b> for receipts, <b>Push</b> for quick taps,
-          <b> SMS</b> for the stuff that can&rsquo;t wait.
+          <b> SMS</b> for anything that can&rsquo;t wait.
         </p>
       </div>
 
@@ -391,8 +391,8 @@ export function Notifications() {
             fontSize: 12.5, color: '#5F5B52', lineHeight: 1.5,
           }}
         >
-          Want per-channel control? Open the desktop app — on mobile we&rsquo;ve rolled
-          email + push + SMS into one master toggle per alert.
+          Want per-channel control? Open the desktop app. On mobile, email, push,
+          and SMS share one toggle per alert.
         </div>
 
         {/* Save */}
