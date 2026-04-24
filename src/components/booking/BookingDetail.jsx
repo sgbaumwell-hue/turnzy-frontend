@@ -14,6 +14,7 @@ import { bookingsApi } from '../../api/bookings';
 import { fmtDateLong, fmtTime, getMonthDay } from '../../utils/dates';
 import { Skeleton } from '../ui/Skeleton';
 import { PropertyRail } from '../PropertyRail';
+import { PaymentCard } from './PaymentCard';
 
 /* ============================================================================
    TOKENS — copied from the design prototype's T object.
@@ -896,6 +897,7 @@ export function BookingDetail({ bookingId, onClose }) {
                 booking={b} cleanerState={cleanerState}
                 hasBackup={hasBackup} primaryFirst={primaryFirst}
               />
+              <PaymentCard role="host" booking={b} onAfterAction={refresh} />
             </div>
             <div style={{ marginTop: 28 }}>
               <PrimaryActions

@@ -5,6 +5,7 @@ import { ChevronLeft, MapPin, CheckCircle, Check, AlertCircle, X } from 'lucide-
 import { cleanerApi } from '../../api/cleaner';
 import { bookingsApi } from '../../api/bookings';
 import { fmtDateLong, fmtTime, getMonthDay } from '../../utils/dates';
+import { PaymentCard } from '../../components/booking/PaymentCard';
 
 const STATUS_BADGES = {
   pending: { label: 'Awaiting Response', cls: 'bg-amber-50 text-amber-800' },
@@ -143,6 +144,13 @@ export function CleanerCalendarJobDetail() {
             {msg.text}
           </div>
         )}
+
+        <div className="mt-5">
+          <PaymentCard role="cleaner" booking={job} onAfterAction={() => {
+            queryClient.invalidateQueries({ queryKey: ['cleaner-jobs'] });
+            queryClient.invalidateQueries({ queryKey: ['cleaner-job', id] });
+          }} />
+        </div>
       </div>
     </div>
   );

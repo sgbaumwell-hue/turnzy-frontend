@@ -6,6 +6,7 @@ import { bookingsApi } from '../../api/bookings';
 import { fmtDateLong, fmtTime, getMonthDay } from '../../utils/dates';
 import { Skeleton } from '../../components/ui/Skeleton';
 import { useAuthStore } from '../../store/authStore';
+import { PaymentCard } from '../../components/booking/PaymentCard';
 
 const STATUS_LABELS = {
   pending: 'Awaiting Response',
@@ -168,6 +169,8 @@ export function CleanerJobDetail({ jobId, onClose }) {
       {assignedMsg && <div className="text-[13px] text-green-600 font-medium bg-green-50 px-3 py-2 rounded-lg">{assignedMsg}</div>}
 
       <ActionButtons job={b} jobId={jobId} onRefresh={handleRefresh} />
+
+      <PaymentCard role="cleaner" booking={b} onAfterAction={handleRefresh} />
 
       {b.timeline?.length > 0 && (
         <div>
