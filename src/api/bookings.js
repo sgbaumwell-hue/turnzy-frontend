@@ -10,5 +10,6 @@ export const bookingsApi = {
   markPaid: (id) => client.post(`/bookings/${id}/mark-paid`),
   notifyNow: (id) => client.post(`/bookings/${id}/notify-now`),
   requestTimeChange: (id, data) => client.post(`/bookings/${id}/request-time-change`, data),
+  sendBackup: (id) => client.post(`/bookings/${id}/send-backup`),
   pollNow: () => client.post('/poll-icals'),
 };
