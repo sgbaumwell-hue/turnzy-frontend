@@ -19,7 +19,14 @@
 @layer utilities {
   .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
   .scrollbar-hide::-webkit-scrollbar { display: none; }
-  .font-serif { font-family: 'Fraunces', Georgia, serif; }
+  /* Display type — kept the utility name for backwards compat, but
+     "serif" is now a misnomer. We render all display/headline text in
+     Inter with tight letter-spacing and heavy weight. One family across
+     the whole app, per Seth's call. */
+  .font-serif {
+    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    letter-spacing: -0.02em;
+  }
 }
 
 @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }

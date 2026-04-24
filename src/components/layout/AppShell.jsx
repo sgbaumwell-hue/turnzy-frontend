@@ -47,7 +47,7 @@ function MobileBrand() {
     <div className="flex items-center pl-4">
       <span
         className="leading-none text-ink"
-        style={{ fontFamily: 'Fraunces, Georgia, serif', fontSize: 20, letterSpacing: -0.4, fontWeight: 900 }}
+        style={{ fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif', fontSize: 20, letterSpacing: -0.04, fontWeight: 900 }}
       >
         Turnzy
       </span>

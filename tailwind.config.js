@@ -44,8 +44,10 @@ export default {
       },
       fontFamily: {
         sans: ['Manrope', 'system-ui', 'sans-serif'],
-        serif: ['Fraunces', 'Georgia', 'serif'],
-        // Scoped — apply via `font-inter` on Settings redesign surfaces only.
+        // Display type. Name kept as `serif` for backwards compat with
+        // existing `font-serif` classes, but the family is Inter — Fraunces
+        // is banned app-wide.
+        serif: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         inter: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       borderRadius: {
