@@ -24,6 +24,7 @@ import { Notifications } from './pages/settings/sections/Notifications';
 import { Billing } from './pages/settings/sections/Billing';
 import { Account } from './pages/settings/sections/Account';
 import { DeleteConfirm } from './pages/account/DeleteConfirm';
+import { Debug } from './pages/Debug';
 import { Login } from './pages/auth/Login';
 import { SignupFlow } from './pages/auth/signup/SignupFlow';
 import { InviteLanding, InviteExpiredLanding } from './pages/auth/InviteLanding';
@@ -101,6 +102,7 @@ function AppWithAuth() {
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/team/accept" element={<AcceptInvite />} />
       <Route path="/account/delete-confirm" element={<RequireAuth><DeleteConfirm /></RequireAuth>} />
+      <Route path="/debug" element={<RequireAuth><Debug /></RequireAuth>} />
 
       {/* Host dashboard */}
       <Route path="/" element={
