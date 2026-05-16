@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { getMonthDay, fmtTime, fmtDateShort } from '../../utils/dates';
 import { getStatusConfig, isUrgent as checkUrgent } from '../../utils/status';
 import { useUiStore } from '../../store/uiStore';
@@ -30,6 +30,7 @@ export function BookingRow({ booking, propName }) {
   const isSelected = selectedBookingId === booking.id;
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const urgent = checkUrgent(booking);
   const sc = getStatusConfig(booking, urgent);
   const { month, day } = getMonthDay(booking.checkout_date);
@@ -41,7 +42,7 @@ export function BookingRow({ booking, propName }) {
     if (isDesktop) {
       setSelectedBooking(booking.id);
     } else {
-      navigate(`/bookings/detail/${booking.id}`);
+      navigate(`/bookings/detail/${booking.id}`, { state: { from: pathname } });
     }
   }
 

@@ -772,7 +772,7 @@ function Activity({ timeline }) {
 /* ============================================================================
    TOP-LEVEL PANE
    ============================================================================ */
-export function BookingDetail({ bookingId, onClose }) {
+export function BookingDetail({ bookingId, onClose, fullPage }) {
   const queryClient = useQueryClient();
   const { data, isLoading } = useQuery({
     queryKey: ['booking', bookingId],
@@ -852,31 +852,34 @@ export function BookingDetail({ bookingId, onClose }) {
       data-testid="booking-detail"
       style={{
         flex: 1, display: 'flex', flexDirection: 'column',
-        background: T.warm50, overflow: 'hidden',
+        background: T.warm50,
+        overflow: fullPage ? 'visible' : 'hidden',
         position: 'relative', minWidth: 0,
       }}
     >
-      <button
-        onClick={onClose}
-        aria-label="Close"
-        style={{
-          position: 'absolute', top: 16, right: 20, zIndex: 20,
-          width: 36, height: 36, borderRadius: 8, border: 'none',
-          background: 'transparent', color: T.warm600, cursor: 'pointer',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}
-      >
-        <X size={18} />
-      </button>
+      {!fullPage && (
+        <button
+          onClick={onClose}
+          aria-label="Close"
+          style={{
+            position: 'absolute', top: 16, right: 20, zIndex: 20,
+            width: 36, height: 36, borderRadius: 8, border: 'none',
+            background: 'transparent', color: T.warm600, cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}
+        >
+          <X size={18} />
+        </button>
+      )}
 
-      <div style={{ flex: 1, overflowY: 'auto' }}>
+      <div style={{ flex: 1, overflowY: fullPage ? 'visible' : 'auto' }}>
         <div style={{
           display: 'flex', gap: 0, alignItems: 'stretch',
           flexWrap: 'wrap', minHeight: '100%',
         }}>
           <div style={{
             flex: '1 1 640px', maxWidth: 760, minWidth: 0,
-            padding: '32px 40px 80px',
+            padding: fullPage ? '20px 20px 40px' : '32px 40px 80px',
           }}>
             <Hero
               booking={b} cleanerState={cleanerState}
