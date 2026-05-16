@@ -1,14 +1,16 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { BookingDetail } from '../../components/booking/BookingDetail';
+import { BottomNav } from '../../components/layout/BottomNav';
 
-// Mobile full-page route for a booking detail. Renders the same pane
-// used in the host dashboard drawer, with onClose wired to a browser back.
 export function BookingDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <BookingDetail bookingId={id} onClose={() => navigate(-1)} />
+      <div style={{ flex: 1, overflow: 'hidden', paddingBottom: 78 }} className="md:pb-0">
+        <BookingDetail bookingId={id} onClose={() => navigate(-1)} />
+      </div>
+      <BottomNav />
     </div>
   );
 }

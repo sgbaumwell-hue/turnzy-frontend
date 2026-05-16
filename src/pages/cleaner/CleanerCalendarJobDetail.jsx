@@ -6,6 +6,7 @@ import { cleanerApi } from '../../api/cleaner';
 import { bookingsApi } from '../../api/bookings';
 import { fmtDateLong, fmtTime, getMonthDay } from '../../utils/dates';
 import { PaymentCard } from '../../components/booking/PaymentCard';
+import { BottomNav } from '../../components/layout/BottomNav';
 
 const STATUS_BADGES = {
   pending: { label: 'Awaiting Response', cls: 'bg-amber-50 text-amber-800' },
@@ -70,7 +71,8 @@ export function CleanerCalendarJobDetail() {
   const badge = STATUS_BADGES[job.cleaner_status] || STATUS_BADGES.pending;
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <>
+    <div className="min-h-screen bg-gray-50 pb-[78px]">
       <div className="sticky top-0 z-10 bg-white border-b border-gray-100 px-4 py-3 flex items-center gap-3">
         <button onClick={() => navigate('/cleaner/calendar')} className="p-1 -ml-1"><ChevronLeft size={22} className="text-gray-700" /></button>
         <h2 className="text-base font-semibold text-gray-900">Job Details</h2>
@@ -153,5 +155,7 @@ export function CleanerCalendarJobDetail() {
         </div>
       </div>
     </div>
+    <BottomNav />
+    </>
   );
 }
