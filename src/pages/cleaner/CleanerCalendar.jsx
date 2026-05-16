@@ -8,6 +8,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './CleanerCalendar.css';
 import { cleanerApi } from '../../api/cleaner';
 import { CleanerJobDetail } from './CleanerJobDetail';
+import { PropertyRail } from '../../components/PropertyRail';
 import { useAuthStore } from '../../store/authStore';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 
@@ -193,8 +194,11 @@ export function CleanerCalendar() {
         </div>
       </div>
       {selectedJobId && isDesktop && (
-        <div className="w-[400px] flex-shrink-0 border-l border-gray-200 bg-stone-50 overflow-y-auto">
-          <CleanerJobDetail jobId={selectedJobId} onClose={() => setSelectedJobId(null)} />
+        <div className="flex-shrink-0 flex overflow-hidden border-l border-gray-200" style={{ width: 520, background: '#F9F8F6' }}>
+          <div className="flex-shrink-0 overflow-y-auto" style={{ flex: '0 1 400px' }}>
+            <CleanerJobDetail jobId={selectedJobId} onClose={() => setSelectedJobId(null)} />
+          </div>
+          <PropertyRail />
         </div>
       )}
     </div>

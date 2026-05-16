@@ -14,6 +14,10 @@ import { CleanerSettingsTeam } from './pages/cleaner/settings/CleanerSettingsTea
 import { CleanerSettingsNotifications } from './pages/cleaner/settings/CleanerSettingsNotifications';
 import { CleanerSettingsAccount } from './pages/cleaner/settings/CleanerSettingsAccount';
 import { TeamDashboard } from './pages/team/TeamDashboard';
+import { TeamCalendar } from './pages/team/TeamCalendar';
+import { TeamSettingsLayout } from './pages/team/settings/TeamSettingsLayout';
+import { TeamSettingsNotifications } from './pages/team/settings/TeamSettingsNotifications';
+import { TeamSettingsAccount } from './pages/team/settings/TeamSettingsAccount';
 import { AcceptInvite } from './pages/team/AcceptInvite';
 import { SettingsLayout } from './pages/settings/SettingsLayout';
 import { Properties } from './pages/settings/sections/Properties';
@@ -148,10 +152,19 @@ function AppWithAuth() {
         <Route path="account" element={<CleanerSettingsAccount />} />
       </Route>
 
-      {/* Team member dashboard */}
+      {/* Team member pages */}
       <Route path="/team" element={
         <RequireAuth allowedRoles={['team_member']}><AppShell><TeamDashboard /></AppShell></RequireAuth>
       } />
+      <Route path="/team/calendar" element={
+        <RequireAuth allowedRoles={['team_member']}><AppShell><TeamCalendar /></AppShell></RequireAuth>
+      } />
+      <Route path="/team/settings" element={
+        <RequireAuth allowedRoles={['team_member']}><AppShell><TeamSettingsLayout /></AppShell></RequireAuth>
+      }>
+        <Route path="notifications" element={<TeamSettingsNotifications />} />
+        <Route path="account" element={<TeamSettingsAccount />} />
+      </Route>
 
       {/* Host settings */}
       <Route path="/settings" element={

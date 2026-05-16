@@ -12,8 +12,9 @@ const CLEANER_TABS = [
 ];
 
 const TEAM_TABS = [
-  { to: '/team',          icon: Home,     label: 'Home',     end: true, match: p => p === '/team' || p.startsWith('/team/jobs') },
-  { to: '/team/settings', icon: Settings, label: 'Settings', match: p => p.startsWith('/team/settings') },
+  { to: '/team',          icon: Home,         label: 'Home',     end: true, match: p => p === '/team' || p.startsWith('/team/jobs') },
+  { to: '/team/calendar', icon: CalendarDays, label: 'Calendar', match: p => p.startsWith('/team/calendar') },
+  { to: '/team/settings', icon: Settings,     label: 'Settings', match: p => p.startsWith('/team/settings') },
 ];
 
 // Host bottom nav — four primary tabs per Settings redesign spec.

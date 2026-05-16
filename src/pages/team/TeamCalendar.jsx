@@ -1,12 +1,28 @@
-import { useMemo, useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { RefreshCw, ChevronDown, X, MapPin, CheckCircle, AlertCircle, Check, Play } from 'lucide-react';
+import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
+import { format, parse, startOfWeek, getDay } from 'date-fns';
+import { enUS } from 'date-fns/locale';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+import '../cleaner/CleanerCalendar.css';
 import { teamApi } from '../../api/cleaner';
 import { PropertyRail } from '../../components/PropertyRail';
 import { fmtDateLong, fmtTime, getMonthDay, fmtDateShort } from '../../utils/dates';
-import { Skeleton } from '../../components/ui/Skeleton';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
-import clsx from 'clsx';
+import { X, MapPin, CheckCircle, AlertCircle, Check, Play } from 'lucide-react';
+
+const localizer = dateFnsLocalizer({
+  format, parse, startOfWeek, getDay,
+  locales: { 'en-US': enUS },
+});
+
+const STATUS_COLORS = {
+  assigned:  { bg: '#fef3c7', text: '#92400e' },
+  confirmed: { bg: '#dcfce7', text: '#15803d' },
+  started:   { bg: '#dbeafe', text: '#1d4ed8' },
+  completed: { bg: '#f3f4f6', text: '#6b7280' },
+  declined:  { bg: '#fee2e2', text: '#b91c1c' },
+};
 
 const BADGE = {
   assigned: { label: 'Confirm Needed', cls: 'bg-amber-50 text-amber-800' },
@@ -16,50 +32,80 @@ const BADGE = {
   declined: { label: 'Declined', cls: 'bg-red-100 text-red-700' },
 };
 
-function SectionHeader({ label, count, color, open, onToggle }) {
-  const colors = { amber: 'bg-amber-400 text-white', green: 'bg-green-500 text-white', warm: 'bg-gray-200 text-gray-600', today: 'bg-coral-400 text-white' };
+function StatusLegend() {
+  const items = [
+    { label: 'Confirm Needed', color: 'bg-amber-400' },
+    { label: 'Confirmed', color: 'bg-green-500' },
+    { label: 'Started', color: 'bg-blue-500' },
+    { label: 'Completed', color: 'bg-gray-400' },
+    { label: 'Declined', color: 'bg-red-500' },
+  ];
   return (
-    <button type="button" onClick={onToggle} className="flex items-center gap-2 px-4 py-2.5 sticky top-0 backdrop-blur-sm z-10 border-b border-gray-100 w-full text-left cursor-pointer bg-gray-50/90">
-      <span className="text-sm font-semibold text-gray-600 uppercase tracking-wide">{label}</span>
-      {count > 0 && <span className={`text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center ${colors[color]}`}>{count}</span>}
-      <ChevronDown size={14} className={clsx('ml-auto text-gray-400 transition-transform duration-200', open && 'rotate-180')} />
-    </button>
+    <div className="flex items-center gap-4 mb-3 flex-wrap">
+      {items.map(i => (
+        <div key={i.label} className="flex items-center gap-1.5">
+          <div className={`w-2 h-2 rounded-full ${i.color}`} />
+          <span className="text-[10px] text-gray-400">{i.label}</span>
+        </div>
+      ))}
+    </div>
   );
 }
 
-function AssignmentRow({ a, isToday, isSelected, onClick }) {
-  const { month, day } = getMonthDay(a.checkout_date);
-  const coTime = fmtTime(a.checkout_time || a.default_checkout_time || '11:00');
-  const ciTime = fmtTime(a.checkin_time || a.default_checkin_time || '15:00');
-  const ciDate = fmtDateShort(a.checkout_date);
-  const badge = BADGE[a.status] || BADGE.assigned;
+function fmtShortDate(dateStr) {
+  if (!dateStr) return '';
+  const clean = dateStr.toString().slice(0, 10);
+  const [y, m, d] = clean.split('-').map(Number);
+  const date = new Date(y, m - 1, d);
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+function CustomToolbar({ label, onNavigate, onView, view }) {
+  const isDesktop = useMediaQuery('(min-width: 768px)');
+  const btnClass = 'px-3 py-1.5 text-sm border border-gray-200 rounded-lg bg-white text-gray-700 hover:bg-gray-50';
+
+  if (!isDesktop) {
+    return (
+      <div className="flex flex-col items-center gap-2 mb-4">
+        <span className="text-base font-semibold text-gray-900">{label}</span>
+        <div className="flex gap-2">
+          <button onClick={() => onNavigate('PREV')} className={btnClass}>← Back</button>
+          <button onClick={() => onNavigate('TODAY')} className={btnClass}>Today</button>
+          <button onClick={() => onNavigate('NEXT')} className={btnClass}>Next →</button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div role="button" tabIndex={0} onClick={onClick} onKeyDown={(e) => e.key === 'Enter' && onClick()}
-      className={clsx('relative cursor-pointer mx-2 mb-2 p-4 transition-colors duration-100 hover:bg-gray-50',
-        isToday && !isSelected && 'bg-amber-50 border-l-4 border-l-amber-400 rounded-r-lg shadow-sm',
-        !isToday && !isSelected && 'bg-white rounded-lg shadow-sm',
-        isSelected && 'ring-2 ring-coral-400 bg-coral-50 rounded-lg shadow-sm',
-      )} style={isToday && !isSelected ? { borderRadius: '0 8px 8px 0' } : undefined}>
-      <div className="absolute top-3 right-3"><span className={`inline-block text-[10px] font-semibold px-2 py-0.5 rounded ${badge.cls}`}>{badge.label}</span></div>
-      <div className="font-semibold text-[15px] text-gray-900 leading-tight pr-28">{month} {day} Turnover</div>
-      {a.property_name && <div className="text-[13px] text-gray-500 mt-0.5">{a.property_name}</div>}
-      <div className="text-[12px] text-gray-400 mt-0.5">Assigned by {a.lead_cleaner_name || 'Team leader'}</div>
-      <div className="mt-3 space-y-1.5">
-        <div className="flex items-center justify-between"><span className="text-xs text-gray-400 uppercase tracking-widest">Checkout</span><span className="text-sm font-medium text-gray-700">{coTime}</span></div>
-        <div className="flex items-center justify-between"><span className="text-xs text-gray-400 uppercase tracking-widest">Check-in</span><span className="text-sm font-medium text-gray-700">{ciDate}, {ciTime}</span></div>
+    <div className="flex items-center justify-between mb-4">
+      <div className="flex gap-2">
+        <button onClick={() => onNavigate('PREV')} className={btnClass}>← Back</button>
+        <button onClick={() => onNavigate('TODAY')} className={btnClass}>Today</button>
+        <button onClick={() => onNavigate('NEXT')} className={btnClass}>Next →</button>
+      </div>
+      <span className="text-base font-semibold text-gray-900">{label}</span>
+      <div className="flex gap-1">
+        <button onClick={() => onView('month')}
+          className={`px-3 py-1.5 text-sm rounded-lg ${view === 'month' ? 'bg-orange-500 text-white' : 'border border-gray-200 bg-white text-gray-700'}`}>
+          Month
+        </button>
+        <button onClick={() => onView('week')}
+          className={`px-3 py-1.5 text-sm rounded-lg ${view === 'week' ? 'bg-orange-500 text-white' : 'border border-gray-200 bg-white text-gray-700'}`}>
+          Week
+        </button>
       </div>
     </div>
   );
 }
 
-function AssignmentDetail({ assignment, onClose, onRefresh }) {
+function AssignmentSidebar({ assignment, onClose, onRefresh }) {
   const [loading, setLoading] = useState(null);
   const [msg, setMsg] = useState(null);
   const [issueText, setIssueText] = useState('');
   const [showIssue, setShowIssue] = useState(false);
 
-  if (!assignment) return <div className="flex items-center justify-center h-full text-gray-400 text-sm">Select a job to view details</div>;
+  if (!assignment) return null;
 
   const a = assignment;
   const { month, day } = getMonthDay(a.checkout_date);
@@ -123,72 +169,90 @@ function AssignmentDetail({ assignment, onClose, onRefresh }) {
   );
 }
 
-export function TeamDashboard() {
+export function TeamCalendar() {
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const queryClient = useQueryClient();
   const [selectedId, setSelectedId] = useState(null);
 
-  const { data, isLoading, refetch } = useQuery({ queryKey: ['team-assignments'], queryFn: () => teamApi.getAssignments(), refetchInterval: 5 * 60 * 1000 });
+  const { data } = useQuery({
+    queryKey: ['team-assignments'],
+    queryFn: () => teamApi.getAssignments(),
+    refetchInterval: 5 * 60 * 1000,
+  });
+
   const assignments = data?.data?.assignments || [];
-  const today = new Date().toISOString().slice(0, 10);
 
-  const sections = useMemo(() => {
-    if (!assignments.length) return {};
-    return {
-      today: assignments.filter(a => a.checkout_date?.toString().slice(0, 10) === today && !['completed', 'declined'].includes(a.status)),
-      upcoming: assignments.filter(a => a.checkout_date?.toString().slice(0, 10) > today && a.status === 'confirmed'),
-      past: assignments.filter(a => a.checkout_date?.toString().slice(0, 10) < today || ['completed', 'declined'].includes(a.status)),
-    };
-  }, [assignments, today]);
+  const events = useMemo(() => {
+    return assignments.map(a => {
+      const coDate = a.checkout_date?.toString().slice(0, 10);
+      const coTime = a.checkout_time || a.default_checkout_time || '11:00';
+      const ciTime = a.checkin_time || a.default_checkin_time || '15:00';
+      const [coH, coM] = coTime.split(':').map(Number);
+      const [ciH, ciM] = ciTime.split(':').map(Number);
+      const [y, m, d] = coDate.split('-').map(Number);
 
-  const [openSections, setOpenSections] = useState({ today: true, upcoming: false, past: false });
-  const toggle = (k) => setOpenSections(p => ({ ...p, [k]: !p[k] }));
+      const dateLabel = fmtShortDate(coDate);
+      const prop = a.property_name || 'Turnover';
 
-  function handleRefresh() { queryClient.invalidateQueries({ queryKey: ['team-assignments'] }); }
+      return {
+        id: a.id,
+        title: `${dateLabel} · ${prop}`,
+        start: new Date(y, m - 1, d, coH, coM),
+        end: new Date(y, m - 1, d, ciH, ciM),
+        resource: a,
+      };
+    });
+  }, [assignments]);
 
   const selected = assignments.find(a => a.id === selectedId) || null;
 
-  const renderSection = (key, label, color) => {
-    const items = sections[key];
-    if (!items?.length) return null;
-    const isOpen = openSections[key] !== false;
-    return (
-      <div key={key}>
-        <SectionHeader label={label} count={items.length} color={color} open={isOpen} onToggle={() => toggle(key)} />
-        <div className="overflow-hidden transition-[max-height] duration-300 ease-in-out" style={{ maxHeight: isOpen ? `${items.length * 180}px` : '0px' }}>
-          <div className="pt-2">{items.map(a => <AssignmentRow key={a.id} a={a} isToday={key === 'today'} isSelected={selectedId === a.id} onClick={() => setSelectedId(a.id)} />)}</div>
-        </div>
-      </div>
-    );
-  };
+  function handleRefresh() {
+    queryClient.invalidateQueries({ queryKey: ['team-assignments'] });
+  }
 
   return (
     <div className="flex w-full h-screen overflow-hidden">
-      <div className={clsx('flex flex-col border-r border-gray-200 bg-white', isDesktop ? 'w-[340px] flex-shrink-0' : 'flex-1')}>
-        <div className="px-4 pt-5 pb-3 border-b border-gray-100">
-          <div className="flex items-start justify-between">
-            <div><h1 className="font-semibold text-[18px] text-gray-900">My Jobs</h1><p className="text-[13px] text-gray-400 mt-0.5">Your assigned turnovers</p></div>
-            <button onClick={() => refetch()} className="p-1.5 rounded-lg text-gray-400 hover:bg-gray-100"><RefreshCw size={15} /></button>
+      <div className={selectedId && isDesktop ? 'flex-1 min-w-0' : 'flex-1'}>
+        <div className="p-4 md:p-6 h-full flex flex-col">
+          <div className="mb-3">
+            <h1 className="font-semibold text-[18px] text-gray-900">Calendar</h1>
+            <p className="text-[13px] text-gray-400">Your assigned turnovers</p>
+          </div>
+          <StatusLegend />
+          <div className="flex-1 min-h-0 h-[calc(100vh-220px)] md:h-auto">
+            <Calendar
+              localizer={localizer}
+              events={events}
+              defaultView="month"
+              views={isDesktop ? ['month', 'week'] : ['month']}
+              style={{ height: '100%' }}
+              eventPropGetter={(event) => {
+                const c = STATUS_COLORS[event.resource.status] || STATUS_COLORS.assigned;
+                return {
+                  style: {
+                    backgroundColor: c.bg,
+                    color: c.text,
+                    borderRadius: '6px',
+                    border: 'none',
+                    fontSize: '11px',
+                    fontWeight: '600',
+                    fontFamily: 'Manrope, sans-serif',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  },
+                };
+              }}
+              onSelectEvent={(event) => setSelectedId(event.resource.id)}
+              components={{ toolbar: CustomToolbar }}
+            />
           </div>
         </div>
-        <div className="flex-1 overflow-y-auto scrollbar-hide bg-gray-50">
-          {isLoading && <div className="p-4 space-y-2">{[...Array(3)].map((_, i) => <Skeleton key={i} className="h-24" />)}</div>}
-          {!isLoading && !assignments.length && (
-            <div className="flex-1 flex flex-col items-center justify-center px-8 text-center h-64">
-              <div className="text-4xl mb-3">📋</div>
-              <div className="text-[15px] font-medium text-gray-700 mb-1">You're not connected to any jobs yet.</div>
-              <div className="text-[13px] text-gray-400">Check your email — your team leader will assign you to jobs when they need you.</div>
-            </div>
-          )}
-          {!isLoading && renderSection('today', 'Today', 'today')}
-          {!isLoading && renderSection('upcoming', 'Upcoming', 'green')}
-          {!isLoading && renderSection('past', 'Past', 'warm')}
-        </div>
       </div>
-      {isDesktop && (
-        <div className="flex-1 min-w-0 flex overflow-hidden" style={{ background: '#F9F8F6' }}>
-          <div className="flex-shrink-0 overflow-y-auto" style={{ flex: '0 1 760px' }}>
-            <AssignmentDetail assignment={selected} onClose={() => setSelectedId(null)} onRefresh={handleRefresh} />
+      {selectedId && isDesktop && (
+        <div className="flex-shrink-0 flex overflow-hidden border-l border-gray-200" style={{ width: 520, background: '#F9F8F6' }}>
+          <div className="flex-shrink-0 overflow-y-auto" style={{ flex: '0 1 400px' }}>
+            <AssignmentSidebar assignment={selected} onClose={() => setSelectedId(null)} onRefresh={handleRefresh} />
           </div>
           <PropertyRail />
         </div>

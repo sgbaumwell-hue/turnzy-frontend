@@ -147,7 +147,11 @@ function TeamNav() {
     <>
       <Eyebrow>Views</Eyebrow>
       <Item to="/team" end icon={Home} label="My jobs" />
-      <Item to="/team/settings" icon={Settings} label="Settings" />
+      <Item to="/team/calendar" icon={CalendarDays} label="Calendar" />
+
+      <div style={{ height: 10 }} />
+      <Item to="/team/settings/notifications" icon={Bell} label="Notifications" />
+      <Item to="/team/settings/account" icon={User} label="Account" />
     </>
   );
 }
@@ -182,7 +186,7 @@ export function Sidebar({ counts = {} }) {
   const accountHref = isCleaner
     ? '/cleaner/settings/account'
     : isTeamMember
-      ? '/team/settings'
+      ? '/team/settings/account'
       : '/settings/account';
 
   async function handleSignOut() {

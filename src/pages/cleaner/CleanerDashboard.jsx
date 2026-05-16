@@ -3,6 +3,7 @@ import { RefreshCw } from 'lucide-react';
 import { cleanerApi } from '../../api/cleaner';
 import { CleanerJobList } from './CleanerJobList';
 import { CleanerJobDetail } from './CleanerJobDetail';
+import { PropertyRail } from '../../components/PropertyRail';
 import { useCleanerUiStore } from '../../store/cleanerUiStore';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 import clsx from 'clsx';
@@ -36,15 +37,20 @@ export function CleanerDashboard() {
         <CleanerJobList jobs={jobs} isLoading={isLoading} />
       </div>
       {isDesktop && (
-        <div className="flex-1 min-w-0 bg-stone-50 overflow-y-auto">
-          {selectedJobId ? (
-            <CleanerJobDetail jobId={selectedJobId} onClose={() => setSelectedJob(null)} />
-          ) : (
-            <div className="flex items-center justify-center h-full text-gray-400 text-sm">
+        selectedJobId ? (
+          <div className="flex-1 min-w-0 flex overflow-hidden" style={{ background: '#F9F8F6' }}>
+            <div className="flex-shrink-0 overflow-y-auto" style={{ flex: '0 1 760px' }}>
+              <CleanerJobDetail jobId={selectedJobId} onClose={() => setSelectedJob(null)} />
+            </div>
+            <PropertyRail />
+          </div>
+        ) : (
+          <div className="flex-1 min-w-0 flex overflow-hidden" style={{ background: '#F9F8F6' }}>
+            <div className="flex items-center justify-center flex-1 text-gray-400 text-sm">
               Select a job to view details
             </div>
-          )}
-        </div>
+          </div>
+        )
       )}
     </div>
   );
