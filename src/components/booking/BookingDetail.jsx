@@ -320,7 +320,7 @@ function TimeCell({ label, time, date, field, editing, onRequestUpdate, onSubmit
               fontSize: 12.5, fontFamily: 'inherit', resize: 'vertical',
             }}
           />
-          <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
             <Button size="sm" onClick={submit} disabled={!newTime || sending}>
               {sending ? 'Sending…' : 'Send request'}
             </Button>

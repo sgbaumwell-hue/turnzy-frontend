@@ -143,8 +143,9 @@ export function CleanerJobDetail({ jobId, onClose }) {
   const badgeStyle = b.cleaner_status === 'declined' ? 'bg-red-100 text-red-700 font-semibold' : b.cleaner_status === 'accepted' ? 'bg-green-50 text-green-700' : b.cleaner_status === 'completed' ? 'bg-gray-100 text-gray-500' : 'bg-amber-50 text-amber-800';
 
   return (
-    <div className="p-6 relative space-y-5">
-      <button onClick={onClose} className="absolute top-4 right-4 p-1.5 rounded-lg text-gray-400 hover:bg-gray-100"><X size={18} /></button>
+    <div className="relative h-full" style={{ background: '#F9F8F6' }}>
+      <button onClick={onClose} className="absolute top-4 right-4 z-10 p-1.5 rounded-lg text-gray-400 hover:bg-gray-100"><X size={18} /></button>
+    <div className="p-6 space-y-5 overflow-y-auto h-full" style={{ maxWidth: 760 }}>
       <div className="pr-8">
         <h2 className="text-[28px] font-bold text-gray-900 leading-tight">{month} {day} Turnover</h2>
         <div className="flex items-center gap-1.5 mt-1"><MapPin size={13} className="text-gray-300" /><p className="text-[14px] font-medium text-gray-400">{b.property_name || 'Property'}</p></div>
@@ -183,6 +184,7 @@ export function CleanerJobDetail({ jobId, onClose }) {
           ))}
         </div>
       )}
+    </div>
     </div>
   );
 }

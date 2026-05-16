@@ -41,14 +41,42 @@ function deriveBack(pathname, role) {
   return null;
 }
 
+function LogoMark({ size = 24 }) {
+  return (
+    <div
+      className="relative flex items-center justify-center flex-shrink-0"
+      style={{
+        width: size, height: size, borderRadius: 6,
+        background: 'linear-gradient(140deg,#F07447 0%,#E85F34 45%,#C8481F 100%)',
+        boxShadow: 'inset 0 1px 0 rgba(255,255,255,.3), 0 1px 4px rgba(168,66,30,.18)',
+      }}
+    >
+      <svg width={size * 0.6} height={size * 0.6} viewBox="0 0 32 32" fill="none">
+        <path d="M16 9.5C19.4 9.8 22 12.5 22 16C22 19.5 19.4 22.2 16 22.5" stroke="white" strokeWidth="2.8" strokeLinecap="round" fill="none" />
+        <path d="M22 16L23.8 14.2M22 16L20.2 14.2" stroke="white" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+        <circle cx="12" cy="16" r="2.2" fill="white" />
+      </svg>
+    </div>
+  );
+}
+
 function MobileBrand() {
   return (
-    <div className="flex items-center pl-4">
+    <div className="flex items-center gap-2 pl-4">
+      <LogoMark size={24} />
       <span
-        className="leading-none text-ink"
-        style={{ fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif', fontSize: 20, letterSpacing: -0.04, fontWeight: 900 }}
+        className="leading-none text-ink font-black text-[16px] tracking-[-0.03em]"
+        style={{ fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif' }}
       >
-        Turnzy
+        Turn
+        <span
+          style={{
+            background: 'linear-gradient(140deg,#F07447,#C8481F)',
+            WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent',
+          }}
+        >
+          zy
+        </span>
       </span>
     </div>
   );
